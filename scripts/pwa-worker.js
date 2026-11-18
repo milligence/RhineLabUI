@@ -1,7 +1,7 @@
 /* The build replaces both tokens; this file is never registered in development. */
 const VERSION = __CACHE_VERSION__;
 const FILES = __PRECACHE_FILES__;
-const PREFIX = `rhine-lab:${new URL(self.registration.scope).pathname}:`;
+const PREFIX = `the-archive:${new URL(self.registration.scope).pathname}:`;
 const CACHE = PREFIX + VERSION;
 const urls = FILES.map(path => new URL(path, self.registration.scope).href);
 const allowed = new Set(urls);

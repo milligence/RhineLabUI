@@ -10,7 +10,6 @@ const requiredFields = [
   "lead",
   "clearance",
   "abstract",
-  "source",
 ];
 const isText = (value) => typeof value === "string" && value.trim().length > 0;
 
@@ -63,11 +62,16 @@ export function validateContent(content) {
     ) {
       errors.push(`${label}.findings：必须包含至少一条非空研究记录`);
     }
-    try {
-      const url = new URL(record.source);
-      if (!["https:", "http:"].includes(url.protocol)) throw new Error();
-    } catch {
-      errors.push(`${label}.source：必须是有效的 HTTP 或 HTTPS 链接`);
+    if (record.source !== "") {
+      try {
+        const url = new URL(record.source);
+        if (!["https:", "http:"].includes(url.protocol)) throw new Error();
+      } catch {
+        errors.push(`${label}.source：必须为空或为有效的 HTTP 或 HTTPS 链接`);
+      }
+    }
+    if (typeof record.image !== "string" || (record.image !== "" && !/^archive-images\/(?!.*\.\.)[\w\-/]+\.(?:png|jpe?g|webp|svg)$/i.test(record.image))) {
+      errors.push(`${label}.image：必须为空或为 archive-images 下的图片路径`);
     }
   });
   for (const name of columns) {
@@ -92,5 +96,5 @@ export async function loadContent() {
 }
 
 export function archiveText(r) {
-  return `\uFEFFRHINE LAB · INTERNAL DATABASE\nFILE ${r.id} / ${r.title}\n${r.en}\n\n科室：${r.department}\n编目范围：${r.date}\n相关人物：${r.lead}\n访问范围：${r.clearance}\n\n${r.abstract}\n\n研究记录\n${r.findings.map((f, i) => `${i + 1}. ${f}`).join("\n")}\n\n设定参考：${r.source}\n本文为基于公开设定的档案式改写，非游戏原文。\n`;
+  return `\uFEFFTHE ARCHIVE · RECORD\nFILE ${r.id} / ${r.title}\n${r.en}\n\n分类：${r.category}\n编目范围：${r.date}\n记录人：${r.lead}\n状态：${r.clearance}\n\n${r.abstract}\n\n文字记录\n${r.findings.map((f, i) => `${i + 1}. ${f}`).join("\n")}\n${r.source ? `\n资料来源：${r.source}\n` : ""}`;
 }

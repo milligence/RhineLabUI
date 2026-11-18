@@ -1,34 +1,16 @@
-# 修改档案内容
+# 编辑 Archive 内容
 
-[`archives.json`](archives.json) 是页面与 TXT 下载共用的档案数据。修改内容无需编辑 TypeScript；`src/data.ts` 只保留类型和阵列位置映射。
+`archives.json` 是界面、搜索与文本导出的共同数据源。初版保留五个分类、每类八份共 40 个占位档案，编号 `X-001` 至 `X-040` 保持稳定；修改数量需同时调整阵列和校验逻辑。
 
-## 文件结构
+每条记录可填写：
 
-- `categories`：检索筛选器的五个分类，按显示顺序排列。“全部档案”由界面添加，无需填写。
-- `columns`：三维阵列从左到右的五个分类。与 `categories` 包含相同名称，顺序可以不同。
-- `records`：四十份档案，按 `X-001` 至 `X-040` 排列。每个分类必须恰好有八份，同分类在数组中的顺序决定列内顺序。
+- `title`、`en`：中英文标题。
+- `category`、`department`：分类和归档单元。分类必须出现在 `categories` 和 `columns` 中。
+- `date`、`lead`、`clearance`：编目范围、记录人和状态。
+- `abstract`、`findings`：摘要和文字记录，`findings` 为非空文本数组。
+- `source`：可选的 HTTP 或 HTTPS 来源链接；不使用时填空字符串。
+- `image`：可选图片路径；不使用时填空字符串，界面显示默认占位图。
 
-| 字段                        | 内容                                                        |
-| --------------------------- | ----------------------------------------------------------- |
-| `id`                        | 稳定编号，用于收藏、定位和下载文件名                        |
-| `title`、`en`               | 中文标题、英文标题                                          |
-| `department`、`category`    | 科室、所属分类；分类须与上面的名称完全一致                  |
-| `date`、`lead`、`clearance` | 编目范围、相关人物、访问范围；`RESTRICTED` 对应目录访问状态 |
-| `abstract`                  | 摘要                                                        |
-| `findings`                  | 至少一条研究记录，使用字符串数组                            |
-| `source`                    | 设定参考的完整 HTTP 或 HTTPS 链接                           |
+例如，将 `sample.jpg` 放在 `public/archive-images/`，在对应记录中填写 `"image": "archive-images/sample.jpg"`。支持 PNG、JPEG、WebP 和 SVG；图片会随正式构建和离线缓存一起发布。请使用你有权使用的素材。图片在阅读页可拖动或使用按钮旋转。
 
-以上字段均必填，文本不能只包含空白。所有内容按纯文本显示，不支持 Markdown 或 HTML；引号按 JSON 规则写为 `\"`，换行写为 `\n`。页面会转义 HTML 特殊字符，TXT 下载保留原文。保留公开设定的来源，区分档案式改写与游戏原文。
-
-## 修改与验证
-
-1. 编辑 JSON 中对应档案的字段。修改分类名称时，同时更新 `categories`、`columns` 和各档案的 `category`。
-2. 执行 `npm run export:archives`，校验数据并更新 `public/archives/` 中的下载文件。校验失败时不会写入任何下载文件。
-3. 执行 `npm run check:content` 检查校验规则与下载一致性，再运行 `npm run build` 验证构建。将 JSON 与更新后的 TXT 一起提交。
-4. 在 `npm run dev` 中查看标题、详情、检索和下载结果，尤其检查长标题与较长正文的实际布局。
-
-`npm run dev` 启动前和 `npm run build` 构建前都会自动校验并导出。开发服务器运行期间，JSON 修改会更新页面；下载文件需再次执行 `npm run export:archives` 或重启开发服务器。
-
-当前五列、每列八份与原片布局、循环阵列相连。校验会拒绝增减档案或改变分类数量；调整这些数量需要另行修改阵列逻辑。不要通过交换或重编号档案改变顺序，以免已有收藏指向不同内容。校验可以检查编号格式与排列，无法判断改写后是否仍是原来那份档案。
-
-内容分离的建议来自 [@Tomahawkd 的 PR #3](https://github.com/LBEILC/RhineLabUI/pull/3)。此实现仅拆分当前项目的档案数据、校验和导出。
+修改后执行 `npm run export:archives` 更新文本导出，再执行 `npm run check:content` 和 `npm run build` 验证。运行 `npm run dev` 和 `npm run build` 时也会自动更新导出。所有文字按纯文本处理，不支持 Markdown 或 HTML。

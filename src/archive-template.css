@@ -1,0 +1,33 @@
+/* The reading surface keeps the image and record together in one scrollable column. */
+[data-mode="detail"] .detail-content {
+  left: auto; right: 6.7%; top: 195px; bottom: 85px;
+  width: min(680px, 41%); max-height: none; overflow-y: auto;
+  padding: 24px 28px 30px; background: rgba(239, 237, 231, .95);
+  border: 1px solid rgba(123, 124, 111, .32); scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+[data-mode="detail"] .object-caption { display: none; }
+.record-image-header, .record-image-tools { display: flex; align-items: center; justify-content: space-between; color: #777b6f; font-size: 10px; letter-spacing: 1.2px; }
+.record-image-header { padding-bottom: 12px; }
+.record-image-stage { height: 225px; overflow: hidden; display: flex; align-items: center; justify-content: center; perspective: 1100px; background: #d9dcd4; cursor: grab; touch-action: pan-y; }
+.record-image-stage.is-dragging { cursor: grabbing; }
+.record-image { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; pointer-events: none; transition: transform 200ms ease; }
+.record-image-stage.is-dragging .record-image { transition: none; }
+.record-image-tools { padding: 10px 0 24px; gap: 12px; }
+.record-image-tools div { display: flex; align-items: center; gap: 6px; }
+.record-image-tools button { min-width: 34px; min-height: 32px; border: 1px solid #b7b9ac; font-size: 10px; padding: 0 8px; }
+.record-image-tools button:hover { background: #d9ddd2; }
+[data-mode="detail"] .detail-content h2 { margin: 16px 0 8px; font-size: 31px; }
+[data-mode="detail"] .detail-rule { margin-top: 20px; }
+[data-mode="detail"] .metadata { margin: 18px 0 22px; gap: 16px 30px; }
+[data-mode="detail"] .tab-panel { height: auto; min-height: 120px; max-height: none; }
+[data-dark-surface="true"] [data-mode="detail"] .detail-content { background: rgba(43, 48, 47, .96); border-color: #626960; }
+[data-dark-surface="true"] .record-image-tools button:hover { background: #50594f; }
+:is([data-layout="compact"], [data-layout="portrait"])[data-mode="detail"] .detail-content { top: 130px; right: var(--edge); bottom: 48px; left: auto; width: min(52%, 600px); padding: 16px; border: 1px solid #aaa99e; }
+:is([data-layout="compact"], [data-layout="portrait"]) .record-image-stage { height: 145px; }
+[data-layout="portrait"][data-mode="detail"] .detail-content { top: 125px; right: var(--edge); bottom: 48px; left: var(--edge); width: auto; }
+[data-layout="portrait"] .record-image-stage { height: clamp(150px, 25vh, 240px); }
+@media (prefers-reduced-motion: reduce) { .record-image { transition: none; } }
+
+.brand-analysis { letter-spacing: 3px; }
+[data-mode="detail"] .powered { display: none; }

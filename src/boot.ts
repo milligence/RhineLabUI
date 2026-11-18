@@ -104,7 +104,7 @@ export class BootSequence {
       el.replaceChildren(ink);
     });
     this.poweredHTML = this.el(".powered").innerHTML;
-    new BootLettering(this.brandLines[0], ["brand"]).setText("RHINE LAB");
+    new BootLettering(this.brandLines[0], ["brand"]).setText("THE ARCHIVE");
     // Bind after collecting the original ring paths. Phrase artwork also has
     // SVG paths, and must never be included in the scan's animated geometry.
     this.accessLettering = new BootLettering(this.el(".access-text"), ["access"]);
@@ -117,7 +117,7 @@ export class BootSequence {
       [".welcome-database", "database", "INTERNAL DATABASE"],
     ] as const) new BootLettering(this.el(selector), [key]).setText(text);
     this.companyInk.forEach((el) =>
-      new BootLettering(el.querySelector("span")!, ["company"]).setText("RHINE LAB.LLC."),
+      new BootLettering(el.querySelector("span")!, ["company"]).setText("THE ARCHIVE"),
     );
   }
   private el(selector: string) {
@@ -142,8 +142,7 @@ export class BootSequence {
     // it every frame invalidates glyph rasterization under the moving HUD.
     if (this.letters.textContent !== s.logoLetters)
       this.letters.textContent = s.logoLetters;
-    this.plus.style.opacity = this.minus.style.opacity =
-      s.logo.symbolScale > 0 ? "1" : "0";
+    this.plus.style.opacity = this.minus.style.opacity = "0";
     this.plus.setAttribute(
       "transform",
       `translate(${s.logo.plusX} 70) rotate(${s.logo.plusAngle}) scale(${s.logo.symbolScale}) translate(-69 -70)`,

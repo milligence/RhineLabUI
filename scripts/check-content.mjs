@@ -15,7 +15,7 @@ test("all forty downloads match the shared content, including the UTF-8 BOM", as
       (
         await readFile(
           new URL(
-            `../public/archives/RHINE-LAB-${record.id}.txt`,
+            `../public/archives/ARCHIVE-${record.id}.txt`,
             import.meta.url,
           ),
           "utf8",
@@ -65,7 +65,7 @@ const invalidCases = [
   [
     "unbalanced columns",
     (c) => {
-      c.records[0].category = c.columns[0];
+      c.records[0].category = c.columns[1];
     },
     /八份档案/,
   ],
@@ -144,6 +144,19 @@ test("accepts independent filter and column order", () => {
   const edited = structuredClone(content);
   edited.categories.reverse();
   assert.equal(validateContent(edited), edited);
+});
+test("accepts a local image and an empty source", () => {
+  const edited = structuredClone(content);
+  edited.records[0].image = "archive-images/example.jpg";
+  edited.records[0].source = "";
+  assert.equal(validateContent(edited), edited);
+});
+test("rejects unsafe image paths", () => {
+  const edited = structuredClone(content);
+  for (const image of ["../secret.svg", "archive-images/../secret.svg", "https://example.com/image.png"]) {
+    edited.records[0].image = image;
+    assert.throws(() => validateContent(edited), /image/);
+  }
 });
 test("plain-text punctuation stays literal in HTML and downloadable text", () => {
   const title = `<玻璃> & "实验" 'A'`;
