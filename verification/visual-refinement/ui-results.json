@@ -1,0 +1,224 @@
+[
+  {
+    "name": "mobile-light",
+    "viewport": [
+      390,
+      844
+    ],
+    "top": {
+      "bounds": {
+        "x": 20,
+        "y": 125,
+        "width": 350,
+        "height": 671
+      },
+      "client": 348,
+      "scroll": 348,
+      "background": "color(srgb 0.886745 0.870745 0.831216)",
+      "shadow": "color(srgb 0.834118 0.817255 0.776863) 2px 2px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 3px 3px 0px 0px, rgb(237, 235, 228) 5px 5px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 6px 6px 0px 0px, rgba(0, 0, 0, 0.1) 0px 12px 28px 0px",
+      "border": "1px",
+      "font": "15px"
+    },
+    "exportLayout": {
+      "nowrap": "nowrap",
+      "width": 88,
+      "scroll": 88
+    },
+    "errors": [],
+    "checks": [
+      "notes",
+      "bookmark-preserves-tab",
+      "export-200",
+      "export-no-wrap",
+      "access-log",
+      "image-rotation-reset",
+      "back"
+    ],
+    "quality": "DOM/layout review: actual scene simulation runs; GPU drawing skipped by test-only response instrumentation. No hardware FPS measurement."
+  },
+  {
+    "name": "mobile-dark",
+    "viewport": [
+      390,
+      844
+    ],
+    "top": {
+      "bounds": {
+        "x": 20,
+        "y": 125,
+        "width": 350,
+        "height": 671
+      },
+      "client": 348,
+      "scroll": 348,
+      "background": "color(srgb 0.177569 0.225255 0.244863)",
+      "shadow": "color(srgb 0.212941 0.262353 0.281961) 2px 2px 0px 0px, color(srgb 0.463726 0.507843 0.515686) 3px 3px 0px 0px, rgb(32, 42, 47) 5px 5px 0px 0px, color(srgb 0.463726 0.507843 0.515686) 6px 6px 0px 0px, rgba(0, 0, 0, 0.1) 0px 12px 28px 0px",
+      "border": "1px",
+      "font": "15px"
+    },
+    "exportLayout": {
+      "nowrap": "nowrap",
+      "width": 88,
+      "scroll": 88
+    },
+    "errors": [],
+    "checks": [
+      "notes",
+      "bookmark-preserves-tab",
+      "export-200",
+      "export-no-wrap",
+      "access-log",
+      "image-rotation-reset",
+      "back"
+    ],
+    "quality": "DOM/layout review: actual scene simulation runs; GPU drawing skipped by test-only response instrumentation. No hardware FPS measurement."
+  },
+  {
+    "name": "mobile-narrow",
+    "viewport": [
+      320,
+      740
+    ],
+    "top": {
+      "bounds": {
+        "x": 14,
+        "y": 125,
+        "width": 292,
+        "height": 567
+      },
+      "client": 290,
+      "scroll": 290,
+      "background": "color(srgb 0.886745 0.870745 0.831216)",
+      "shadow": "color(srgb 0.834118 0.817255 0.776863) 2px 2px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 3px 3px 0px 0px, rgb(237, 235, 228) 5px 5px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 6px 6px 0px 0px, rgba(0, 0, 0, 0.1) 0px 12px 28px 0px",
+      "border": "1px",
+      "font": "15px"
+    },
+    "exportLayout": {
+      "nowrap": "nowrap",
+      "width": 88,
+      "scroll": 88
+    },
+    "errors": [],
+    "checks": [
+      "notes",
+      "bookmark-preserves-tab",
+      "export-200",
+      "export-no-wrap",
+      "access-log",
+      "image-rotation-reset",
+      "back"
+    ],
+    "quality": "DOM/layout review: actual scene simulation runs; GPU drawing skipped by test-only response instrumentation. No hardware FPS measurement."
+  },
+  {
+    "name": "landscape",
+    "viewport": [
+      844,
+      390
+    ],
+    "top": {
+      "bounds": {
+        "x": 385.125,
+        "y": 130,
+        "width": 438.875,
+        "height": 212
+      },
+      "client": 437,
+      "scroll": 437,
+      "background": "color(srgb 0.886745 0.870745 0.831216)",
+      "shadow": "color(srgb 0.834118 0.817255 0.776863) 2px 2px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 3px 3px 0px 0px, rgb(237, 235, 228) 5px 5px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 6px 6px 0px 0px, rgba(0, 0, 0, 0.1) 0px 12px 28px 0px",
+      "border": "1px",
+      "font": "15px"
+    },
+    "exportLayout": {
+      "nowrap": "nowrap",
+      "width": 88,
+      "scroll": 88
+    },
+    "errors": [],
+    "checks": [
+      "notes",
+      "bookmark-preserves-tab",
+      "export-200",
+      "export-no-wrap",
+      "access-log",
+      "image-rotation-reset",
+      "back"
+    ],
+    "quality": "DOM/layout review: actual scene simulation runs; GPU drawing skipped by test-only response instrumentation. No hardware FPS measurement."
+  },
+  {
+    "name": "desktop-light",
+    "viewport": [
+      1440,
+      960
+    ],
+    "top": {
+      "bounds": {
+        "x": 753.138916015625,
+        "y": 173.3333282470703,
+        "width": 590.388916015625,
+        "height": 711.1111450195312
+      },
+      "client": 662,
+      "scroll": 662,
+      "background": "color(srgb 0.886745 0.870745 0.831216)",
+      "shadow": "color(srgb 0.834118 0.817255 0.776863) 3px 3px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 4px 4px 0px 0px, rgb(237, 235, 228) 7px 7px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 8px 8px 0px 0px, rgba(0, 0, 0, 0.1) 0px 18px 40px 0px",
+      "border": "1px",
+      "font": "18px"
+    },
+    "exportLayout": {
+      "nowrap": "nowrap",
+      "width": 90,
+      "scroll": 90
+    },
+    "errors": [],
+    "checks": [
+      "notes",
+      "bookmark-preserves-tab",
+      "export-200",
+      "export-no-wrap",
+      "access-log",
+      "image-rotation-reset",
+      "back"
+    ],
+    "quality": "DOM/layout review: actual scene simulation runs; GPU drawing skipped by test-only response instrumentation. No hardware FPS measurement."
+  },
+  {
+    "name": "desktop-dark",
+    "viewport": [
+      1440,
+      960
+    ],
+    "top": {
+      "bounds": {
+        "x": 753.138916015625,
+        "y": 173.3333282470703,
+        "width": 590.388916015625,
+        "height": 711.1111450195312
+      },
+      "client": 662,
+      "scroll": 662,
+      "background": "color(srgb 0.177569 0.225255 0.244863)",
+      "shadow": "color(srgb 0.212941 0.262353 0.281961) 3px 3px 0px 0px, color(srgb 0.463726 0.507843 0.515686) 4px 4px 0px 0px, rgb(32, 42, 47) 7px 7px 0px 0px, color(srgb 0.463726 0.507843 0.515686) 8px 8px 0px 0px, rgba(0, 0, 0, 0.1) 0px 18px 40px 0px",
+      "border": "1px",
+      "font": "18px"
+    },
+    "exportLayout": {
+      "nowrap": "nowrap",
+      "width": 90,
+      "scroll": 90
+    },
+    "errors": [],
+    "checks": [
+      "notes",
+      "bookmark-preserves-tab",
+      "export-200",
+      "export-no-wrap",
+      "access-log",
+      "image-rotation-reset",
+      "back"
+    ],
+    "quality": "DOM/layout review: actual scene simulation runs; GPU drawing skipped by test-only response instrumentation. No hardware FPS measurement."
+  }
+]

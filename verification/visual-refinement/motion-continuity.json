@@ -1,0 +1,10 @@
+{
+  "checks": "passed",
+  "previousJump": 0.460518341339044,
+  "maximumEventJump": 0,
+  "maximumVelocitySeam": 0.0002020217326759166,
+  "maximumExpiryHeight": 4.4799087523785e-18,
+  "maximumExpiryVelocity": 4.4799087523785e-11,
+  "maximumHistory": 64,
+  "maximumPreparedDifference": 5.551115123125783e-16
+}

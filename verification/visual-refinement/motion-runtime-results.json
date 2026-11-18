@@ -1,0 +1,87 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "real-keyboard-12-down-4-up",
+      "start": {
+        "lane": 0,
+        "row": 12
+      },
+      "final": {
+        "lane": 0,
+        "row": 20
+      },
+      "maxHistory": 16
+    },
+    {
+      "name": "living-wave-history-expires"
+    },
+    {
+      "name": "selection-wave-off-navigation-on-no-latent-wave",
+      "disabledRowDelta": 5
+    },
+    {
+      "name": "reduced-motion-real-navigation",
+      "start": {
+        "lane": 0,
+        "row": 26
+      },
+      "final": {
+        "lane": 1,
+        "row": 28
+      }
+    },
+    {
+      "name": "real-mouse-drag-and-grid-settle",
+      "releasePhase": "coasting",
+      "releaseVelocity": {
+        "lane": -0.0000161426091495613,
+        "row": 9.512542316392226
+      },
+      "travelRows": 7,
+      "coastingObserved": true,
+      "limitation": null
+    },
+    {
+      "name": "detail-exit-geometry-and-quick-reopen",
+      "before": {
+        "x": 486.47222900390625,
+        "y": 173.3333282470703,
+        "width": 590.3888549804688,
+        "height": 711.1111450195312,
+        "shadow": "color(srgb 0.834118 0.817255 0.776863) 3px 3px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 4px 4px 0px 0px, rgb(237, 235, 228) 7px 7px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 8px 8px 0px 0px, rgba(0, 0, 0, 0.1) 0px 18px 40px 0px",
+        "background": "color(srgb 0.886745 0.870745 0.831216)",
+        "hidden": false
+      },
+      "immediate": {
+        "x": 486.47222900390625,
+        "y": 173.3333282470703,
+        "width": 590.3888549804688,
+        "height": 711.1111450195312,
+        "shadow": "color(srgb 0.834118 0.817255 0.776863) 3px 3px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 4px 4px 0px 0px, rgb(237, 235, 228) 7px 7px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 8px 8px 0px 0px, rgba(0, 0, 0, 0.1) 0px 18px 40px 0px",
+        "background": "color(srgb 0.886745 0.870745 0.831216)",
+        "hidden": false
+      },
+      "during": {
+        "x": 486.47222900390625,
+        "y": 173.3333282470703,
+        "width": 590.3888549804688,
+        "height": 711.1111450195312,
+        "shadow": "color(srgb 0.834118 0.817255 0.776863) 3px 3px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 4px 4px 0px 0px, rgb(237, 235, 228) 7px 7px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 8px 8px 0px 0px, rgba(0, 0, 0, 0.1) 0px 18px 40px 0px",
+        "background": "color(srgb 0.886745 0.870745 0.831216)",
+        "hidden": false
+      },
+      "reopened": {
+        "x": 486.47222900390625,
+        "y": 173.3333282470703,
+        "width": 590.3888549804688,
+        "height": 711.1111450195312,
+        "shadow": "color(srgb 0.834118 0.817255 0.776863) 3px 3px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 4px 4px 0px 0px, rgb(237, 235, 228) 7px 7px 0px 0px, color(srgb 0.507843 0.495098 0.460784) 8px 8px 0px 0px, rgba(0, 0, 0, 0.1) 0px 18px 40px 0px",
+        "background": "color(srgb 0.886745 0.870745 0.831216)",
+        "hidden": false
+      }
+    }
+  ],
+  "errors": [],
+  "limitation": "Actual application input, scene simulation, matrix updates and DOM; GPU drawing skipped by test-only response instrumentation. No hardware frame-rate/performance or GPU visual claim."
+}

@@ -53,6 +53,85 @@ export function baselineSelectionWave(distance: number, age: number) {
   );
 }
 
+export const SELECTION_WAVE_LIFETIME = 3.2;
+const SELECTION_WAVE_INTERVAL = 0.05;
+export type SelectionPulse = { row: number; lane: number; time: number };
+
+/** Preserve the signed crest/trough, then arrive at rest before history expires. */
+export function flowingSelectionWave(distance: number, age: number) {
+  return (
+    baselineSelectionWave(distance, age) *
+    (1 - smooth((age - (SELECTION_WAVE_LIFETIME - 0.6)) / 0.6))
+  );
+}
+
+/**
+ * Keep living waves through fast input. A same-frame burst may replace its
+ * zero-age source; faster subsequent input skips only an unborn wave.
+ * At 20 new waves/second, lifetime expiry bounds the history to 65 entries.
+ */
+export function queueSelectionPulse(
+  pulses: SelectionPulse[],
+  cell: { row: number; lane: number },
+  time: number,
+) {
+  const last = pulses.at(-1);
+  if (last?.time === time) {
+    last.row = cell.row;
+    last.lane = cell.lane;
+    return;
+  }
+  if (last && time - last.time < SELECTION_WAVE_INTERVAL) return;
+  pulses.push({ ...cell, time });
+}
+
+/** Identity through normal travel, with a C2 shoulder instead of a hard stop. */
+export function limitSelectionWave(height: number) {
+  const magnitude = Math.abs(height);
+  return magnitude <= 0.5
+    ? height
+    : Math.sign(height) * (0.5 + 0.1 * Math.tanh((magnitude - 0.5) / 0.1));
+}
+
+type PreparedSelectionPulse = {
+  row: number;
+  lane: number;
+  travel: number;
+  amplitude: number;
+};
+
+/** The time envelope is shared by every card, so evaluate it only once/frame. */
+export function prepareSelectionPulses(pulses: SelectionPulse[], time: number) {
+  const prepared: PreparedSelectionPulse[] = [];
+  for (const pulse of pulses) {
+    const age = time - pulse.time;
+    if (age <= 0 || age >= SELECTION_WAVE_LIFETIME) continue;
+    prepared.push({
+      row: pulse.row,
+      lane: pulse.lane,
+      travel: age * 8,
+      amplitude: 0.8 * smooth(age / 0.2) * Math.exp(-age * 1.15) *
+        (1 - smooth((age - (SELECTION_WAVE_LIFETIME - 0.6)) / 0.6)),
+    });
+  }
+  return prepared;
+}
+
+export function flowingSelectionField(
+  pulses: PreparedSelectionPulse[],
+  row: number,
+  lane: number,
+) {
+  let height = 0;
+  for (const pulse of pulses) {
+    const rowDistance = row - pulse.row;
+    const laneDistance = (lane - pulse.lane) * 2.2;
+    const distance = Math.sqrt(rowDistance * rowDistance + laneDistance * laneDistance) - pulse.travel;
+    height += pulse.amplitude * Math.cos(distance * 0.58) * bell(distance, 3.4);
+  }
+  return limitSelectionWave(height);
+}
+
 // Retained for the comparison experiments; the user chose the signed baseline.
 export function selectionWave(distance: number, age: number) {
   return Math.max(0, baselineSelectionWave(distance, age));

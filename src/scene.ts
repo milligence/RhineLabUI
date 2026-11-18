@@ -42,7 +42,13 @@ import { fullMotion, reducedMotion, type MotionPreferences } from "./motion-pref
 import {
   archiveWave,
   extraction,
-  baselineSelectionWave,
+  flowingSelectionWave,
+  queueSelectionPulse,
+  limitSelectionWave,
+  prepareSelectionPulses,
+  flowingSelectionField,
+  SELECTION_WAVE_LIFETIME,
+  type SelectionPulse,
   rippleEnvelope,
   settlingWave,
   damp,
@@ -212,7 +218,7 @@ export class ArchiveScene {
     returnY: number | null;
     clarity: number;
   }[] = [];
-  private pulses: { row: number; lane: number; time: number }[] = [];
+  private pulses: SelectionPulse[] = [];
   private pendingPulse: ArchiveCell | null = null;
   private selectedSlot = 76;
   private detail = 0;
@@ -252,7 +258,7 @@ export class ArchiveScene {
   onNavigate?: (axis: "row" | "lane", direction: number) => void;
   constructor(
     private container: HTMLElement,
-    private readonly selectionPulse = baselineSelectionWave,
+    private readonly selectionPulse = flowingSelectionWave,
     private readonly deferSelectionPulse = false,
     private readonly lightingLook: LightingLook = "baseline",
   ) {
@@ -775,8 +781,14 @@ export class ArchiveScene {
     this.drawLabel(index);
   }
   private emitPulse(cell: ArchiveCell) {
-    this.pulses.push({ ...cell, time: this.clock });
-    this.pulses = this.pulses.slice(-6);
+    if (!this.motion.selectionWave) return;
+    if (this.selectionPulse === flowingSelectionWave) {
+      queueSelectionPulse(this.pulses, cell, this.clock);
+    } else {
+      // Historical comparison scenes retain their authored wave composition.
+      this.pulses.push({ ...cell, time: this.clock });
+      this.pulses = this.pulses.slice(-6);
+    }
   }
   private drawLabel(index: number) {
     if (!this.labelTexture) return;
@@ -1288,7 +1300,11 @@ export class ArchiveScene {
     // Keep the illuminated set near the origin. Lateral navigation is a track
     // movement of the whole array, just like the existing front/back rail.
     const trackX = cinematic ? 0 : this.columnCamera.value;
-    this.pulses = this.pulses.filter((p) => time - p.time < 3.2);
+    this.pulses = this.pulses.filter((p) => time - p.time < SELECTION_WAVE_LIFETIME);
+    const flowingPulses = !cinematic && this.motion.selectionWave &&
+      this.selectionPulse === flowingSelectionWave && !this.deferSelectionPulse
+      ? prepareSelectionPulses(this.pulses, time)
+      : null;
     const aligningCopy = this.outgoing.some((o) => o.returnY !== null);
     const idle =
       !cinematic &&
@@ -1354,7 +1370,9 @@ export class ArchiveScene {
         ) *
           this.idleGain;
       let pulseHeight = 0;
-      if (!cinematic && this.motion.selectionWave) {
+      if (flowingPulses) {
+        pulseHeight = flowingSelectionField(flowingPulses, row, lane) * this.pulseGain;
+      } else if (!cinematic && this.motion.selectionWave) {
         let ripple = 0;
         for (const p of this.pulses) {
           const distance = Math.hypot(row - p.row, (lane - p.lane) * 2.2);
@@ -1363,7 +1381,9 @@ export class ArchiveScene {
             this.selectionPulse(distance, age) *
             (this.deferSelectionPulse ? rippleEnvelope(distance, age) : 1);
         }
-        pulseHeight = THREE.MathUtils.clamp(ripple, -0.6, 0.6) * this.pulseGain;
+        pulseHeight = (this.selectionPulse === flowingSelectionWave
+          ? limitSelectionWave(ripple)
+          : THREE.MathUtils.clamp(ripple, -0.6, 0.6)) * this.pulseGain;
       }
       const distance = row - this.shoulder.value;
       return (

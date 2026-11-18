@@ -1,0 +1,10 @@
+{
+  "baseline": "6ed290b440bcb940ddb01cf325cbb66fdc0d602c",
+  "screenshots": "Actual DOM/CSS layout review; GPU draw skipped only by scratch browser response instrumentation. Images cropped from application screenshots.",
+  "source_sha256": {
+    "src/archive-template.css": "702789763565b1b0ef749ec85d813852bdede80b18e8c65abbddf6cfc4f12ba8",
+    "src/motion.ts": "a38e383563c353f5827f6fae2deefe771ab87e1b3de8bc576ee5f013395eada6",
+    "src/scene.ts": "a61b0c14321b6ddd9b82e6d82bf842aaacfbfb3dee03e29dbb17b292d9d6cbba",
+    "scripts/check-flowing-selection.mjs": "e0b39d3123db489114556f1526b792b5f2ff52445b0d5b61b06ee1667ff0dfee"
+  }
+}
