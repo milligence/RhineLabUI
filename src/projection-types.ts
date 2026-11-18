@@ -18,13 +18,20 @@ export interface ResearchNode {
   date: string;
   stage: number;
   lane: number;
+  /** Chronological chapter, distinct from the node's strict order (`stage`). */
+  phase?: number;
+  thread?: string;
+  dateNote?: string;
   status: "question" | "tested" | "supported" | "negative" | "paused" | "open";
+  statusLabel?: string;
   evidence: string;
   question: string;
   attempt: string;
   result: string;
   interpretation: string;
   retrospective: string[];
+  retrospectiveDate?: string;
+  retrospectiveSources?: ArchiveSource[];
   sources: ArchiveSource[];
 }
 
@@ -33,7 +40,8 @@ export interface ResearchProjectionData {
   label: string;
   description: string;
   nodes: ResearchNode[];
-  edges: { from: string; to: string; label?: string }[];
+  edges: { from: string; to: string; label?: string; kind?: "continuation" | "branch" | "merge" | "correction" }[];
+  phases?: { id: number; title: string; date: string }[];
   retrospectiveDate?: string;
 }
 

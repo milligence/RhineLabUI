@@ -39,6 +39,7 @@ import { archiveFraming } from "./viewport-layout";
 import { ArchiveDrag, ArchivePlaneMomentum, type DragAxis, type DragProjection, type DragPosition } from "./archive-drag";
 import { assetUrl as publicAsset } from "./asset-url";
 import { fullMotion, reducedMotion, type MotionPreferences } from "./motion-preferences";
+import { ARRAY_REVEAL_START } from "./boot-motion";
 import {
   archiveWave,
   extraction,
@@ -204,6 +205,8 @@ export class ArchiveScene {
   private shoulder = { value: 12, velocity: 0 };
   private laneFocus = { value: initialArchiveLocation.lane, velocity: 0 };
   private columnCamera = { value: 0, velocity: 0 };
+  private lastCinematic: { shot: number; shoulder: number; lane: number; entryZ: number } | null = null;
+  private openingHandoff: { shot: number; shoulder: number; lane: number; entryZ: number; start: number } | null = null;
   private returnY: number | null = null;
   private canInspect = false;
   private clearance = 0;
@@ -586,7 +589,11 @@ export class ArchiveScene {
     this.setHover(null);
     if (mode === "detail") this.decryption.enter(this.scanBlend > .9 && this.decryption.clarity > .999);
     else this.decryption.leave();
-    if (mode === "hidden") this.decryption.select();
+    if (mode === "hidden") {
+      this.decryption.select();
+      this.lastCinematic = null;
+      this.openingHandoff = null;
+    }
     if (mode !== "archive") this.pendingPulse = null;
     this.looping = mode !== "hidden";
     if (!this.looping) {
@@ -1219,8 +1226,18 @@ export class ArchiveScene {
     time: number,
     cinematic?: { reveal: number; lift: number; zoom: number; time: number },
   ) {
+    const handingOff = !cinematic && this.lastCinematic !== null;
+    if (handingOff) {
+      this.openingHandoff = { ...this.lastCinematic!, start: time };
+      this.lastCinematic = null;
+    }
+    if (cinematic) this.openingHandoff = null;
+    const handoffMix = this.openingHandoff ? ease((time - this.openingHandoff.start) / 0.95) : 1;
+    if (handoffMix === 1) this.openingHandoff = null;
     const elapsed = Math.max(0, time - this.last || 0.016);
-    const dt = Math.min(elapsed, 0.05);
+    // The first interactive frame inherits the last rendered pose exactly.
+    // Subsequent frames start the responsive reframing and track motion.
+    const dt = handingOff ? 0 : Math.min(elapsed, 0.05);
     this.last = time;
     this.clock = time;
     if (!this.loaded) return;
@@ -1295,9 +1312,12 @@ export class ArchiveScene {
       this.lift.value = extraction(shot);
       this.lift.velocity = 0;
       this.shoulder.value = selectedRow;
+      this.shoulder.velocity = 0;
       this.laneFocus.value = selectedLane;
       this.laneFocus.velocity = 0;
-      this.columnCamera.value = chosen.x;
+      // The cinematic array is rendered with trackX = 0. Carry that actual
+      // state into interaction, including private collections in lanes 0/1.
+      this.columnCamera.value = 0;
       this.columnCamera.velocity = 0;
     }
     // Keep the illuminated set near the origin. Lateral navigation is a track
@@ -1389,13 +1409,19 @@ export class ArchiveScene {
           : THREE.MathUtils.clamp(ripple, -0.6, 0.6)) * this.pulseGain;
       }
       const distance = row - this.shoulder.value;
-      return (
+      const interactiveHeight = (
         (height +
         settlingWave(distance, 26.56) *
           columnStrength(lane, this.laneFocus.value)) * (1 - this.flatMix) + breathing + pulseHeight +
         (activePlay && !this.reduced ? rhythmDisplacement(row, lane, time, play.bands, play.strength, rhythm, screenX(row, lane)) : 0) +
         (this.relayLifts.get(cellKey({ row, lane })) ?? 0)
       );
+      const handoff = this.openingHandoff;
+      return handoff ? THREE.MathUtils.lerp(
+        cinematicField(row, lane, handoff.shot, handoff.shoulder, handoff.lane),
+        interactiveHeight,
+        handoffMix,
+      ) : interactiveHeight;
     };
     const field = (row: number, lane: number): number => {
       let values = fieldCache.get(lane);
@@ -1452,11 +1478,16 @@ export class ArchiveScene {
     this.appearance.apply(this.model, ease(this.lift.value / 0.4));
     this.appearance.setClarity(this.model, this.modelClarity());
     // Reference 26.92–27.76: the array travels horizontally into a white field.
-    const entry = cinematic ? ease((shot - 21.9) / 0.86) : this.reveal;
-    const entranceTime = THREE.MathUtils.clamp((shot - 21.92) / 0.75, 0, 1);
+    const entry = cinematic ? ease((shot - ARRAY_REVEAL_START) / 0.86) : this.reveal;
+    const entranceTime = THREE.MathUtils.clamp((shot - ARRAY_REVEAL_START) / 0.75, 0, 1);
     const entryZ = cinematic
       ? -23 * (1 - entranceTime) ** 2
-      : -28 * (1 - entry);
+      : this.openingHandoff
+        ? THREE.MathUtils.lerp(this.openingHandoff.entryZ, -28 * (1 - entry), handoffMix)
+        : -28 * (1 - entry);
+    if (cinematic) this.lastCinematic = {
+      shot, shoulder: this.shoulder.value, lane: this.laneFocus.value, entryZ,
+    };
     for (let i = this.outgoing.length - 1; i >= 0; i--) {
       const o = this.outgoing[i];
       const p = this.cellPosition(o.cell);
@@ -1671,7 +1702,7 @@ export class ArchiveScene {
     const cameraTransition = this.targetDetail || this.detail > 0.01
       ? this.motion.detailTransition
       : this.motion.selectionTransition;
-    const cameraBlend = cinematic ? 1 : cameraTransition ? 1 - Math.exp(-dt * 5) : 1;
+    const cameraBlend = handingOff ? 0 : cinematic ? 1 : cameraTransition ? 1 - Math.exp(-dt * 5) : 1;
     this.camera.position.lerp(cameraPosition, cameraBlend);
     this.cameraAim.lerp(cameraAim, cameraBlend);
     this.camera.lookAt(this.cameraAim);
@@ -1866,6 +1897,7 @@ export class ArchiveScene {
         .toArray()
         .map((v) => Math.round(v * 10000) / 10000),
       fieldOfView: this.camera.fov,
+      openingHandoff: this.openingHandoff ? { sourceTime: this.openingHandoff.shot, progress: ease((this.clock - this.openingHandoff.start) / 0.95) } : null,
       loaded: this.loaded,
       drawCalls: this.renderer.info.render.calls,
       renderedFrames: this.renderedFrames,

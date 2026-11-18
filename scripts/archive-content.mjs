@@ -135,10 +135,23 @@ function validateProjection(projection, label, errors) {
     ids.set(n.id, n);
     for (const key of ["question", "attempt", "result", "interpretation"]) if (typeof n[key] !== "string") errors.push(`${label}.${n.id}.${key}：必须为文字`);
     if (!Array.isArray(n.retrospective) || !n.retrospective.every(isText)) errors.push(`${label}.${n.id}：复盘必须为文字段落数组`);
+    if (n.phase !== undefined && (!Number.isInteger(n.phase) || n.phase < 0)) errors.push(`${label}.${n.id}：阶段索引无效`);
+    for (const key of ["thread", "dateNote", "retrospectiveDate", "statusLabel"]) if (n[key] !== undefined && !isText(n[key])) errors.push(`${label}.${n.id}.${key}：必须为非空文字`);
     validateSources(n.sources, `${label}.${n.id}`, errors);
+    if (n.retrospectiveSources !== undefined) validateSources(n.retrospectiveSources, `${label}.${n.id}.retrospectiveSources`, errors);
   }
   for (const edge of projection.edges) {
     const from = ids.get(edge?.from), to = ids.get(edge?.to);
     if (!from || !to || from.stage >= to.stage) errors.push(`${label}：连线必须指向存在的后续阶段节点`);
+    if (edge?.kind !== undefined && !["continuation", "branch", "merge", "correction"].includes(edge.kind)) errors.push(`${label}：研究连线类型无效`);
+  }
+  if (projection.phases !== undefined) {
+    const phases = new Set();
+    if (!Array.isArray(projection.phases)) errors.push(`${label}：研究阶段必须为数组`);
+    else for (const phase of projection.phases) {
+      if (!phase || !Number.isInteger(phase.id) || phase.id < 0 || phases.has(phase.id) || !isText(phase.title) || !isText(phase.date)) errors.push(`${label}：研究阶段无效或重复`);
+      else phases.add(phase.id);
+    }
+    for (const n of projection.nodes) if (n.phase !== undefined && !phases.has(n.phase)) errors.push(`${label}.${n.id}：研究节点阶段不存在`);
   }
 }

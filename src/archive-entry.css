@@ -1,0 +1,120 @@
+/* The archive owns both routes. Keep actions on one fixed, legible datum;
+   only the source leader follows the physical carrier. */
+[data-mode="archive"] .archive-callout {
+  left: 50.5%;
+  top: 43.6%;
+  width: min(650px, 43%);
+}
+.archive-callout .file-summary { width: auto; gap: 18px; }
+.archive-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin: 30px 0 0 58px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 360ms ease 120ms, transform 500ms cubic-bezier(.2,.7,.2,1) 120ms, visibility 0s 480ms;
+}
+[data-mode="archive"] .archive-actions {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 120ms, 120ms, 0s;
+}
+.archive-actions :is(.read-file, .archive-project-file) {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  min-width: 160px;
+  min-height: 66px;
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--optical-line);
+  border-top-color: color-mix(in srgb, var(--optical-line), white 26%);
+  background: color-mix(in srgb, var(--optical-plane) 90%, transparent);
+  color: var(--optical-ink);
+  text-align: left;
+  opacity: 1;
+  transition: border-color 180ms, background-color 180ms;
+}
+.archive-actions .archive-project-file[hidden] { display: none; }
+.archive-actions .read-file { border-left: 2px solid var(--optical-accent); }
+.archive-actions button small {
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 1.1px;
+  color: var(--optical-muted);
+}
+.archive-actions button > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: .5px;
+  transform: none;
+}
+.archive-actions button i { font-style: normal; font-size: 18px; color: var(--optical-accent); }
+.archive-actions button:hover { border-color: var(--optical-accent); background: var(--optical-plane); }
+.archive-actions .read-file:hover > span { transform: none; }
+.archive-actions button:focus-visible { outline: 2px solid var(--optical-accent); outline-offset: 4px; }
+.archive-source-trace {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  fill: var(--optical-accent);
+  color: var(--optical-accent);
+  opacity: .55;
+}
+.archive-source-trace path { fill: none; stroke: currentColor; stroke-width: .8; stroke-dasharray: 2 4; vector-effect: non-scaling-stroke; }
+[data-mode="boot"] .archive-source-trace { visibility: hidden; }
+
+/* The projection belongs to the document's identity, above variable metadata. */
+.record-identity-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+[data-projection-pending="true"] #detail-content { visibility: hidden; pointer-events: none; }
+.record-identity-row .detail-kicker { min-width: 0; }
+.detail-ui .record-identity-row .record-projection-entry {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  min-width: 104px;
+  width: auto;
+  min-height: 42px;
+  margin: -8px 0;
+  padding: 10px 0 10px 14px;
+  border: 0;
+  border-left: 1px solid var(--optical-line);
+  background: transparent;
+  color: var(--optical-ink);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.detail-ui .record-identity-row .record-projection-entry > span[aria-hidden="true"] { font-size: 18px; color: var(--optical-accent); }
+.detail-ui .record-identity-row .record-projection-entry:hover { color: var(--optical-accent); background: transparent; }
+
+:is([data-layout="compact"], [data-layout="portrait"])[data-mode="archive"] .archive-callout { left: 53%; top: 35%; width: calc(47% - var(--edge)); }
+:is([data-layout="compact"], [data-layout="portrait"]) .archive-actions { gap: 8px; margin: 18px 0 0; }
+:is([data-layout="compact"], [data-layout="portrait"]) .archive-actions button { flex: 1; min-width: 0; min-height: 60px; padding: 10px 12px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .archive-actions button small { font-size: 8px; letter-spacing: .7px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .archive-actions button > span { gap: 10px; font-size: 12px; }
+[data-layout="portrait"][data-mode="archive"] .archive-callout { left: var(--edge); top: auto; bottom: 205px; width: calc(100% - 2 * var(--edge)); }
+[data-layout="portrait"] .archive-source-trace { opacity: .32; }
+[data-layout="portrait"] .record-identity-row { gap: 10px; }
+[data-layout="portrait"] .record-identity-row .detail-kicker { gap: 4px 10px; }
+[data-layout="portrait"] .detail-ui .record-identity-row .record-projection-entry { min-width: 88px; gap: 10px; padding-left: 10px; font-size: 11px; }
+@media (max-height: 440px) and (orientation: landscape) {
+  [data-layout="compact"][data-mode="archive"] .archive-callout { top: 25%; }
+  [data-layout="compact"] .archive-actions { margin-top: 12px; }
+  [data-layout="compact"] .archive-actions button { min-height: 50px; gap: 4px; padding-block: 6px; }
+}
+.reduce-surfaces .archive-actions { transition: none; transform: none; }

@@ -1,0 +1,177 @@
+/* A specimen in an optical field. Geometry and experimental observation remain
+   separate; this sheet only supplies the material and task presentation. */
+.cube-projection {
+  position: relative;
+  min-height: 490px;
+  height: 100%;
+  --cube-line: color-mix(in srgb, var(--optical-ink, #242720) 15%, transparent);
+  --cube-soft: color-mix(in srgb, var(--theme-panel, #e5e3da) 65%, transparent);
+}
+.cube-projection .cube-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 20px;
+  padding: 0 0 20px;
+  margin: 0;
+  border: 0;
+}
+.cube-task-tabs { display: flex; align-items: stretch; gap: 26px; }
+.cube-projection .cube-task-tabs button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  min-height: 60px;
+  padding: 6px 0 13px;
+  border: 0;
+  color: var(--optical-muted);
+  background: transparent;
+  text-align: left;
+}
+.cube-task-tabs button small { font-size: 9px; line-height: 1.4; font-weight: 400; letter-spacing: 1.3px; }
+.cube-task-tabs button > span { font-size: 14px; line-height: 1.5; font-weight: 500; }
+.cube-projection .cube-task-tabs button[aria-pressed="true"] { color: var(--optical-ink); background: transparent; box-shadow: none; }
+.cube-task-tabs button::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--optical-accent); transition: width 260ms ease; }
+.cube-task-tabs button[aria-pressed="true"]::after { width: 28px; }
+.cube-projection .cube-history-tools { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; }
+.cube-projection .cube-history-tools button { min-height: 40px; padding: 8px 10px; font-size: 11px; color: var(--optical-muted); }
+.cube-projection .cube-history-tools button:disabled { opacity: .33; }
+.cube-projection .cube-history-tools [data-action="reset-view"] { margin-left: 14px; }
+.cube-projection .cube-workspace { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 254px; gap: clamp(24px, 3vw, 52px); min-height: 0; }
+.cube-projection .cube-stage { position: relative; isolation: isolate; min-height: 390px; height: 100%; overflow: hidden; background: transparent; }
+.cube-projection .cube-stage::before { content: ""; position: absolute; inset: 8% 2% 12%; z-index: 0; pointer-events: none; background: radial-gradient(ellipse at 45% 43%, color-mix(in srgb, var(--theme-panel, #e5e3da) 48%, transparent), transparent 72%); }
+.cube-optical-plane {
+  position: absolute;
+  z-index: 0;
+  inset: 17% 9% 17% 12%;
+  border-top: 1px solid color-mix(in srgb, var(--theme-panel, #eee) 75%, transparent);
+  border-left: 1px solid color-mix(in srgb, var(--theme-panel, #eee) 70%, transparent);
+  background: linear-gradient(118deg, color-mix(in srgb, var(--optical-ink, #30352e) 7%, transparent), color-mix(in srgb, var(--theme-panel, #eee) 18%, transparent) 65%, transparent);
+  transform: skewY(-7deg);
+  mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
+  pointer-events: none;
+  overflow: hidden;
+}
+.cube-optical-plane::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 0 48%, color-mix(in srgb, var(--theme-panel, #eee) 35%, transparent) 50%, transparent 52%); transform: translateX(-110%); animation: cube-optical-register 18s ease-in-out infinite; }
+@keyframes cube-optical-register { 0%, 35% { transform: translateX(-110%); opacity: 0; } 42% { opacity: .55; } 65% { transform: translateX(110%); opacity: 0; } 100% { transform: translateX(110%); opacity: 0; } }
+.cube-projection .cube-view { position: relative; z-index: 1; display: block; width: 100%; height: 100%; min-height: 0; touch-action: none; }
+.cube-projection .cube-stage-note { position: absolute; top: 12px; left: 16px; right: 16px; z-index: 2; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; max-width: none; margin: 0; pointer-events: none; }
+.cube-stage-note > span:first-child { color: var(--optical-muted); font-size: 9px; letter-spacing: 1.4px; line-height: 1.6; }
+.cube-stage-note > span:last-child { color: var(--optical-muted); font-size: 11px; line-height: 1.6; }
+.cube-calibration { position: absolute; inset: 4px 2px 4px; pointer-events: none; z-index: 2; }
+.cube-calibration i { position: absolute; width: 9px; height: 9px; border-color: var(--cube-line); border-style: solid; border-width: 0; }
+.cube-calibration i:nth-child(1) { left: 0; top: 0; border-top-width: 1px; border-left-width: 1px; }
+.cube-calibration i:nth-child(2) { right: 0; top: 0; border-top-width: 1px; border-right-width: 1px; }
+.cube-calibration i:nth-child(3) { left: 0; bottom: 0; border-bottom-width: 1px; border-left-width: 1px; }
+.cube-calibration i:nth-child(4) { right: 0; bottom: 0; border-bottom-width: 1px; border-right-width: 1px; }
+.cube-projection .cube-readout { z-index: 2; left: 16px; right: 16px; bottom: 14px; gap: 8px 20px; color: var(--optical-muted); font-size: 11px; }
+.cube-projection .cube-readout strong { font-size: 11px; font-weight: 400; }
+.cube-projection .cube-inspector { position: relative; min-height: 0; margin: 0; padding: 10px 0 16px 22px; border-left: 1px solid var(--cube-line); overflow-y: auto; }
+.cube-section-kicker { display: block; color: var(--optical-muted); font-size: 9px; line-height: 1.6; letter-spacing: 1.5px; }
+.cube-projection .cube-context h2 { margin: 12px 0 15px; font-size: 23px; font-weight: 500; line-height: 1.35; letter-spacing: -.4px; }
+.cube-projection .cube-context p { max-width: 24em; color: var(--optical-body); font-size: 13px; line-height: 1.95; }
+.cube-specimen-counts { display: flex; align-items: flex-start; gap: 24px; padding: 22px 0 4px; }
+.cube-specimen-counts strong { display: block; color: var(--optical-ink); font-size: 35px; font-weight: 300; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.cube-specimen-counts small { display: block; margin-top: 7px; color: var(--optical-muted); font-size: 10px; line-height: 1.7; }
+.cube-specimen-counts > span { color: var(--cube-line); margin-top: 10px; font-size: 24px; font-weight: 300; }
+.cube-projection .cube-inspection-guide { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--cube-line); }
+.cube-projection .cube-inspection-guide p { margin: 10px 0 15px; max-width: 23em; font-size: 13px; line-height: 1.95; color: var(--optical-body); }
+.cube-projection .cube-inspection-guide button { padding: 8px 0; color: var(--optical-ink); font-size: 12px; }
+.cube-projection .cube-inspector section + section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--cube-line); }
+.cube-projection .cube-tool-group { display: flex; flex-wrap: wrap; gap: 4px; }
+.cube-projection .cube-tool-group button { padding: 9px 13px; min-height: 40px; background: transparent; color: var(--optical-muted); border-bottom: 1px solid transparent; }
+.cube-projection .cube-tool-group button[aria-pressed="true"] { color: var(--optical-ink); background: var(--cube-soft); border-bottom-color: var(--optical-accent); }
+.cube-projection .cube-inspector details { margin-top: 20px; border-top: 1px solid var(--cube-line); }
+.cube-projection .cube-inspector details > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 10px 0; cursor: pointer; color: var(--optical-ink); font-size: 12px; line-height: 1.6; list-style: none; }
+.cube-projection .cube-inspector summary::-webkit-details-marker { display: none; }
+.cube-projection .cube-inspector summary > span { font-size: 9px; letter-spacing: 1.3px; color: var(--optical-muted); }
+.cube-projection .cube-inspector summary > span::after { content: "+"; display: inline-block; margin-left: 8px; font-size: 13px; }
+.cube-projection .cube-inspector details[open] > summary > span::after { content: "−"; }
+.cube-projection .cube-inspector .cube-data-panel { margin-top: 30px; }
+.cube-projection .cube-inspector :is(label, p) { font-size: 12px; line-height: 1.85; }
+.cube-projection .cube-inspector :is(input[type="number"], select) { border-color: var(--cube-line); background: transparent; }
+.cube-projection .cube-inspector input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--optical-accent); }
+.cube-projection .cube-inspector .cube-frustum-toggle { margin-block: 7px 18px; }
+.cube-projection .cube-eye-coordinates { display: flex; gap: 10px; }
+.cube-projection .cube-eye-coordinates label { display: block; flex: 1; min-width: 0; }
+.cube-projection .cube-eye-coordinates input { display: block; width: 100%; margin-top: 5px; }
+.cube-projection .cube-observer-heading { display: flex; align-items: center; gap: 8px; }
+.cube-observer-symbol { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex: 0 0 auto; border: 1px solid var(--optical-accent); border-radius: 50%; color: var(--optical-accent); font-size: 11px; }
+.cube-projection .cube-observer-heading h3 { margin: 0; font-size: 12px; font-weight: 500; }
+.cube-projection .cube-observer-heading button { margin-left: auto; padding: 7px 0 7px 6px; font-size: 10px; white-space: nowrap; }
+.cube-projection .cube-observer-view { display: block; width: 100%; max-width: 100%; height: 180px; margin: 14px 0 10px; border: 1px solid var(--cube-line); background: color-mix(in srgb, var(--theme-panel, #ddd) 32%, transparent); }
+.cube-projection .cube-counts { display: flex; margin: 20px 0 8px; }
+.cube-projection .cube-counts output { font-size: 34px; font-weight: 300; }
+.cube-projection .cube-counts small { margin-top: 6px; font-size: 10px; }
+.cube-projection .cube-set-view { width: 100%; padding: 11px 8px; margin: 8px 0 0; background: var(--cube-soft); text-align: left; font-size: 11px; }
+.cube-observer-tag { position: absolute; z-index: 3; display: flex; align-items: center; gap: 7px; color: var(--optical-accent); padding: 6px 9px; background: color-mix(in srgb, var(--theme-panel, #e9e7de) 90%, transparent); border-left: 2px solid var(--optical-accent); font-size: 17px; font-weight: 500; line-height: 1; transform: translate(-50%, -50%); pointer-events: none; }
+.cube-observer-tag small { font-size: 10px; font-weight: 400; color: var(--optical-ink); }
+.cube-projection .cube-return-inspection { position: absolute; z-index: 3; right: 14px; top: 42px; padding: 9px 12px; background: var(--cube-soft); color: var(--optical-ink); font-size: 11px; }
+.cube-projection[data-eye-view="true"] .cube-optical-plane { opacity: .25; }
+.cube-projection[data-task="observe"] .cube-context p { margin-bottom: 0; }
+.cube-projection[data-task="observe"] .cube-specimen-counts { padding-top: 14px; }
+.cube-projection[data-task="observe"] .cube-specimen-counts strong { font-size: 26px; }
+.cube-projection .cube-status:empty { display: none; }
+.cube-projection [hidden] { display: none !important; }
+.cube-projection :is(button, summary, canvas):focus-visible { outline: 1px solid var(--optical-accent); outline-offset: 4px; }
+.cube-projection[data-reduced="true"] *, .projection-shell[data-reduced="true"] .cube-projection * { animation: none !important; transition: none !important; }
+.cube-projection[data-reduced="true"] ::after, .projection-shell[data-reduced="true"] .cube-projection ::after { animation: none !important; transition: none !important; }
+
+@media (max-width: 1100px) {
+  .cube-projection .cube-workspace { grid-template-columns: minmax(0, 1fr) 224px; gap: 24px; }
+  .cube-projection .cube-inspector { padding-left: 18px; }
+  .cube-projection .cube-task-tabs { gap: 20px; }
+  .cube-projection .cube-history-tools button { font-size: 10px; padding-inline: 8px; }
+}
+@media (max-width: 900px) {
+  .cube-projection { height: auto; min-height: 0; }
+  .cube-projection .cube-toolbar { align-items: flex-end; flex-wrap: wrap; gap: 7px 16px; padding-bottom: 15px; }
+  .cube-projection .cube-task-tabs { flex: 1; gap: clamp(20px, 4vw, 38px); }
+  .cube-projection .cube-history-tools { gap: 0; }
+  .cube-projection .cube-workspace { display: block; }
+  .cube-projection .cube-stage { height: clamp(360px, 52dvh, 540px); min-height: 360px; max-height: none; }
+  .cube-projection .cube-stage-note { left: 12px; right: 12px; }
+  .cube-projection .cube-stage-note > span:last-child { font-size: 10px; }
+  .cube-projection .cube-inspector { margin-top: 22px; padding: 20px 0 10px; overflow: visible; border-left: 0; border-top: 1px solid var(--cube-line); }
+  .cube-projection .cube-context { position: relative; padding-right: 150px; min-height: 104px; }
+  .cube-projection .cube-specimen-counts { position: absolute; right: 0; top: 15px; padding: 0; gap: 20px; }
+  .cube-projection .cube-context h2 { font-size: 22px; }
+  .cube-projection .cube-inspection-guide { margin-top: 20px; }
+  .cube-projection .cube-inspection-guide p { max-width: none; }
+  .cube-projection .cube-observer-view { height: clamp(200px, 46vw, 300px); }
+  .cube-projection .cube-inspector .cube-slice-grid { max-width: 380px; }
+  .cube-projection .cube-inspector .cube-slice-grid button { min-height: 34px; height: 34px; }
+  .cube-projection .cube-inspector :is(button, input[type="number"], select) { min-height: 44px; }
+}
+@media (max-width: 480px) {
+  .cube-projection .cube-toolbar { display: block; padding-bottom: 10px; }
+  .cube-projection .cube-task-tabs { gap: 0; justify-content: space-between; }
+  .cube-projection .cube-task-tabs button { min-height: 58px; }
+  .cube-projection .cube-task-tabs button small { font-size: 8px; letter-spacing: .9px; }
+  .cube-projection .cube-task-tabs button > span { font-size: 12px; }
+  .cube-projection .cube-history-tools { margin: 4px 0 0; justify-content: flex-end; }
+  .cube-projection .cube-history-tools [data-action="reset-view"] { margin-left: auto; }
+  .cube-projection .cube-history-tools button { min-height: 35px; }
+  .cube-projection .cube-stage { height: 350px; min-height: 350px; }
+  .cube-projection .cube-stage-note { display: block; top: 12px; }
+  .cube-projection .cube-stage-note > span { display: block; font-size: 8px; }
+  .cube-projection .cube-stage-note > span:last-child { margin-top: 6px; font-size: 10px; }
+  .cube-projection .cube-readout { left: 12px; right: 12px; bottom: 12px; font-size: 10px; }
+  .cube-projection .cube-readout strong { font-size: 10px; }
+  .cube-projection .cube-context { padding-right: 125px; }
+  .cube-projection .cube-context p { font-size: 12px; }
+  .cube-projection .cube-specimen-counts { gap: 13px; }
+  .cube-projection .cube-specimen-counts strong { font-size: 28px; }
+  .cube-projection .cube-specimen-counts small { font-size: 9px; }
+  .cube-projection .cube-context h2 { font-size: 20px; }
+  .cube-projection .cube-return-inspection { top: 58px; }
+}
+@media (prefers-reduced-motion: reduce) { .cube-projection .cube-optical-plane::after { animation: none; } }
+
+.cube-projection .cube-history-tools .cube-marker-toggle { position: relative; padding-left: 20px; }
+.cube-projection .cube-marker-toggle::before { content: ""; position: absolute; left: 5px; top: calc(50% - 3px); width: 5px; height: 5px; border: 1px solid var(--optical-muted); }
+.cube-projection .cube-marker-toggle[aria-pressed="true"] { color: var(--optical-ink); background: transparent; box-shadow: none; }
+.cube-projection .cube-marker-toggle[aria-pressed="true"]::before { background: var(--optical-accent); border-color: var(--optical-accent); }

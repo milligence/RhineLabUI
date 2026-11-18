@@ -3,6 +3,10 @@
 import { brandTrack, companyTrack, scanTrack, track } from "./boot-tracks";
 import { scanOrbitTrack } from "./boot-orbit-tracks";
 import { bootLogoTrack } from "./boot-logo-tracks";
+// The white field, 3D visibility and physical entrance share one boundary.
+// App seconds correspond to reference seconds minus five.
+export const ARRAY_REVEAL_START = 21.92;
+export const ARRAY_REVEAL_DURATION = 0.38;
 export const progress = (t: number, a: number, b: number) =>
   Math.max(0, Math.min(1, (t - a) / (b - a)));
 export const smooth = (p: number) => p * p * (3 - 2 * p);
@@ -134,7 +138,7 @@ export function bootMotion(appTime: number) {
     welcomeOpacity: 1 - Math.pow(exit, 3),
     exitBlur: 8 * exit,
     exit,
-    backgroundOpacity: t < 26.92 ? 1 : 0,
+    backgroundOpacity: 1 - smooth(progress(appTime, ARRAY_REVEAL_START, ARRAY_REVEAL_START + ARRAY_REVEAL_DURATION)),
     white: smooth(progress(t, 26.16, 26.88)),
   };
 }

@@ -18,6 +18,7 @@ import "./quality-settings.css";
 import "./responsive.css";
 import "./archive-template.css";
 import "./projection.css";
+import "./archive-entry.css";
 import { ProjectionViewer } from "./projection-viewer";
 import { sourceMarkup } from "./research-projection";
 import { viewportLayout, openingLayout } from "./viewport-layout";
@@ -31,6 +32,7 @@ import { ArchiveScene } from "./scene";
 import { ModelViewer } from "./model-viewer";
 import { ContentTransition, SurfaceTransition } from "./ui-transitions";
 import { BootSequence } from "./boot";
+import { ARRAY_REVEAL_START, ARRAY_REVEAL_DURATION } from "./boot-motion";
 import { loadBootWebfonts } from "./boot-lettering";
 import { wrap, type ArchiveNavigation } from "./archive-loop";
 import {
@@ -99,7 +101,7 @@ $("#stage").innerHTML = `
   <svg id="inspection-marks" viewBox="0 0 1920 1080" aria-hidden="true"><path id="inspection-lines"/><g id="inspection-corners"></g><circle id="inspection-point" r="1.8"/></svg>
   <div id="inspection-text" aria-hidden="true">CONFIDENTIALITY:<strong>GENERAL BUSINESS USE</strong></div>
   <section id="archive-ui" class="archive-ui" aria-label="档案选择">
-    <div class="archive-callout"><div class="eyebrow">INTERNAL DATABASE <span>／</span> <span id="archive-category">分类 01</span></div><button class="file-title" data-action="open">FILE NUMBER: <span id="selected-id">X-<span id="selected-code">001</span></span><span class="file-open">↗</span></button><div class="callout-rule"><i></i></div><div class="file-summary"><span id="selected-title">未命名档案 001</span><span id="selected-clearance">BUSINESS AREA</span></div><button class="read-file" data-action="open">ACCESS FILE <span>→</span></button></div>
+    <div class="archive-callout"><div class="eyebrow">INTERNAL DATABASE <span>／</span> <span id="archive-category">分类 01</span></div><button class="file-title" data-action="open">FILE NUMBER: <span id="selected-id">X-<span id="selected-code">001</span></span><span class="file-open">↗</span></button><div class="callout-rule"><i></i></div><div class="file-summary"><span id="selected-title">未命名档案 001</span><span id="selected-clearance">BUSINESS AREA</span></div><div class="archive-actions" aria-label="当前档案操作"><button type="button" class="read-file" data-action="open"><small>READ ARCHIVE</small><span>读取档案 <i aria-hidden="true">↗</i></span></button><button type="button" class="archive-project-file" data-action="projection" hidden><small>OPTICAL PROJECTION</small><span>全息投影 <i aria-hidden="true">↗</i></span></button></div></div>
     <div id="hover-label" class="hover-label" hidden>X-<span id="hover-code">001</span> / <span id="hover-title"></span></div>
     <div class="archive-counter"><span class="tiny-label">ARCHIVE / SELECT</span><div><span id="selected-number">01</span><i>/</i><span class="count-total">12</span></div></div>
     <div class="archive-navigation"><button data-action="prev" aria-label="上一个档案">↑</button><div id="file-ticks" class="file-ticks"></div><button data-action="next" aria-label="下一个档案">↓</button></div>
@@ -118,7 +120,7 @@ $("#stage").innerHTML = `
   <div id="loading" class="loading"><div class="loading-mark">${logo}</div><span>CONNECTING TO INTERNAL DATABASE</span><i></i></div>
 `;
 
-$(".archive-callout").insertAdjacentHTML("beforeend", '<button class="archive-project-file" data-action="projection" hidden>LAUNCH PROJECTION <span>启动投影 ↗</span></button>');
+$("#archive-ui").insertAdjacentHTML("afterbegin", '<svg class="archive-source-trace" aria-hidden="true"><path/><circle r="2.5"/></svg>');
 $("#column-number").lastChild!.textContent = ` / ${String(archiveColumns.length).padStart(2, "0")}`;
 const projectionViewer = new ProjectionViewer($("#viewport"));
 let projectionRequest = 0;
@@ -494,8 +496,14 @@ let fileTicks = [
 ];
 
 function setMode(next: Mode) {
-  if (next !== "detail") projectionRequest++;
   if (workbench?.enabled && next === "detail") next = "archive";
+  if (next !== "detail") {
+    projectionRequest++;
+    // A direct projection never exposed the reading page. Keep it hidden
+    // when cancelling extraction or returning to its original array.
+    if ($("#stage").dataset.projectionPending === "true") detailTransition.hide(true);
+    delete $("#stage").dataset.projectionPending;
+  }
   const previousMode = mode;
   rollingTitles.forEach((title) =>
     title.update({
@@ -670,19 +678,31 @@ function replayBootAfterModal(forcePreview: boolean) {
   if (!forcePreview) audio.play("ui-tick");
 }
 function openFile() {
-  if (!ready) return;
+  if (!ready || projectionViewer.isOpen) return;
   closeModal(() => {
+    if ($("#stage").dataset.projectionPending === "true") {
+      projectionRequest++;
+      delete $("#stage").dataset.projectionPending;
+      pendingDetailFocus = true;
+    }
     setMode("detail");
     audio.play("open");
   });
 }
-function openProjection() {
+function openProjection(trigger?: HTMLElement) {
   const record = records[selected];
-  if (!ready || !record.projection) return;
-  const entryBounds = document.activeElement instanceof HTMLElement ? document.activeElement.getBoundingClientRect() : undefined;
+  // The source route owns an extraction until it either opens or is cancelled.
+  // A repeated activation must not turn an array request into a reading request.
+  if (!ready || !record.projection || modal || projectionViewer.isOpen || $("#stage").dataset.projectionPending === "true") return;
+  const source = trigger ?? document.querySelector<HTMLElement>(mode === "detail" ? ".record-projection-entry" : ".archive-project-file");
   const request = ++projectionRequest;
   const fromArchive = mode !== "detail";
-  if (fromArchive) setMode("detail");
+  if (fromArchive) {
+    $("#stage").dataset.projectionPending = "true";
+    setMode("detail");
+    pendingDetailFocus = false;
+    $("#detail-content").inert = true;
+  }
   const begun = performance.now();
   const enter = () => {
     if (request !== projectionRequest || selected !== records.indexOf(record) || mode !== "detail") return;
@@ -690,11 +710,28 @@ function openProjection() {
       requestAnimationFrame(enter); return;
     }
     pendingDetailFocus = false;
+    // Measure the carrier at the actual open frame, after any extraction. Its
+    // projected position is in stage coordinates; the viewer uses viewport px.
+    const host = $("#three-scene");
+    const bounds = host.getBoundingClientRect();
+    const anchor = scene?.projectCard(0, 3.7);
+    const entryBounds = source?.getBoundingClientRect();
+    const origin = anchor?.every(Number.isFinite) && bounds.width && bounds.height && host.clientWidth && host.clientHeight
+      ? { x: bounds.left + anchor[0] * bounds.width / host.clientWidth, y: bounds.top + anchor[1] * bounds.height / host.clientHeight }
+      : entryBounds?.width
+        ? { x: entryBounds.left + entryBounds.width / 2, y: entryBounds.top + entryBounds.height / 2 }
+        : undefined;
     $("#detail-content .record-projection-entry")?.focus({ preventScroll: true });
     projectionViewer.open(record, {
       reducedMotion: !motionActive("surfaceTransitions"),
-      origin: entryBounds?.width ? { x: entryBounds.left + entryBounds.width / 2, y: entryBounds.top + entryBounds.height / 2 } : undefined,
-      onClose: () => { audio.setScene(mode); audio.play("page-close"); },
+      origin,
+      onClose: () => {
+        if (fromArchive) {
+          setMode("archive");
+          source?.focus({ preventScroll: true });
+        }
+        audio.setScene(mode); audio.play("page-close");
+      },
     });
     audio.setScene("viewer"); audio.play("page-open");
   };
@@ -729,11 +766,11 @@ function renderDetail() {
   const r = records[selected];
   $("#object-id").textContent = "NO." + String(selected + 1).padStart(3, "0");
   $("#detail-content").innerHTML = `
-  <div class="record-heading"><div class="detail-kicker"><span>FILE ${r.id}</span><span>${escapeHtml(r.clearance)}</span></div>
+  <div class="record-heading"><div class="record-identity-row"><div class="detail-kicker"><span>FILE ${r.id}</span><span>${escapeHtml(r.clearance)}</span></div>
+  ${r.projection ? `<button type="button" class="record-projection-entry" data-action="projection" aria-label="展开 ${escapeHtml(r.title)}的全息投影"><span>全息投影</span><span aria-hidden="true">↗</span></button>` : ""}</div>
   <h2>${escapeHtml(r.en)}</h2><div class="detail-title-cn">${escapeHtml(r.title)}<span>${escapeHtml(r.category)}</span></div>
   </div><div class="detail-rule"></div>
   <dl class="metadata"><div><dt>FOLDER / 归档单元</dt><dd>${escapeHtml(r.department)}</dd></div><div><dt>COLLECTION / 编目范围</dt><dd>${escapeHtml(r.date)}</dd></div><div><dt>CONTRIBUTOR / 记录人</dt><dd>${escapeHtml(r.lead)}</dd></div><div><dt>STATUS / 状态</dt><dd><i></i>${r.clearance === "RESTRICTED" ? "目录访问" : "已归档 · 可读取"}</dd></div></dl>
-  ${r.projection ? `<button type="button" class="record-projection-entry" data-action="projection"><span><small>LAUNCH PROJECTION</small><strong>${escapeHtml(r.projection.label)}</strong></span><span aria-hidden="true">↗</span></button>` : ""}
   ${r.image ? `<figure class="record-image-stage"><img class="record-image" src="${escapeHtml(assetUrl(r.image))}" alt="${escapeHtml(r.title)}的档案图像" /></figure>` : ""}
   <div class="detail-tabs" role="tablist"><button id="tab-overview" class="active" role="tab" aria-controls="tab-panel" aria-selected="true" data-tab="overview">01 <span>档案</span></button><button id="tab-notes" role="tab" aria-controls="tab-panel" aria-selected="false" data-tab="notes">02 <span>研究记录</span></button><button id="tab-history" role="tab" aria-controls="tab-panel" aria-selected="false" data-tab="history">03 <span>来源与访问</span></button><i class="tab-indicator" aria-hidden="true"></i></div>
   <div id="tab-panel" class="tab-panel" role="tabpanel">${overview()}</div>
@@ -804,8 +841,13 @@ function notify(message: string) {
 
 function openModal(kind: NonNullable<typeof modal>) {
   if (!ready) return;
+  const opener = document.activeElement as HTMLElement;
+  // Search or settings can interrupt the carrier extraction. Cancel before
+  // isolating the modal, so a queued RAF cannot open a second surface over it.
+  if ($("#stage").dataset.projectionPending === "true" && !projectionViewer.isOpen)
+    setMode("archive");
   if (!modal) {
-    previousFocus = document.activeElement as HTMLElement;
+    previousFocus = opener;
     modalSiblings = [...$("#stage").children]
       .filter(
         (node): node is HTMLElement =>
@@ -1073,7 +1115,7 @@ document.addEventListener("click", (e) => {
   if (action === "column-prev") stepColumn(-1);
   if (action === "column-next") stepColumn(1);
   if (action === "open") openFile();
-  if (action === "projection") { el.focus({ preventScroll: true }); openProjection(); }
+  if (action === "projection") { el.focus({ preventScroll: true }); openProjection(el); }
   if (action === "model-viewer" && mode === "detail" && scene) {
     const activeScene = scene;
     // Safari does not always focus a button when it is tapped. Capture the
@@ -1246,7 +1288,7 @@ const ease = (t: number) => {
   return t * t * (3 - 2 * t);
 };
 function bootFrame(t: number) {
-  if (isWallpaper && !scene && frozenTime === null && t >= 21.9) {
+  if (isWallpaper && !scene && frozenTime === null && t >= ARRAY_REVEAL_START) {
     setMode("archive");
     return undefined;
   }
@@ -1275,7 +1317,7 @@ function bootFrame(t: number) {
       $(".powered").style.opacity = String(1 - ease((t - end + 0.35) / 0.35));
   }
   let step: string = motion.step;
-  if (t >= 22) {
+  if (t >= ARRAY_REVEAL_START) {
     step = "array";
   }
   if (t >= 25.68) {
@@ -1290,14 +1332,14 @@ function bootFrame(t: number) {
   }
   $(".file-title").firstChild!.textContent =
     step === "array"
-      ? "SELECTING FILES...".slice(0, Math.max(0, Math.floor((t - 21.94) * 18)))
+      ? "SELECTING FILES...".slice(0, Math.max(0, Math.floor((t - ARRAY_REVEAL_START - 0.02) * 18)))
       : "FILE NUMBER: ";
   $("#stage").style.setProperty(
     "--entry-opacity",
-    String(ease((t - 21.9) / 0.13)),
+    String(ease((t - ARRAY_REVEAL_START) / ARRAY_REVEAL_DURATION)),
   );
   $(".callout-rule").style.transform = `scaleX(${ease((t - 22.08) / 0.9)})`;
-  const reveal = ease((t - 22) / 0.4),
+  const reveal = ease((t - ARRAY_REVEAL_START) / 0.4),
     lift = ease((t - 26) / 1.8),
     zoom = 0.55 * ease((t - 27.3) / 1.65) + 0.45 * ease((t - 29.0) / 5.0);
   if (t >= 35) {
@@ -1305,6 +1347,29 @@ function bootFrame(t: number) {
     return undefined;
   }
   return { reveal, lift, zoom, time: t };
+}
+
+function updateArchiveSourceTrace() {
+  const trace = document.querySelector<SVGSVGElement>(".archive-source-trace")!;
+  const enabled = mode === "archive" && !!scene && !projectionViewer.isOpen && !workbench?.enabled;
+  trace.style.visibility = enabled ? "visible" : "hidden";
+  if (!enabled || !scene) return;
+  const stage = $("#stage");
+  const bounds = stage.getBoundingClientRect();
+  const title = $(".file-title").getBoundingClientRect();
+  const scale = bounds.width / stage.clientWidth;
+  const [x, y] = scene.projectCard(2.35, 3.45);
+  const tx = (title.left - bounds.left) / scale - 20;
+  const ty = (title.top - bounds.top + title.height / 2) / scale;
+  trace.setAttribute("viewBox", `0 0 ${stage.clientWidth} ${stage.clientHeight}`);
+  const path = trace.querySelector("path")!;
+  const point = trace.querySelector("circle")!;
+  // Keep portrait's connector local to the upper specimen, away from text.
+  const endX = stage.dataset.layout === "portrait" ? tx + 26 : tx;
+  const endY = stage.dataset.layout === "portrait" ? ty - 40 : ty;
+  path.setAttribute("d", `M ${x.toFixed(2)} ${y.toFixed(2)} L ${(endX - 24).toFixed(2)} ${y.toFixed(2)} L ${endX.toFixed(2)} ${endY.toFixed(2)}`);
+  point.setAttribute("cx", x.toFixed(2));
+  point.setAttribute("cy", y.toFixed(2));
 }
 
 const inspectionOverlay = new InspectionOverlay();
@@ -1344,9 +1409,10 @@ function frame(ms: number) {
     motionActive("pointerParallax"),
   );
   // The calibrated 2D opening fully covers the scene until array entry.
-  if (!viewer?.isOpen && !projectionViewer.isOpen && (!cinema || cinema.time >= 21.9))
+  if (!viewer?.isOpen && !projectionViewer.isOpen && (!cinema || cinema.time >= ARRAY_REVEAL_START - 0.12))
     scene?.update(time, cinema);
   viewer?.update(time);
+  updateArchiveSourceTrace();
   if (threeState === "closing" && scene?.presentationHidden) releaseThree();
   playground?.position();
   if (scene && mode === "detail" && !projectionViewer.isOpen) {
@@ -1358,7 +1424,7 @@ function frame(ms: number) {
     $("#detail-content").style.opacity = String(scene.detailVisibility);
     $("#detail-content").style.translate =
       `0 ${(1 - scene.detailVisibility) * 18}px`;
-    $("#detail-content").inert = scene.detailVisibility < 0.1;
+    $("#detail-content").inert = scene.detailVisibility < 0.1 || $("#stage").dataset.projectionPending === "true";
     if (
       pendingDetailFocus &&
       scene.detailVisibility >= 0.1 &&

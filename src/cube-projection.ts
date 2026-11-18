@@ -1,15 +1,17 @@
 import {
-  AmbientLight, Box3, BoxGeometry, BufferGeometry, Color, DirectionalLight,
-  EdgesGeometry, Float32BufferAttribute, GridHelper, Group, LineBasicMaterial,
-  LineSegments, MathUtils, Matrix4, Mesh, MeshBasicMaterial, MeshStandardMaterial,
-  NoBlending, NoColorSpace, OrthographicCamera, PerspectiveCamera, Quaternion,
+  ACESFilmicToneMapping, AmbientLight, Box3, BoxGeometry, BufferGeometry, Color, DirectionalLight,
+  EdgesGeometry, Float32BufferAttribute, Group, HemisphereLight, LineBasicMaterial,
+  LineSegments, MathUtils, Matrix4, Mesh, MeshBasicMaterial, MeshPhysicalMaterial,
+  NoBlending, NoColorSpace, OrthographicCamera, PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Quaternion,
   Raycaster, Scene, ShaderMaterial, SphereGeometry, SRGBColorSpace, Vector2,
   Vector3, WebGLRenderer, WebGLRenderTarget,
 } from "three";
 import { CubeArcball } from "./cube-rotation.ts";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 export type CubeVector = [number, number, number];
 export type CubeTool = "inspect" | "remove" | "restore" | "paint";
+type CubeTask = "inspect" | "edit" | "observe";
 export interface CubeObserver {
   mode: "orbit" | "fixed";
   eye: CubeVector;
@@ -153,9 +155,15 @@ export class CubeProjection {
   private targetDistance = 12;
   private target = new Vector3();
   private autoFitInspection = true;
-  private bodyMaterial = new MeshStandardMaterial({ vertexColors: true, roughness: .66, metalness: .04, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
-  private lineMaterial = new LineBasicMaterial({ color: 0x77756e });
-  private apparatusMaterial = new LineBasicMaterial({ color: 0x9f7a32, transparent: true, opacity: .65 });
+  private task: CubeTask = "inspect";
+  private throughObserver = false;
+  private showFrustum = false;
+  private showMarkers = false;
+  private environmentTargets: WebGLRenderTarget[] = [];
+  private bodyMaterial = new MeshPhysicalMaterial({ vertexColors: true, roughness: .38, metalness: .035, clearcoat: .24, clearcoatRoughness: .3, specularIntensity: .9, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  private lineMaterial = new LineBasicMaterial({ color: 0x77756e, transparent: true, opacity: .16, depthWrite: false });
+  private apparatusMaterial = new LineBasicMaterial({ color: 0x9f7a32, transparent: true, opacity: .58 });
+  private frustumMaterial = new LineBasicMaterial({ color: 0x9f7a32, transparent: true, opacity: .24, depthWrite: false });
   private markerMaterial = new MeshBasicMaterial({ color: 0xb78835 });
   private selectionMaterial = new LineBasicMaterial({ color: 0xb78835, depthTest: true });
   private idMaterial = new ShaderMaterial({
@@ -172,9 +180,15 @@ export class CubeProjection {
   private eyeLines = new LineSegments(this.lineGeometry, this.lineMaterial);
   private apparatus = new Group();
   private aim = new LineSegments(new BufferGeometry(), this.apparatusMaterial);
+  private frustum = new LineSegments(new BufferGeometry(), this.frustumMaterial);
   private marker = new Mesh(new SphereGeometry(.075, 12, 8), this.markerMaterial);
   private selection: LineSegments;
-  private grid?: GridHelper;
+  private floor = new Mesh(new PlaneGeometry(1, 1), new ShaderMaterial({
+    uniforms: { shadowOpacity: { value: .24 } }, transparent: true, depthWrite: false,
+    vertexShader: "varying vec2 vShadowUv; void main(){vShadowUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}",
+    fragmentShader: "varying vec2 vShadowUv; uniform float shadowOpacity; void main(){vec2 p=(vShadowUv-.5)*2.;float r=dot(p,p);float core=exp(-8.5*r);float penumbra=exp(-3.5*r)*.36;float edge=1.-smoothstep(.65,1.,max(abs(p.x),abs(p.y)));gl_FragColor=vec4(.18,.20,.18,(core+penumbra)*shadowOpacity*edge);}",
+  }));
+  private keyLights: DirectionalLight[] = [];
   private owners: Hit[] = [];
   private raycaster = new Raycaster();
   private pointers = new Map<number, PointerState>();
@@ -216,31 +230,111 @@ export class CubeProjection {
     catch (error) { this.state = defaultCubeExperiment(); initialError = (error as Error).message; }
     this.layer = Math.floor(this.state.n / 2);
     this.root = document.createElement("div"); this.root.className = "cube-projection";
-    this.root.innerHTML = `<div class="cube-toolbar" aria-label="实验工具"><div class="cube-tool-group">${Object.entries(TOOL_NAMES).map(([tool, label], i) => `<button type="button" data-tool="${tool}" aria-pressed="${tool === "inspect"}" title="${i + 1} · ${label}">${label}</button>`).join("")}</div><div class="cube-paint-tools" hidden><input type="color" aria-label="染面颜色" value="${this.paint}"><button type="button" data-action="erase" aria-pressed="false">清除面色</button></div><div class="cube-history-tools"><button type="button" data-action="undo" title="Ctrl / ⌘ Z">撤销</button><button type="button" data-action="redo" title="Ctrl / ⌘ Shift Z">重做</button><button type="button" data-action="reset-view">复位检视</button><button type="button" data-action="fit">适配全景</button></div></div>
-      <div class="cube-workspace"><div class="cube-stage"><canvas class="cube-view" tabindex="0" aria-label="自由检视整套实验。拖动旋转，滚轮缩放；双指缩放和翻转。检视不改变数学观察点。"></canvas><p class="cube-stage-note">INSPECTION / 自由检视<br>拖动旋转 · 滚轮缩放 · 双指翻转<br>检视不改变数学观察点</p><div class="cube-readout"><span data-readout="model"></span><strong data-readout="selection">未选择格子</strong></div></div>
-      <aside class="cube-inspector" aria-label="实验参数"><section><h3>EYE / 数学观察点取景</h3><canvas class="cube-observer-view" tabindex="0" aria-label="数学观察点取景。拖动改变观察位置或朝向，会更新像素估计。"></canvas><p data-readout="observer-hint"></p><div class="cube-counts"><div><output data-readout="count">—</output><small>当前取景 · 像素估计</small></div><div><strong data-readout="present"></strong><small>现有实体方块</small></div></div><p data-readout="sampling" role="status"></p><label>观察方式<select data-field="mode"><option value="orbit">环绕中心 · 改变点位</option><option value="fixed">定点环视 · 只改朝向</option></select></label><label>投影<select data-field="projection"><option value="perspective">透视 · 有限观察点</option><option value="orthographic">正交 · 平行视线</option></select></label><label><span data-readout="fov-label">视野角度</span><input data-field="fov" type="range" min="25" max="110" step="1"><output data-readout="fov"></output></label><div class="cube-eye-coordinates">${["X", "Y", "Z"].map((axis, i) => `<label>${axis}<input type="number" data-eye="${i}" step="0.05" aria-label="观察点 ${axis} 坐标"></label>`).join("")}</div><button type="button" data-action="set-eye">设置观察点</button><button type="button" data-action="center-aim">看向中心</button><button type="button" data-action="eye-selected">移至选中空格</button><p data-readout="eye-warning" hidden></p></section>
-      <section><h3>SLICE / 逐层编辑</h3><label>层轴<select data-field="axis"><option value="z">Z</option><option value="y">Y</option><option value="x">X</option></select><output data-readout="layer"></output></label><label><input data-field="layer" type="range" min="1" max="${this.state.n}" value="${this.layer + 1}" step="1" aria-label="选择编辑层"></label><div class="cube-slice-scroll"><div class="cube-slice-grid" role="group" aria-label="当前层格子"></div></div><p data-readout="tool-hint"></p><div class="cube-face-tools" role="group" aria-label="选择或染色的面">${FACE_LABELS.map((label, face) => `<button type="button" data-face="${face}" aria-pressed="false">${label}</button>`).join("")}</div></section>
-      <section><h3>DATA / 实验文件</h3><label>阶数<input type="number" data-field="n" min="1" max="12" step="1" value="${this.state.n}"><button type="button" data-action="rebuild">新建</button></label><button type="button" data-action="export">导出实验</button><button type="button" data-action="import">导入实验</button><input type="file" data-field="file" accept=".json,application/json" hidden><p>逐格数据与观察点一起保存；自由检视不写入实验。</p></section><p class="cube-status" role="status" aria-live="polite"></p></aside></div>`;
+    this.root.dataset.task = this.task; this.root.dataset.reduced = String(this.reduced);
+    this.root.innerHTML = `<div class="cube-toolbar" aria-label="实验工具">
+      <div class="cube-task-tabs" role="group" aria-label="实验步骤">
+        <button type="button" data-task="inspect" aria-pressed="true"><small>01 / INSPECT</small><span>查看构造</span></button>
+        <button type="button" data-task="edit" aria-pressed="false"><small>02 / EXCAVATE</small><span>挖格实验</span></button>
+        <button type="button" data-task="observe" aria-pressed="false"><small>03 / OBSERVE</small><span>检验可见性</span></button>
+      </div>
+      <div class="cube-history-tools"><button type="button" class="cube-marker-toggle" data-action="toggle-markers" aria-pressed="false" title="显示原始构造中的面颜色标记">构造标记</button><button type="button" data-action="undo" title="Ctrl / ⌘ Z">撤销</button><button type="button" data-action="redo" title="Ctrl / ⌘ Shift Z">重做</button><button type="button" data-action="reset-view">复位视角</button><button type="button" data-action="fit">框选主体</button></div>
+    </div>
+    <div class="cube-workspace">
+      <div class="cube-stage">
+        <div class="cube-optical-plane" aria-hidden="true"></div><div class="cube-calibration" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <canvas class="cube-view" tabindex="0" aria-label="自由检视。拖动旋转，滚轮缩放；双指缩放和翻转。检视不改变观察位置。"></canvas>
+        <div class="cube-stage-note"><span data-readout="view-label">SPATIAL SPECIMEN / 空间构造</span><span data-readout="gesture">拖动旋转 · 滚轮缩放</span></div>
+        <span class="cube-observer-tag" hidden>O <small>观察位置</small></span>
+        <button type="button" class="cube-return-inspection" data-action="through-eye" hidden>↗ 返回构造视图</button>
+        <div class="cube-readout"><span data-readout="model"></span><strong data-readout="selection">选择方块，查看位置</strong></div>
+      </div>
+      <aside class="cube-inspector" aria-label="当前实验">
+        <section class="cube-context"><span class="cube-section-kicker">SPATIAL INQUIRY</span><h2 data-readout="task-title">看清构造</h2><p data-readout="task-hint">转动实体，检查孔道与遮挡。每一格都保持不透明。</p>
+          <div class="cube-specimen-counts"><div><strong data-readout="present"></strong><small>现有方块</small></div><span>/</span><div><strong data-readout="removed"></strong><small>已挖除</small></div></div>
+        </section>
+        <section class="cube-edit-panel" hidden>
+          <div class="cube-tool-group" role="group" aria-label="编辑方式">${Object.entries(TOOL_NAMES).map(([tool, label], i) => `<button type="button" data-tool="${tool}" aria-pressed="${tool === "inspect"}" title="${i + 1} · ${label}">${label}</button>`).join("")}</div>
+          <div class="cube-paint-tools" hidden><input type="color" aria-label="染面颜色" value="${this.paint}"><button type="button" data-action="erase" aria-pressed="false">清除面色</button></div>
+          <p data-readout="tool-hint"></p>
+          <details class="cube-slice-panel" open><summary>逐层编辑<span>SLICE</span></summary><label>层轴<select data-field="axis"><option value="z">Z</option><option value="y">Y</option><option value="x">X</option></select><output data-readout="layer"></output></label><label><input data-field="layer" type="range" min="1" max="${this.state.n}" value="${this.layer + 1}" step="1" aria-label="选择编辑层"></label><div class="cube-slice-scroll"><div class="cube-slice-grid" role="group" aria-label="当前层格子"></div></div><div class="cube-face-tools" role="group" aria-label="选择或染色的面">${FACE_LABELS.map((label, face) => `<button type="button" data-face="${face}" aria-pressed="false">${label}</button>`).join("")}</div></details>
+        </section>
+        <section class="cube-observation-panel" hidden>
+          <div class="cube-observer-heading"><span class="cube-observer-symbol">O</span><h3>从此处观察</h3><button type="button" data-action="through-eye" aria-pressed="false">展开视图 ↗</button></div>
+          <canvas class="cube-observer-view" tabindex="0" aria-label="观察位置 O 的真实取景。拖动改变观察位置或朝向，滚轮调整取景。"></canvas>
+          <p data-readout="observer-hint"></p>
+          <div class="cube-counts"><div><output data-readout="count">—</output><small>当前取景可见 · 像素估计</small></div></div><p data-readout="sampling" role="status"></p>
+          <button type="button" class="cube-set-view" data-action="use-inspection-eye">以当前检视位置设定 O ↗</button>
+          <details class="cube-observer-settings"><summary>观察参数<span>VIEWPOINT</span></summary><label class="cube-frustum-toggle"><input type="checkbox" data-field="frustum">显示视野范围</label><label>观察方式<select data-field="mode"><option value="orbit">环绕中心 · 改变点位</option><option value="fixed">定点环视 · 只改朝向</option></select></label><label>投影<select data-field="projection"><option value="perspective">透视 · 有限观察点</option><option value="orthographic">正交 · 平行视线</option></select></label><label><span data-readout="fov-label">视野角度</span><input data-field="fov" type="range" min="25" max="110" step="1"><output data-readout="fov"></output></label><div class="cube-eye-coordinates">${["X", "Y", "Z"].map((axis, i) => `<label>${axis}<input type="number" data-eye="${i}" step="0.05" aria-label="观察点 ${axis} 坐标"></label>`).join("")}</div><button type="button" data-action="set-eye">设置观察点</button><button type="button" data-action="center-aim">看向中心</button><button type="button" data-action="eye-selected">移至选中空格</button></details><p data-readout="eye-warning" hidden></p>
+        </section>
+        <div class="cube-inspection-guide"><span class="cube-section-kicker">A QUESTION OF SIGHT</span><p>固定一个观察位置，最多能同时看见多少个剩余方块？</p><button type="button" data-task="observe">检查当前构造 ↗</button></div>
+        <details class="cube-data-panel"><summary>实验文件<span>DATA</span></summary><label>阶数<input type="number" data-field="n" min="1" max="12" step="1" value="${this.state.n}"><button type="button" data-action="rebuild">新建</button></label><button type="button" data-action="export">导出实验</button><button type="button" data-action="import">导入实验</button><input type="file" data-field="file" accept=".json,application/json" hidden><p>构造与观察位置一起保存。</p></details>
+        <p class="cube-status" role="status" aria-live="polite"></p>
+      </aside>
+    </div>`;
     host.replaceChildren(this.root);
     this.mainCanvas = this.root.querySelector(".cube-view")!;
     this.eyeCanvas = this.root.querySelector(".cube-observer-view")!;
     const box = new BoxGeometry(1.012, 1.012, 1.012);
     this.selection = new LineSegments(new EdgesGeometry(box), this.selectionMaterial); box.dispose();
     this.selection.visible = false; this.selection.renderOrder = 4;
-    this.scene.add(this.body, this.lines, this.selection, this.apparatus);
-    this.apparatus.add(this.marker, this.aim);
+    this.floor.rotation.x = -Math.PI / 2;
+    this.scene.add(this.body, this.lines, this.selection, this.apparatus, this.floor);
+    this.apparatus.add(this.marker, this.aim, this.frustum); this.apparatus.visible = false;
     this.eyeScene.add(this.eyeBody, this.eyeLines);
     this.idScene.add(this.idBody);
+    this.body.castShadow = this.body.receiveShadow = true;
+    this.eyeBody.castShadow = this.eyeBody.receiveShadow = true;
+    // Only the lighting normal is rounded at a seam. The opaque silhouette,
+    // ray picking and ID pass all retain the exact, gapless lattice geometry.
+    this.bodyMaterial.onBeforeCompile = shader => {
+      shader.vertexShader = shader.vertexShader.replace("#include <common>", `#include <common>
+        attribute vec2 cubeUV; attribute vec3 cubeTangentU; attribute vec3 cubeTangentV; attribute float cubeAO;
+        varying vec2 vCubeUV; varying vec3 vCubeU; varying vec3 vCubeV; varying float vCubeAO;`)
+        .replace("#include <beginnormal_vertex>", `#include <beginnormal_vertex>
+          vCubeUV = cubeUV; vCubeU = normalize(normalMatrix * cubeTangentU); vCubeV = normalize(normalMatrix * cubeTangentV); vCubeAO = cubeAO;`);
+      shader.fragmentShader = shader.fragmentShader.replace("#include <common>", `#include <common>
+        varying vec2 vCubeUV; varying vec3 vCubeU; varying vec3 vCubeV; varying float vCubeAO;`)
+        .replace("#include <normal_fragment_begin>", `#include <normal_fragment_begin>
+          vec2 cubeEdges = min(vCubeUV, vec2(1.0) - vCubeUV);
+          vec2 cubeBevel = (vec2(1.0) - smoothstep(vec2(0.0), vec2(0.06), cubeEdges)) * sign(vCubeUV - vec2(0.5));
+          normal = normalize(normal + 0.8 * (vCubeU * cubeBevel.x + vCubeV * cubeBevel.y));
+          nonPerturbedNormal = normal;`)
+        .replace("#include <color_fragment>", `#include <color_fragment>
+          float cubeEdgeDistance = min(min(vCubeUV.x, 1.0-vCubeUV.x), min(vCubeUV.y, 1.0-vCubeUV.y));
+          float cubeEdgeAA = max(fwidth(cubeEdgeDistance), 0.0001);
+          float cubeSeam = 1.0 - smoothstep(0.0015, 0.0015 + cubeEdgeAA, cubeEdgeDistance);
+          diffuseColor.rgb *= 1.0 - 0.12 * cubeSeam;`)
+        .replace("#include <aomap_fragment>", `#include <aomap_fragment>
+          reflectedLight.indirectDiffuse *= vCubeAO * vCubeAO;
+          reflectedLight.indirectSpecular *= mix(0.25, 1.0, vCubeAO);`);
+    };
+    this.bodyMaterial.customProgramCacheKey = () => "rhine-cube-ceramic-v2";
     for (const scene of [this.scene, this.eyeScene]) {
-      scene.add(new AmbientLight(0xffffff, 2.05));
-      const light = new DirectionalLight(0xfff5df, 2.7); light.position.set(4, 7, 5); scene.add(light);
-      const fill = new DirectionalLight(0xe0e5e5, .8); fill.position.set(-4, 1, -3); scene.add(fill);
+      scene.add(new AmbientLight(0xffffff, .04), new HemisphereLight(0xf4f4ee, 0x737772, .28));
+      const light = new DirectionalLight(0xfffaed, 2.6); light.position.set(-4, 7, 5); light.castShadow = true;
+      light.shadow.mapSize.set(1024, 1024); light.shadow.bias = -.00012; light.shadow.normalBias = .012;
+      light.shadow.radius = 3; this.keyLights.push(light); scene.add(light);
+      const fill = new DirectionalLight(0xe2eaf0, .45); fill.position.set(-4, 2, 5); scene.add(fill);
     }
-    this.bindControls(); this.bindInspection(); this.bindObserver();
+    this.bindControls(); this.bindInspection(); this.bindObserver(); this.bindObserver(this.mainCanvas, () => this.throughObserver);
     try {
       this.renderer = new WebGLRenderer({ canvas: this.mainCanvas, antialias: true, alpha: true });
       this.eyeRenderer = new WebGLRenderer({ canvas: this.eyeCanvas, antialias: true, alpha: true });
-      for (const renderer of [this.renderer, this.eyeRenderer]) { renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5)); renderer.outputColorSpace = SRGBColorSpace; renderer.setClearColor(0x000000, 0); }
+      for (const renderer of [this.renderer, this.eyeRenderer]) {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5)); renderer.outputColorSpace = SRGBColorSpace;
+        renderer.toneMapping = ACESFilmicToneMapping; renderer.toneMappingExposure = 1.04;
+        renderer.shadowMap.enabled = true; renderer.shadowMap.type = PCFShadowMap; renderer.setClearColor(0x000000, 0);
+      }
+      // A separate PMREM belongs to each WebGL context. Both cameras see the
+      // same soft-box illumination without sharing an invalid GPU render target.
+      const environment = new RoomEnvironment();
+      for (const [renderer, scene] of [[this.renderer, this.scene], [this.eyeRenderer, this.eyeScene]] as const) {
+        const generator = new PMREMGenerator(renderer);
+        const target = generator.fromScene(environment, .055, .1, 100, { size: 64 });
+        this.environmentTargets.push(target); scene.environment = target.texture; scene.environmentIntensity = .34;
+        generator.dispose();
+      }
+      environment.dispose();
     } catch { this.announce("此设备暂时无法显示三维画面。逐层编辑和实验导入导出仍可使用。"); }
     this.resetInspection(false); this.refreshTheme(); this.syncUI(); this.mathChanged(false);
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -251,6 +345,7 @@ export class CubeProjection {
   }
 
   private query<T extends Element = HTMLElement>(selector: string) { return this.root.querySelector<T>(selector)!; }
+  private markersVisible() { return this.showMarkers || this.tool === "paint"; }
   private readout(name: string, text: string) { this.query(`[data-readout="${name}"]`).textContent = text; }
   private announce(message: string) { this.query(".cube-status").textContent = message; }
   private get mathCamera() { return this.state.observer.projection === "orthographic" ? this.mathOrthographic : this.mathPerspective; }
@@ -270,8 +365,10 @@ export class CubeProjection {
   private buildGeometry() {
     const { n, present, colors } = this.state;
     const positions: number[] = [], normals: number[] = [], shades: number[] = [], ids: number[] = [], edgePositions: number[] = [];
+    const uv: number[] = [], tangentsU: number[] = [], tangentsV: number[] = [], occlusions: number[] = [];
     const edges = new Set<string>(); this.owners = [];
     const color = new Color();
+    const occupied = (p: number[]) => p.every(v => v >= 0 && v < n) && !!present[cubeIndex(p[0], p[1], p[2], n)];
     for (let i = 0; i < present.length; i++) {
       if (!present[i]) continue;
       const c = cubeCoordinates(i, n), code = i + 1;
@@ -279,9 +376,22 @@ export class CubeProjection {
         const neighbor = c.map((v, a) => v + DIRECTIONS[face][a]);
         if (neighbor.every(v => v >= 0 && v < n) && present[cubeIndex(neighbor[0], neighbor[1], neighbor[2], n)]) continue;
         const vertices = CORNERS[face].map(corner => corner.map((v, a) => c[a] + v - n / 2));
-        color.copy(colors[i][face] ? new Color(colors[i][face]!) : this.baseColor);
+        const u = CORNERS[face][1].map((v, a) => v - CORNERS[face][0][a]);
+        const v = CORNERS[face][3].map((value, a) => value - CORNERS[face][0][a]);
+        const faceUV = [[0, 0], [1, 0], [1, 1], [0, 1]];
+        color.copy(this.markersVisible() && colors[i][face] ? new Color(colors[i][face]!) : this.baseColor);
         for (const corner of [0, 1, 2, 0, 2, 3]) {
-          positions.push(...vertices[corner]); normals.push(...DIRECTIONS[face]); shades.push(color.r, color.g, color.b);
+          // Local voxel occlusion is strongest at real concave junctions. It
+          // creates depth inside channels without opening false visual gaps.
+          const su = faceUV[corner][0] ? 1 : -1, sv = faceUV[corner][1] ? 1 : -1;
+          const sideU = occupied(c.map((value, a) => value + DIRECTIONS[face][a] + u[a] * su));
+          const sideV = occupied(c.map((value, a) => value + DIRECTIONS[face][a] + v[a] * sv));
+          const diagonal = occupied(c.map((value, a) => value + DIRECTIONS[face][a] + u[a] * su + v[a] * sv));
+          const occlusion = sideU && sideV ? 3 : Number(sideU) + Number(sideV) + Number(diagonal);
+          const shade = [1, .88, .74, .59][occlusion];
+          positions.push(...vertices[corner]); normals.push(...DIRECTIONS[face]); shades.push(color.r * shade, color.g * shade, color.b * shade);
+          uv.push(...faceUV[corner]); tangentsU.push(...u); tangentsV.push(...v);
+          occlusions.push(shade);
           ids.push((code & 255) / 255, ((code >> 8) & 255) / 255, ((code >> 16) & 255) / 255);
         }
         this.owners.push({ index: i, face }, { index: i, face });
@@ -297,15 +407,21 @@ export class CubeProjection {
     this.geometry.setAttribute("normal", new Float32BufferAttribute(normals, 3));
     this.geometry.setAttribute("color", new Float32BufferAttribute(shades, 3));
     this.geometry.setAttribute("cellId", new Float32BufferAttribute(ids, 3));
+    this.geometry.setAttribute("cubeUV", new Float32BufferAttribute(uv, 2));
+    this.geometry.setAttribute("cubeTangentU", new Float32BufferAttribute(tangentsU, 3));
+    this.geometry.setAttribute("cubeTangentV", new Float32BufferAttribute(tangentsV, 3));
+    this.geometry.setAttribute("cubeAO", new Float32BufferAttribute(occlusions, 1));
     this.geometry.computeBoundingSphere();
     this.lineGeometry.setAttribute("position", new Float32BufferAttribute(edgePositions, 3));
     this.body.geometry = this.eyeBody.geometry = this.idBody.geometry = this.geometry;
     this.lines.geometry = this.eyeLines.geometry = this.lineGeometry;
-    if (this.grid) { this.grid.removeFromParent(); this.grid.geometry.dispose(); for (const mat of [this.grid.material].flat()) mat.dispose(); }
-    this.grid = new GridHelper(n + 2, n + 2, this.lineMaterial.color, this.lineMaterial.color);
-    this.grid.position.y = -n / 2 - .015;
-    for (const mat of [this.grid.material].flat()) { mat.transparent = true; mat.opacity = .2; }
-    this.scene.add(this.grid);
+    this.floor.visible = present.some(Boolean);
+    this.floor.position.y = -n / 2 - n * .13; this.floor.scale.set(n * 2.35, n * 2.35, 1);
+    for (const light of this.keyLights) {
+      const radius = n * 1.25, camera = light.shadow.camera;
+      light.position.set(n * 2.1, n * 2.7, -n * 1.4); camera.left = camera.bottom = -radius; camera.right = camera.top = radius;
+      camera.near = .1; camera.far = n * 10; camera.updateProjectionMatrix(); light.shadow.needsUpdate = true;
+    }
     this.updateSelection();
   }
 
@@ -315,20 +431,32 @@ export class CubeProjection {
     // The optical CSS token is a color-mix(), which Three.Color does not parse.
     // Reproduce that same mix from the underlying theme's ordinary RGB tokens.
     const ink = new Color(read("--theme-muted", "#77756d")).lerp(new Color(read("--theme-ink", "#080a08")), .22);
-    this.baseColor.set(read("--theme-panel", "#ded9cb"));
-    const luminance = this.baseColor.r * .2126 + this.baseColor.g * .7152 + this.baseColor.b * .0722;
+    const panel = new Color(read("--theme-panel", "#ded9cb"));
+    const luminance = panel.r * .2126 + panel.g * .7152 + panel.b * .0722;
     const darkAmount = 1 - MathUtils.smoothstep(luminance, .025, .22);
-    // Keep opaque faces readable as volumes in the dark optical theme, without
-    // turning the specimen into either a glowing object or a transparent grid.
-    this.baseColor.lerp(new Color("#b9b5a7"), .14 * darkAmount);
-    this.lineMaterial.color.copy(ink).lerp(this.baseColor, .28 + .24 * darkAmount);
+    this.baseColor.set("#e3e2da").lerp(new Color("#c1c5bf"), darkAmount * .42);
+    this.lineMaterial.color.copy(ink).lerp(new Color("#6c706b"), .65);
+    this.floor.material.uniforms.shadowOpacity.value = .21 + darkAmount * .18;
     const accent = read("--theme-accent", "#9b7247");
-    this.markerMaterial.color.set(accent); this.selectionMaterial.color.set(accent); this.apparatusMaterial.color.set(accent);
+    this.markerMaterial.color.set(accent); this.selectionMaterial.color.set(accent); this.apparatusMaterial.color.set(accent); this.frustumMaterial.color.set(accent);
     this.buildGeometry(); this.dirty = true; this.eyeDirty = true; this.requestFrame();
   }
 
   private resetInspection(animate = true) {
-    const eye = new Vector3(...spherical(1, 76, 36));
+    // A face with a real interior opening should be visible in the first view.
+    // This is a presentation choice only; no preset observer is moved.
+    const openings = [0, 0, 0], n = this.state.n;
+    this.state.present.forEach((present, index) => {
+      if (present) return;
+      const c = cubeCoordinates(index, n);
+      for (let axis = 0; axis < 3; axis++) {
+        if (![0, n - 1].includes(c[axis])) continue;
+        if (c.every((v, a) => a === axis || v > 0 && v < n - 1)) openings[axis]++;
+      }
+    });
+    const maximum = Math.max(...openings), unique = maximum > 0 && openings.filter(v => v === maximum).length === 1;
+    const axis = unique ? openings.indexOf(maximum) : -1;
+    const eye = new Vector3(...spherical(1, axis === 0 ? 66 : axis === 2 ? 24 : 40, axis === 1 ? 58 : axis >= 0 ? 22 : 28));
     const q = new Quaternion().setFromRotationMatrix(new Matrix4().lookAt(eye, new Vector3(), new Vector3(0, 1, 0)));
     this.ball.setOrientation(q, animate && !this.reduced); this.autoFitInspection = true;
     this.fitInspection(!animate || this.reduced, q);
@@ -338,19 +466,16 @@ export class CubeProjection {
   private fitInspection(immediate = false, orientation = this.ball.orientation) {
     const n = this.state.n, points: Vector3[] = [], inverse = orientation.clone().invert();
     for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) points.push(new Vector3(x, y, z).multiplyScalar(n / 2));
-    points.push(new Vector3(...this.state.observer.eye));
-    const apparatus = this.aim.geometry.getAttribute("position");
-    if (apparatus) for (let i = 0; i < apparatus.count; i++) points.push(new Vector3().fromBufferAttribute(apparatus, i));
     points.forEach(point => point.applyQuaternion(inverse));
     const center = new Box3().setFromPoints(points).getCenter(new Vector3());
     this.target.copy(center).applyQuaternion(orientation);
     const vertical = Math.tan(MathUtils.degToRad(this.camera.fov / 2)), horizontal = vertical * this.camera.aspect;
-    // Fit every actual point at its own depth, including the eye and frustum.
-    // A circumscribed cube alone clips the eye on portrait screens.
+    // The specimen owns the composition. An optional, distant observation point
+    // must never shrink the cube into an icon just to fit an explanatory frustum.
     let distance = n * .95;
     for (const point of points) {
       point.sub(center);
-      distance = Math.max(distance, point.z + Math.abs(point.x) * 1.15 / horizontal, point.z + Math.abs(point.y) * 1.2 / vertical);
+      distance = Math.max(distance, point.z + Math.abs(point.x) * 1.24 / horizontal, point.z + Math.abs(point.y) * 1.36 / vertical);
     }
     this.targetDistance = Math.min(n * 100, distance); this.autoFitInspection = true;
     if (this.reduced || immediate) this.distance = this.targetDistance;
@@ -392,8 +517,18 @@ export class CubeProjection {
       const start = o.projection === "orthographic" ? new Vector3((i === 0 || i === 3 ? -1 : 1) * halfHeight * aspect, (i < 2 ? -1 : 1) * halfHeight, 0).applyQuaternion(q).add(eye) : eye;
       segments.push(...start.toArray(), ...corners[i].toArray(), ...corners[i].toArray(), ...corners[(i + 1) % 4].toArray());
     }
-    segments.push(...eye.toArray(), ...new Vector3(...o.target).toArray());
-    this.aim.geometry.dispose(); this.aim.geometry = new BufferGeometry().setAttribute("position", new Float32BufferAttribute(segments, 3));
+    this.frustum.geometry.dispose(); this.frustum.geometry = new BufferGeometry().setAttribute("position", new Float32BufferAttribute(segments, 3));
+    this.updateSightline();
+  }
+
+  private updateSightline() {
+    const destination = this.selected
+      ? new Vector3(...cubeCoordinates(this.selected.index, this.state.n).map((value, a) => value + .5 - this.state.n / 2 + DIRECTIONS[this.selected!.face][a] * .5) as CubeVector)
+      : new Vector3(...this.state.observer.target);
+    this.aim.geometry.dispose();
+    this.aim.geometry = new BufferGeometry().setAttribute("position", new Float32BufferAttribute([...this.state.observer.eye, ...destination.toArray()], 3));
+    this.apparatus.visible = this.task === "observe" && !this.throughObserver;
+    this.frustum.visible = this.showFrustum;
   }
 
   private updateInspectionCamera() {
@@ -401,6 +536,16 @@ export class CubeProjection {
     this.camera.quaternion.copy(this.ball.orientation);
     this.camera.near = Math.max(.001, this.distance / 10000); this.camera.far = Math.max(100, this.distance + this.state.n * 100);
     this.camera.updateProjectionMatrix(); this.camera.updateMatrixWorld();
+    const tag = this.query(".cube-observer-tag");
+    tag.hidden = this.task !== "observe" || this.throughObserver;
+    if (!tag.hidden) {
+      const point = new Vector3(...this.state.observer.eye).project(this.camera), w = this.mainCanvas.clientWidth, h = this.mainCanvas.clientHeight;
+      const outside = Math.abs(point.x) > .9 || Math.abs(point.y) > .8 || point.z > 1;
+      tag.dataset.outside = String(outside);
+      tag.style.left = `${MathUtils.clamp((point.x + 1) * .5 * w, 76, w - 76)}px`;
+      tag.style.top = `${MathUtils.clamp((1 - point.y) * .5 * h, 70, h - 68)}px`;
+      tag.querySelector("small")!.textContent = outside ? "画面外观察位置" : "观察位置";
+    }
   }
 
   private requestFrame() {
@@ -416,8 +561,24 @@ export class CubeProjection {
       this.distance += (this.targetDistance - this.distance) * (this.reduced ? 1 : 1 - Math.exp(-dt / .12)); this.dirty = true;
     } else this.distance = this.targetDistance;
     try {
-      if (this.dirty) { this.updateInspectionCamera(); this.renderer?.render(this.scene, this.camera); this.dirty = false; }
-      if (this.eyeDirty) { this.eyeRenderer?.render(this.eyeScene, this.mathCamera); this.eyeDirty = false; }
+      if (this.dirty) {
+        this.updateInspectionCamera();
+        if (this.renderer && this.throughObserver) {
+          // Show precisely the same field as the small observer image and ID
+          // estimate; letterbox rather than silently change its aspect ratio.
+          const w = this.mainCanvas.clientWidth, h = this.mainCanvas.clientHeight, aspect = this.mathPerspective.aspect;
+          const width = Math.min(w, h * aspect), height = width / aspect;
+          this.renderer.setViewport(0, 0, w, h); this.renderer.clear();
+          this.renderer.setViewport((w - width) / 2, (h - height) / 2, width, height);
+          this.eyeScene.environment = this.environmentTargets[0]?.texture ?? null;
+          this.renderer.render(this.eyeScene, this.mathCamera); this.renderer.setViewport(0, 0, w, h);
+        } else this.renderer?.render(this.scene, this.camera);
+        this.dirty = false;
+      }
+      if (this.eyeDirty && this.task === "observe") {
+        this.eyeScene.environment = this.environmentTargets[1]?.texture ?? null;
+        this.eyeRenderer?.render(this.eyeScene, this.mathCamera); this.eyeDirty = false;
+      }
     } catch { this.announce("三维显示暂时不可用；可以继续逐层编辑或导出实验。"); }
     if (this.ball.moving && !this.ball.dragging || Math.abs(this.distance - this.targetDistance) > .0001) this.requestFrame();
   }
@@ -512,9 +673,26 @@ export class CubeProjection {
   private syncUI() {
     const present = this.state.present.reduce((sum, v) => sum + v, 0);
     this.readout("model", `${this.state.n} × ${this.state.n} × ${this.state.n} / ${this.state.present.length - present} 格已挖除`);
-    this.readout("present", String(present)); this.query<HTMLInputElement>('[data-field="n"]').value = String(this.state.n);
+    this.readout("present", String(present)); this.readout("removed", String(this.state.present.length - present)); this.query<HTMLInputElement>('[data-field="n"]').value = String(this.state.n);
+    this.root.dataset.task = this.task; this.root.dataset.eyeView = String(this.throughObserver);
+    const markerToggle = this.query<HTMLButtonElement>('[data-action="toggle-markers"]');
+    markerToggle.setAttribute("aria-pressed", String(this.markersVisible())); markerToggle.disabled = this.tool === "paint";
+    this.root.querySelectorAll<HTMLButtonElement>("[data-task]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.task === this.task)));
+    this.query(".cube-edit-panel").hidden = this.task !== "edit";
+    this.query(".cube-observation-panel").hidden = this.task !== "observe";
+    this.query(".cube-inspection-guide").hidden = this.task !== "inspect";
+    this.query(".cube-return-inspection").hidden = !this.throughObserver;
+    this.root.querySelectorAll<HTMLButtonElement>('[data-action="through-eye"]').forEach(button => button.setAttribute("aria-pressed", String(this.throughObserver)));
+    this.query('.cube-observer-heading [data-action="through-eye"]').textContent = this.throughObserver ? "收起视图 ↙" : "展开视图 ↗";
+    this.query<HTMLButtonElement>('[data-action="use-inspection-eye"]').disabled = this.throughObserver;
+    this.readout("task-title", { inspect: "看清构造", edit: "改变一格", observe: "确定观察位置" }[this.task]);
+    this.readout("task-hint", { inspect: "转动实体，检查孔道与遮挡。每一格都保持不透明。", edit: "挖除或还原一格，检查开口怎样改变遮挡。拖动继续旋转。", observe: "O 定义当前观察位置。取景只统计从这里实际看见的方块。" }[this.task]);
+    this.readout("view-label", this.throughObserver ? "VIEWPOINT O / 从此处观察" : "SPATIAL SPECIMEN / 空间构造");
+    this.readout("gesture", this.throughObserver ? "拖动调整观察 · 滚轮调整取景" : "拖动旋转 · 滚轮缩放");
+    this.mainCanvas.setAttribute("aria-label", this.throughObserver ? "从观察位置 O 看。拖动调整观察方向，滚轮调整取景。" : "自由检视。拖动旋转，滚轮缩放；双指缩放和翻转。检视不改变观察位置。");
     this.root.querySelectorAll<HTMLButtonElement>("[data-tool]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.tool === this.tool)));
     this.query(".cube-paint-tools").hidden = this.tool !== "paint";
+    this.query(".cube-face-tools").hidden = this.tool !== "paint";
     this.mainCanvas.style.cursor = this.ball.dragging && [...this.pointers.values()].some(p => p.moved) ? "grabbing" : this.tool === "inspect" || this.temporaryInspect ? "grab" : "crosshair";
     this.readout("tool-hint", { inspect: "点击选格；拖动始终旋转。选择其他工具后才会编辑。", remove: "点击挖除一格；拖动不挖除。层网格可编辑内部。", restore: "点击可见空缺还原；内部空格请用层网格。", paint: "点击一个面染色；面方向按钮可染选格的隐藏面。" }[this.tool]);
     this.drawSlice(); this.updateSelection(); this.syncObserver(); this.syncHistory();
@@ -542,9 +720,9 @@ export class CubeProjection {
   private updateSelection() {
     const hit = this.hover ?? this.selected; this.selection.visible = !!hit;
     if (hit) this.selection.position.set(...cubeCoordinates(hit.index, this.state.n).map(v => v + .5 - this.state.n / 2) as CubeVector);
-    this.readout("selection", this.selected ? `(${cubeCoordinates(this.selected.index, this.state.n).map(v => v + 1).join(", ")}) · ${this.state.present[this.selected.index] ? "实体" : "空缺"} · ${FACE_LABELS[this.selected.face]}` : "未选择格子");
+    this.readout("selection", this.selected ? `(${cubeCoordinates(this.selected.index, this.state.n).map(v => v + 1).join(", ")}) · ${this.state.present[this.selected.index] ? "实体" : "空缺"} · ${FACE_LABELS[this.selected.face]}` : "选择方块，查看位置");
     this.root.querySelectorAll<HTMLButtonElement>("[data-face]").forEach(button => { button.disabled = !this.selected; button.setAttribute("aria-pressed", String(Number(button.dataset.face) === this.selected?.face)); });
-    this.dirty = true; this.requestFrame();
+    this.updateSightline(); this.dirty = true; this.requestFrame();
   }
 
   private act(hit: Hit, inspectOnly = false) {
@@ -581,7 +759,20 @@ export class CubeProjection {
     return hit;
   }
 
-  private setTool(tool: CubeTool) { this.cancelPointers(); this.tool = tool; this.hover = null; this.syncUI(); }
+  private setTool(tool: CubeTool) {
+    this.cancelPointers(); this.tool = tool; this.hover = null;
+    if (tool !== "inspect") { this.task = "edit"; this.throughObserver = false; }
+    this.buildGeometry(); this.eyeDirty = true; this.syncUI();
+  }
+  private setTask(task: CubeTask) {
+    this.cancelPointers(); this.task = task; this.throughObserver = false; this.hover = null;
+    this.tool = task === "edit" ? this.tool === "inspect" ? "remove" : this.tool : "inspect";
+    this.buildGeometry(); this.syncUI(); this.resize(); this.dirty = this.eyeDirty = true; this.requestFrame();
+  }
+  private toggleObserverView() {
+    this.cancelPointers(); this.throughObserver = !this.throughObserver; this.syncUI();
+    this.dirty = this.eyeDirty = true; this.requestFrame();
+  }
   private cancelPointers() {
     for (const id of this.pointers.keys()) { try { this.mainCanvas.releasePointerCapture(id); } catch {} }
     this.pointers.clear(); this.ball.cancel(); this.cancelObserverGesture(); this.temporaryInspect = false;
@@ -592,6 +783,7 @@ export class CubeProjection {
     const canvas = this.mainCanvas, signal = this.abort.signal;
     canvas.addEventListener("contextmenu", event => event.preventDefault(), { signal });
     canvas.addEventListener("pointerdown", event => {
+      if (this.throughObserver) return;
       if (event.button !== 0 && event.button !== 2) return;
       this.autoFitInspection = false;
       canvas.focus({ preventScroll: true }); const p = this.point(event);
@@ -606,6 +798,7 @@ export class CubeProjection {
       canvas.setPointerCapture(event.pointerId); event.preventDefault(); this.updateSelection();
     }, { signal });
     canvas.addEventListener("pointermove", event => {
+      if (this.throughObserver) return;
       const p = this.point(event), previous = this.pointers.get(event.pointerId);
       if (!previous) { this.hover = this.pick(p.x, p.y); this.updateSelection(); return; }
       previous.x = p.x; previous.y = p.y;
@@ -640,7 +833,7 @@ export class CubeProjection {
     canvas.addEventListener("pointercancel", event => release(event, true), { signal });
     canvas.addEventListener("lostpointercapture", event => { if (this.pointers.has(event.pointerId)) release(event, true); }, { signal });
     canvas.addEventListener("pointerleave", () => { if (!this.pointers.size) { this.hover = null; this.updateSelection(); } }, { signal });
-    canvas.addEventListener("wheel", event => { event.preventDefault(); event.stopPropagation(); this.zoomInspection(event.deltaY * (event.deltaMode === 1 ? .035 : .0012)); }, { signal, passive: false });
+    canvas.addEventListener("wheel", event => { if (this.throughObserver) return; event.preventDefault(); event.stopPropagation(); this.zoomInspection(event.deltaY * (event.deltaMode === 1 ? .035 : .0012)); }, { signal, passive: false });
     window.addEventListener("blur", () => { this.cancelPointers(); this.syncUI(); }, { signal });
   }
 
@@ -651,24 +844,26 @@ export class CubeProjection {
     this.dirty = true; this.requestFrame();
   }
 
-  private bindObserver() {
-    const canvas = this.eyeCanvas, signal = this.abort.signal;
+  private bindObserver(canvas = this.eyeCanvas, active = () => this.task === "observe") {
+    const signal = this.abort.signal;
     let pointer: number | null = null, before: CubeExperiment | null = null, historySaved = false;
     let start = { x: 0, y: 0 }, moved = false;
     canvas.style.touchAction = "none"; canvas.style.cursor = "grab";
+    const previousCancel = this.cancelObserverGesture;
     this.cancelObserverGesture = () => {
+      previousCancel();
       const id = pointer; pointer = null; before = null; this.mathBall.cancel(); canvas.style.cursor = "grab";
       if (id !== null) { try { canvas.releasePointerCapture(id); } catch {} }
     };
     canvas.addEventListener("contextmenu", event => event.preventDefault(), { signal });
     canvas.addEventListener("pointerdown", event => {
-      if (pointer !== null || event.button !== 0) return;
+      if (!active() || pointer !== null || event.button !== 0) return;
       pointer = event.pointerId; before = this.getState(); historySaved = false; moved = false; start = this.point(event, canvas);
       this.mathBall.setOrientation(this.orientationOfObserver()); this.mathBall.begin(start.x, start.y, canvas.clientWidth, canvas.clientHeight, event.timeStamp);
       canvas.setPointerCapture(event.pointerId); canvas.focus({ preventScroll: true }); event.preventDefault();
     }, { signal });
     canvas.addEventListener("pointermove", event => {
-      if (pointer !== event.pointerId) return;
+      if (!active() || pointer !== event.pointerId) return;
       const p = this.point(event, canvas);
       if (!moved && Math.hypot(p.x - start.x, p.y - start.y) < 3) return;
       moved = true; if (!historySaved && before) { this.pushHistory(before); historySaved = true; }
@@ -687,6 +882,7 @@ export class CubeProjection {
     };
     canvas.addEventListener("pointerup", end, { signal }); canvas.addEventListener("pointercancel", end, { signal }); canvas.addEventListener("lostpointercapture", end, { signal });
     canvas.addEventListener("wheel", event => {
+      if (!active()) return;
       event.preventDefault(); event.stopPropagation(); if (performance.now() - this.wheelHistoryAt > 300) this.pushHistory(); this.wheelHistoryAt = performance.now();
       const factor = Math.exp(MathUtils.clamp(event.deltaY * (event.deltaMode === 1 ? .03 : .0015), -.5, .5)), o = this.state.observer;
       if (o.projection === "orthographic") o.orthoSize = MathUtils.clamp(o.orthoSize * factor, this.state.n * .25, this.state.n * 8);
@@ -700,6 +896,7 @@ export class CubeProjection {
     const signal = this.abort.signal;
     this.root.addEventListener("click", event => {
       const element = (event.target as Element).closest<HTMLElement>("button"); if (!element) return;
+      if (element.dataset.task) { this.setTask(element.dataset.task as CubeTask); return; }
       if (element.dataset.tool) { this.setTool(element.dataset.tool as CubeTool); return; }
       if (element.dataset.cell !== undefined) { this.act({ index: Number(element.dataset.cell), face: this.selected?.face ?? 4 }, event.shiftKey); return; }
       if (element.dataset.face !== undefined && this.selected) { this.act({ index: this.selected.index, face: Number(element.dataset.face) }, this.tool !== "paint"); return; }
@@ -708,6 +905,14 @@ export class CubeProjection {
         case "redo": this.history(true); break;
         case "reset-view": this.resetInspection(); break;
         case "fit": this.fitInspection(); break;
+        case "toggle-markers": this.showMarkers = !this.showMarkers; this.buildGeometry(); this.eyeDirty = true; this.syncUI(); break;
+        case "through-eye": this.toggleObserverView(); break;
+        case "use-inspection-eye": {
+          this.updateInspectionCamera();
+          const eye = this.camera.position.clone(), direction = this.camera.getWorldDirection(new Vector3());
+          this.changeObserver(o => { o.eye = tuple(eye); o.target = tuple(eye.add(direction)); o.up = tuple(new Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion)); o.mode = "fixed"; o.projection = "perspective"; o.fov = this.camera.fov; });
+          this.announce("观察位置 O 已设为当前检视位置。"); break;
+        }
         case "erase": this.erase = !this.erase; element.setAttribute("aria-pressed", String(this.erase)); break;
         case "set-eye": {
           const eye = [0, 1, 2].map(i => Number(this.query<HTMLInputElement>(`[data-eye="${i}"]`).value)) as CubeVector;
@@ -729,6 +934,9 @@ export class CubeProjection {
         }
         case "import": this.query<HTMLInputElement>('[data-field="file"]').click(); break;
       }
+    }, { signal });
+    this.query<HTMLInputElement>('[data-field="frustum"]').addEventListener("change", event => {
+      this.showFrustum = (event.target as HTMLInputElement).checked; this.frustum.visible = this.showFrustum; this.dirty = true; this.requestFrame();
     }, { signal });
     this.query<HTMLInputElement>('[type="color"]').addEventListener("input", event => { this.paint = (event.target as HTMLInputElement).value; this.erase = false; this.query('[data-action="erase"]').setAttribute("aria-pressed", "false"); }, { signal });
     this.query<HTMLInputElement>('[data-field="layer"]').addEventListener("input", event => { this.layer = Number((event.target as HTMLInputElement).value) - 1; this.drawSlice(); }, { signal });
@@ -760,10 +968,10 @@ export class CubeProjection {
       const key = event.key.toLowerCase();
       if ((event.metaKey || event.ctrlKey) && ["z", "y"].includes(key)) { event.preventDefault(); this.history(key === "y" || event.shiftKey); }
       else if (/^[1-4]$/.test(key)) { event.preventDefault(); this.setTool((["inspect", "remove", "restore", "paint"] as CubeTool[])[Number(key) - 1]); }
-      else if (key === "home") { event.preventDefault(); this.resetInspection(); }
-      else if (["+", "=", "-", "_"].includes(key)) { event.preventDefault(); this.zoomInspection(key === "-" || key === "_" ? .15 : -.15); }
+      else if (key === "home") { event.preventDefault(); if (this.throughObserver) this.toggleObserverView(); this.resetInspection(); }
+      else if (["+", "=", "-", "_"].includes(key) && !this.throughObserver) { event.preventDefault(); this.zoomInspection(key === "-" || key === "_" ? .15 : -.15); }
       else if (key === " " && event.target === this.mainCanvas) { event.preventDefault(); this.temporaryInspect = true; this.syncUI(); }
-      else if (["arrowleft", "arrowright", "arrowup", "arrowdown", "q", "e"].includes(key) && event.target === this.mainCanvas) {
+      else if (["arrowleft", "arrowright", "arrowup", "arrowdown", "q", "e"].includes(key) && event.target === this.mainCanvas && !this.throughObserver) {
         event.preventDefault(); this.autoFitInspection = false; const axis = key === "q" || key === "e" ? new Vector3(0, 0, 1) : key === "arrowleft" || key === "arrowright" ? new Vector3(0, 1, 0) : new Vector3(1, 0, 0);
         const sign = ["arrowleft", "arrowup", "q"].includes(key) ? 1 : -1;
         const q = this.ball.orientation.clone().multiply(new Quaternion().setFromAxisAngle(axis, sign * Math.PI / 12)); this.ball.setOrientation(q, !this.reduced); this.dirty = true; this.requestFrame();
@@ -780,11 +988,12 @@ export class CubeProjection {
     if (this.disposed) return;
     try {
       const next = parseCubeExperiment(input); this.cancelPointers(); this.pushHistory(); this.state = next; this.selected = this.hover = null; this.layer = Math.floor(next.n / 2); this.tool = "inspect";
+      this.task = "inspect"; this.throughObserver = false;
       this.count = null; this.dataChanged(); this.resetInspection(false); this.announce("已载入实验。当前为查看工具。");
     } catch (error) { this.announce((error as Error).message); }
   }
   setReducedMotion(value: boolean) {
-    this.reduced = value;
+    this.reduced = value; this.root.dataset.reduced = String(value);
     if (value) { if (!this.ball.dragging) this.ball.cancel(); this.distance = this.targetDistance; }
     this.dirty = true; this.requestFrame();
   }
@@ -806,14 +1015,15 @@ export class CubeProjection {
     this.dirty = true; this.requestFrame();
   }
   getStats() {
-    return { ready: !!this.renderer && !!this.eyeRenderer, n: this.state.n, present: this.state.present.reduce((sum, value) => sum + value, 0), tool: this.tool, selected: this.selected ? { ...this.selected } : null, inspectionQuaternion: this.ball.orientation.toArray(), inspectionEye: this.camera.position.toArray(), inspectionDistance: this.distance, angularSpeed: this.ball.angularSpeed, observer: clone(this.state.observer), eyeOccupied: cubeEyeOccupancy(this.state), visibleCount: this.count, countPending: this.countPending, countPasses: this.countPasses, countRevision: this.countRevision, sampleSize: { ...this.countSize }, undo: this.undoStack.length, redo: this.redoStack.length, reducedMotion: this.reduced, error: this.lastCountError };
+    return { ready: !!this.renderer && !!this.eyeRenderer, n: this.state.n, present: this.state.present.reduce((sum, value) => sum + value, 0), task: this.task, throughObserver: this.throughObserver, showFrustum: this.showFrustum, showMarkers: this.markersVisible(), apparatusVisible: this.apparatus.visible, tool: this.tool, selected: this.selected ? { ...this.selected } : null, inspectionQuaternion: this.ball.orientation.toArray(), inspectionEye: this.camera.position.toArray(), inspectionDistance: this.distance, angularSpeed: this.ball.angularSpeed, observer: clone(this.state.observer), eyeOccupied: cubeEyeOccupancy(this.state), visibleCount: this.count, countPending: this.countPending, countPasses: this.countPasses, countRevision: this.countRevision, sampleSize: { ...this.countSize }, undo: this.undoStack.length, redo: this.redoStack.length, reducedMotion: this.reduced, error: this.lastCountError };
   }
   dispose() {
     if (this.disposed) return;
     this.disposed = true; this.abort.abort(); this.resizeObserver?.disconnect(); cancelAnimationFrame(this.raf); clearTimeout(this.countTimer); this.cancelPointers();
-    this.geometry.dispose(); this.lineGeometry.dispose(); this.aim.geometry.dispose(); this.marker.geometry.dispose(); this.selection.geometry.dispose();
-    if (this.grid) { this.grid.geometry.dispose(); for (const material of [this.grid.material].flat()) material.dispose(); }
-    for (const material of [this.bodyMaterial, this.lineMaterial, this.apparatusMaterial, this.markerMaterial, this.selectionMaterial, this.idMaterial]) material.dispose();
+    this.geometry.dispose(); this.lineGeometry.dispose(); this.aim.geometry.dispose(); this.frustum.geometry.dispose(); this.marker.geometry.dispose(); this.selection.geometry.dispose(); this.floor.geometry.dispose(); this.floor.material.dispose();
+    for (const light of this.keyLights) light.shadow.dispose();
+    for (const target of this.environmentTargets) target.dispose();
+    for (const material of [this.bodyMaterial, this.lineMaterial, this.apparatusMaterial, this.frustumMaterial, this.markerMaterial, this.selectionMaterial, this.idMaterial]) material.dispose();
     this.countTarget?.dispose(); this.renderer?.dispose(); this.eyeRenderer?.dispose(); this.renderer?.forceContextLoss(); this.eyeRenderer?.forceContextLoss(); this.root.remove();
   }
 }
