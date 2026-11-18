@@ -1,0 +1,478 @@
+{
+  "scope": "Actual isolated product modules and CSS; synthetic research fixture; generic 3³ Cube",
+  "render": "Native DOM/CSS rendering of the research projection; Cube WebGL was not exercised in this run.",
+  "startedAt": "2026-11-18T17:39:46.109Z",
+  "checks": [
+    {
+      "name": "Research overview fits every node inside the unobstructed stage 1440x960",
+      "status": "pass",
+      "ms": 439,
+      "evidence": {
+        "initial": {
+          "selected": "qa-node-0",
+          "x": -8.399999999999999,
+          "y": 195.3,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "fitted": {
+          "selected": "qa-node-0",
+          "x": 19.999999999999943,
+          "y": 208.89919354838707,
+          "scale": 0.7693548387096775,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "bounds": {
+          "stage": {
+            "left": 48.953125,
+            "right": 1043.046875,
+            "top": 141.6875,
+            "bottom": 851
+          },
+          "label": {
+            "left": 68.953125,
+            "right": 1023.046875,
+            "top": 159.6875,
+            "bottom": 200.484375
+          },
+          "tools": {
+            "left": 60.953125,
+            "right": 1031.046875,
+            "top": 793,
+            "bottom": 839
+          },
+          "nodes": [
+            {
+              "id": "qa-node-0",
+              "left": 115.11441040039062,
+              "right": 284.3724670410156,
+              "top": 396.74798583984375,
+              "bottom": 481.37701416015625
+            },
+            {
+              "id": "qa-node-1",
+              "left": 345.9208679199219,
+              "right": 515.178955078125,
+              "top": 396.74798583984375,
+              "bottom": 481.37701416015625
+            },
+            {
+              "id": "qa-node-2",
+              "left": 345.9208679199219,
+              "right": 515.178955078125,
+              "top": 515.9979858398438,
+              "bottom": 600.6270141601562
+            },
+            {
+              "id": "qa-node-3",
+              "left": 576.727294921875,
+              "right": 745.9853515625,
+              "top": 396.74798583984375,
+              "bottom": 481.37701416015625
+            },
+            {
+              "id": "qa-node-4",
+              "left": 807.5337524414062,
+              "right": 976.7918090820312,
+              "top": 396.74798583984375,
+              "bottom": 481.37701416015625
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Research Home returns to the same whole-graph overview 1440x960",
+      "status": "pass",
+      "ms": 52,
+      "evidence": {
+        "selected": "qa-node-0",
+        "x": 19.999999999999943,
+        "y": 208.89919354838707,
+        "scale": 0.7693548387096775,
+        "playing": false,
+        "nodeCount": 5,
+        "retrospectiveNode": "qa-node-0",
+        "reducedMotion": true
+      }
+    },
+    {
+      "name": "Research overview wheel zoom is continuous and survives close/reopen 1440x960",
+      "status": "pass",
+      "ms": 314,
+      "evidence": {
+        "before": {
+          "selected": "qa-node-0",
+          "x": 19.999999999999943,
+          "y": 208.89919354838707,
+          "scale": 0.7693548387096775,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "zoomed": {
+          "selected": "qa-node-0",
+          "x": -85.61949389668985,
+          "y": 176.70428642680994,
+          "scale": 0.9396921220038726,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "restored": {
+          "selected": "qa-node-0",
+          "x": -85.61949389668985,
+          "y": 176.70428642680994,
+          "scale": 0.9396921220038726,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "ratio": 1.2214027581601699
+      }
+    },
+    {
+      "name": "Disposing during animated close immediately restores inert state and focus",
+      "status": "pass",
+      "ms": 9,
+      "evidence": {
+        "closing": "closing",
+        "open": false,
+        "modalPresent": false,
+        "inert": false,
+        "focus": "open-research"
+      }
+    },
+    {
+      "name": "Research overview fits every node inside the unobstructed stage 320x740",
+      "status": "pass",
+      "ms": 296,
+      "evidence": {
+        "initial": {
+          "selected": "qa-node-0",
+          "x": 1.200000000000017,
+          "y": 61.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "fitted": {
+          "selected": "qa-node-0",
+          "x": 20,
+          "y": 120,
+          "scale": 0.2,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "bounds": {
+          "stage": {
+            "left": 16,
+            "right": 304,
+            "top": 182.5,
+            "bottom": 482.5
+          },
+          "label": {
+            "left": 30,
+            "right": 290,
+            "top": 196.5,
+            "bottom": 253.78125
+          },
+          "tools": {
+            "left": 24,
+            "right": 296,
+            "top": 424.5,
+            "bottom": 474.5
+          },
+          "nodes": [
+            {
+              "id": "qa-node-0",
+              "left": 48,
+              "right": 92,
+              "top": 314.5,
+              "bottom": 336.5
+            },
+            {
+              "id": "qa-node-1",
+              "left": 108,
+              "right": 152,
+              "top": 314.5,
+              "bottom": 336.5
+            },
+            {
+              "id": "qa-node-2",
+              "left": 108,
+              "right": 152,
+              "top": 345.5,
+              "bottom": 367.5
+            },
+            {
+              "id": "qa-node-3",
+              "left": 168,
+              "right": 212,
+              "top": 314.5,
+              "bottom": 336.5
+            },
+            {
+              "id": "qa-node-4",
+              "left": 228,
+              "right": 272,
+              "top": 314.5,
+              "bottom": 336.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Research Home returns to the same whole-graph overview 320x740",
+      "status": "pass",
+      "ms": 49,
+      "evidence": {
+        "selected": "qa-node-0",
+        "x": 20,
+        "y": 120,
+        "scale": 0.2,
+        "playing": false,
+        "nodeCount": 5,
+        "retrospectiveNode": "qa-node-0",
+        "reducedMotion": true
+      }
+    },
+    {
+      "name": "Research overview wheel zoom is continuous and survives close/reopen 320x740",
+      "status": "pass",
+      "ms": 300,
+      "evidence": {
+        "before": {
+          "selected": "qa-node-0",
+          "x": 20,
+          "y": 120,
+          "scale": 0.2,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "zoomed": {
+          "selected": "qa-node-0",
+          "x": -7.4539420118610735,
+          "y": 113.46861863427499,
+          "scale": 0.244280551632034,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "restored": {
+          "selected": "qa-node-0",
+          "x": -7.4539420118610735,
+          "y": 113.46861863427499,
+          "scale": 0.244280551632034,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "ratio": 1.2214027581601699
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "research-final-1440x960-light",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": -8.399999999999999,
+          "y": 195.3,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "../screenshots/research-desktop-light.png",
+      "committed": true
+    },
+    {
+      "name": "research-final-1440x960-dark",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": -8.399999999999999,
+          "y": 195.3,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "research-final-1440x960-dark.png",
+      "committed": false
+    },
+    {
+      "name": "research-fit-1440x960",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 19.999999999999943,
+          "y": 208.89919354838707,
+          "scale": 0.7693548387096775,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "research-fit-1440x960.png",
+      "committed": false
+    },
+    {
+      "name": "research-final-320x740-light",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 1.200000000000017,
+          "y": 61.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "research-final-320x740-light.png",
+      "committed": false
+    },
+    {
+      "name": "research-final-320x740-dark",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 1.200000000000017,
+          "y": 61.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "research-final-320x740-dark.png",
+      "committed": false
+    },
+    {
+      "name": "research-fit-320x740",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 20,
+          "y": 120,
+          "scale": 0.2,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "../screenshots/research-mobile-overview.png",
+      "committed": true
+    }
+  ],
+  "errors": [],
+  "layouts": [],
+  "sourceSha256AtStart": {
+    "projection-viewer.ts": "ea56269913f27fa6c4e422c160a380328db620d0e8738945699f9899ed4f0d4d",
+    "research-projection.ts": "bc45f9f80258b7de9755a8353961970a1a51f7fa984fa6f720d5cd244845f649",
+    "cube-projection.ts": "adc4f1de7ad7a18a9c25516cf6064a33d0f4906e99abc34439b2e8ebeba9069a",
+    "cube-rotation.ts": "6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972",
+    "projection.css": "03ada7330f551b1d4c62c3b02201dca59c229c8bafadb692def45dd3599cfff1",
+    "archive-template.css": "a1c4aad3639e7ab8e6334337739f797a382e8b19ea98cf7a208a797305e10a8a"
+  },
+  "finishedAt": "2026-11-18T17:39:58.093Z",
+  "elapsedSeconds": 11.984,
+  "summary": {
+    "pass": 7,
+    "fail": 0,
+    "pageErrors": 0,
+    "screenshots": 6
+  },
+  "mode": "fit",
+  "evidencePhase": "final-targeted-research-follow-up",
+  "artifactPolicy": "Complete check/state/layout evidence is retained. Only four representative generic screenshots are committed; omitted images remain local review artifacts."
+}

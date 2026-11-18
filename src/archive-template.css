@@ -1,13 +1,18 @@
-/* One scrollable dossier: bound cover, mounted image, and a separate writing leaf.
-   The persistent surface keeps its geometry during exit; theme colors interpolate. */
+/* One material language for the archive, its reading surface and its projection.
+   Theme variables interpolate with the existing scene; no translucent text or blur. */
+:root {
+  --optical-ink: var(--theme-ink, #080a08);
+  --optical-body: color-mix(in srgb, var(--theme-ink, #080a08) 88%, var(--theme-muted, #77756d));
+  --optical-muted: color-mix(in srgb, var(--theme-muted, #77756d) 78%, var(--theme-ink, #080a08));
+  --optical-plane: color-mix(in srgb, var(--theme-panel, #edebe4) 97%, transparent);
+  --optical-field: color-mix(in srgb, var(--theme-field, #e7e3d9) 72%, var(--theme-panel, #edebe4));
+  --optical-line: color-mix(in srgb, var(--theme-line, #aaa59a) 64%, transparent);
+  --optical-edge: color-mix(in srgb, var(--theme-ink, #080a08) 16%, transparent);
+  --optical-accent: var(--theme-accent, #9b7247);
+}
+
+/* Keep the reading plane in place until the existing exit transition finishes. */
 .detail-ui .detail-content {
-  --dossier-cover: color-mix(in srgb, var(--theme-field, #e7e3d9) 92%, var(--theme-line, #aaa59a));
-  --dossier-sheet: var(--theme-panel, #edebe4);
-  --dossier-line: color-mix(in srgb, var(--theme-line, #aaa59a) 75%, var(--theme-ink, #080a08));
-  --dossier-edge: color-mix(in srgb, var(--theme-field, #e7e3d9) 70%, var(--theme-line, #aaa59a));
-  --dossier-ink: color-mix(in srgb, var(--theme-ink, #080a08) 84%, var(--theme-muted, #77756d));
-  --dossier-muted: var(--theme-muted, #77756d);
-  --dossier-accent: var(--theme-accent, #9b7247);
   left: auto;
   right: 6.7%;
   top: 195px;
@@ -15,86 +20,117 @@
   width: min(680px, 41%);
   max-height: none;
   overflow-y: auto;
-  padding: 24px 28px 30px 40px;
-  color: var(--dossier-ink);
-  background: linear-gradient(90deg, var(--dossier-edge) 0 11px, var(--dossier-line) 11px 12px, transparent 12px), var(--dossier-cover);
-  border: 1px solid var(--dossier-line);
-  border-top: 4px solid var(--theme-ink, #080a08);
-  box-shadow: 3px 3px 0 var(--dossier-edge), 4px 4px 0 var(--dossier-line), 7px 7px 0 var(--dossier-sheet), 8px 8px 0 var(--dossier-line), 0 18px 40px #0000001a;
+  padding: 30px 34px 32px;
+  color: var(--optical-ink);
+  background: var(--optical-plane);
+  border: 1px solid var(--optical-line);
+  box-shadow: inset 1px 1px 0 #ffffff28, 2px 0 0 var(--optical-edge), 0 16px 40px #0000000b;
   scrollbar-width: thin;
-  scrollbar-color: var(--dossier-line) transparent;
+  scrollbar-color: var(--optical-line) transparent;
   overscroll-behavior: contain;
   overflow-wrap: anywhere;
 }
-
 .detail-ui .object-caption { display: none; }
-.record-image-header, .record-image-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--dossier-muted); font-size: 10px; letter-spacing: 1.2px; }
-.record-image-header { padding-bottom: 12px; font-weight: 600; }
-.record-image-header span:last-child { color: var(--dossier-ink); font-variant-numeric: tabular-nums; letter-spacing: 2px; }
-.record-image-stage { height: 225px; overflow: hidden; display: flex; align-items: center; justify-content: center; perspective: 1100px; background: var(--dossier-edge); border: 5px solid var(--dossier-sheet); outline: 1px solid var(--dossier-line); box-shadow: 0 2px 4px #00000018; cursor: grab; touch-action: pan-y; }
+.record-heading { position: relative; }
+.detail-ui .detail-kicker { align-items: center; gap: 12px; flex-wrap: wrap; font-size: 11px; letter-spacing: 1.5px; }
+.detail-ui .detail-kicker span:first-child { color: var(--optical-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.detail-ui .detail-kicker span:last-child { color: var(--optical-muted); font-size: 10px; line-height: 1.5; }
+.detail-ui .detail-kicker span:last-child::before { content: ""; display: inline-block; width: 4px; height: 4px; margin-right: 7px; background: var(--optical-accent); vertical-align: middle; }
+.detail-ui .detail-content h2 { margin: 19px 0 9px; max-width: 100%; font-size: 32px; font-weight: 600; line-height: 1.16; letter-spacing: -.7px; color: var(--optical-ink); overflow-wrap: anywhere; }
+.detail-ui .detail-title-cn { gap: 14px; flex-wrap: wrap; font-size: 22px; font-weight: 400; }
+.detail-ui .detail-title-cn > span { color: var(--optical-muted); font-size: 11px; font-weight: 400; }
+.detail-ui .detail-content .detail-rule { height: 1px; margin-top: 25px; background: var(--optical-edge); }
+.detail-ui .detail-content .record-abstract { margin: 24px 0; color: var(--optical-body); font-size: 18px; line-height: 1.9; text-align: left; }
+.detail-ui .detail-content .record-abstract p { margin: 0; color: inherit; font: inherit; }
+
+/* Catalog fields use alignment and a shared datum, without individual boxes. */
+.detail-ui .metadata { margin: 22px 0; padding: 0 0 22px; gap: 20px 28px; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 0; border-bottom: 1px solid var(--optical-line); background: none; }
+.detail-ui .metadata > div { min-width: 0; padding: 0; border: 0; }
+.detail-ui .metadata dt { color: var(--optical-muted); font-size: 11px; line-height: 1.6; font-weight: 400; }
+.detail-ui .metadata dd { color: var(--optical-ink); margin-top: 7px; line-height: 1.6; }
+.detail-ui .metadata dd i { background: var(--optical-accent); }
+.detail-ui .detail-content .detail-tabs { gap: 28px; padding: 0; border-bottom: 1px solid var(--optical-line); }
+.detail-ui .detail-tabs button { min-height: 44px; padding: 10px 0 13px; border: 0; background: none; color: var(--optical-muted); }
+.detail-ui .detail-tabs button.active { color: var(--optical-ink); font-weight: 600; box-shadow: none; }
+.detail-ui .detail-tabs button:focus-visible { outline: 2px solid var(--optical-accent); outline-offset: 3px; }
+.detail-ui .detail-content .tab-indicator { background: var(--optical-accent); }
+.detail-ui .tab-panel { height: auto; min-height: 120px; max-height: none; overflow: visible; padding: 24px 0 10px; border: 0; background: none; box-shadow: none; }
+.detail-ui .panel-label { color: var(--optical-muted); font-size: 11px; font-weight: 400; letter-spacing: 1.2px; }
+.detail-ui .detail-content .tab-panel p { color: var(--optical-body); font-size: 18px; line-height: 1.9; text-align: left; }
+.detail-ui .tab-panel .research-notes li { margin: 0; padding: 14px 0; border-bottom: 1px solid var(--optical-line); color: var(--optical-body); font-size: 16px; line-height: 1.9; }
+.detail-ui .research-notes li:last-child { border-bottom: 0; padding-bottom: 0; }
+.detail-ui .research-notes li > span { flex: 0 0 22px; color: var(--optical-accent); font-weight: 400; font-variant-numeric: tabular-nums; line-height: 30px; }
+.detail-ui .log-row { flex-wrap: wrap; margin-top: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--optical-line); gap: 8px 12px; }
+.detail-ui .log-row b { color: var(--optical-muted); }
+
+/* A projection is a view of this record. Its invitation repeats the source ID. */
+.record-projection-entry { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 100%; min-height: 64px; margin: 24px 0; padding: 16px 18px; border: 0; border-left: 2px solid var(--optical-accent); background: var(--optical-field); color: var(--optical-ink); text-align: left; text-decoration: none; }
+.record-projection-entry strong { display: block; font-size: 16px; line-height: 1.6; font-weight: 600; }
+.record-projection-entry small { display: block; margin-top: 5px; color: var(--optical-muted); font-size: 12px; line-height: 1.65; }
+.record-projection-entry > span[aria-hidden="true"] { flex: 0 0 auto; font-size: 24px; }
+.record-projection-entry:hover { background: color-mix(in srgb, var(--optical-field) 92%, var(--optical-accent)); }
+.record-projection-entry:focus-visible { outline: 2px solid var(--optical-accent); outline-offset: 4px; }
+.record-diagram-preview { display: block; width: 100%; margin: 22px 0; padding: 12px 0; color: var(--optical-ink); text-align: left; }
+.record-diagram-preview svg { display: block; width: 100%; height: auto; max-height: 190px; overflow: visible; }
+.record-diagram-preview > span, .record-diagram-preview > small { display: block; margin-top: 12px; color: var(--optical-muted); font-size: 11px; letter-spacing: .5px; line-height: 1.6; }
+
+/* Narrative archives retain a continuous, comfortable reading column. */
+.record-story { max-width: 38em; }
+.record-story section { margin-top: 38px; }
+.record-story section:first-child { margin-top: 0; }
+.detail-ui .record-story h3 { margin: 10px 0 18px; color: var(--optical-ink); font-size: 24px; font-weight: 600; line-height: 1.5; }
+.detail-ui .detail-content .record-story p { margin: 18px 0; color: var(--optical-body); font-size: 18px; line-height: 1.95; }
+.record-chapter-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 20px; margin: 20px 0 12px; color: var(--optical-muted); font-size: 11px; line-height: 1.7; letter-spacing: 1px; }
+.record-chapter-meta strong { color: var(--optical-ink); font-weight: 400; }
+
+/* Real archive images keep a quiet instrument edge; missing media has no frame. */
+.record-image-header, .record-image-tools { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--optical-muted); font-size: 10px; letter-spacing: 1px; }
+.record-image-header { margin-top: 24px; padding-bottom: 10px; }
+.record-image-header span:last-child { color: var(--optical-ink); font-variant-numeric: tabular-nums; }
+.record-image-stage { height: 225px; margin: 24px 0; overflow: hidden; display: flex; align-items: center; justify-content: center; perspective: 1100px; background: var(--optical-field); border: 1px solid var(--optical-line); touch-action: pan-y; }
 .record-image-stage.is-dragging { cursor: grabbing; }
 .record-image { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; pointer-events: none; transition: transform 200ms ease; }
 .record-image-stage.is-dragging .record-image { transition: none; }
-.record-image-tools { padding: 12px 0 24px; flex-wrap: wrap; }
+.record-image-tools { padding: 10px 0 20px; }
 .record-image-tools div { display: flex; align-items: center; gap: 6px; }
-.record-image-tools button { min-width: 36px; min-height: 36px; border: 1px solid var(--dossier-line); background: var(--dossier-sheet); color: var(--dossier-ink); font-size: 10px; padding: 0 9px; }
-.record-image-tools button:hover { background: var(--dossier-edge); }
-.record-image-tools button:focus-visible { outline: 2px solid var(--dossier-accent); outline-offset: 3px; }
-
-.detail-ui .detail-kicker { gap: 12px; flex-wrap: wrap; }
-.detail-ui .detail-kicker span:first-child { padding: 6px 9px; background: var(--theme-ink, #080a08); color: var(--theme-paper, #eae5e1); font-weight: 600; line-height: 1.3; }
-.detail-ui .detail-kicker span:last-child { padding: 5px 8px; border: 1px solid var(--dossier-accent); color: var(--dossier-accent); font-size: 9px; font-weight: 600; letter-spacing: 1.3px; line-height: 1.3; }
-.detail-ui .detail-content h2 { margin: 17px 0 9px; max-width: 100%; font-size: 31px; font-weight: 600; letter-spacing: -.8px; color: var(--dossier-ink); overflow-wrap: anywhere; }
-.detail-ui .detail-title-cn { gap: 12px; flex-wrap: wrap; font-size: 22px; font-weight: 600; }
-.detail-ui .detail-title-cn > span { color: var(--dossier-muted); font-weight: 400; }
-.detail-ui .detail-rule { height: 3px; margin-top: 20px; background: linear-gradient(90deg, var(--theme-ink, #080a08) 0 64px, var(--dossier-line) 64px); }
-.detail-ui .metadata { margin: 18px 0 22px; gap: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--dossier-line); background: color-mix(in srgb, var(--dossier-sheet) 45%, var(--dossier-cover)); }
-.detail-ui .metadata > div { min-width: 0; padding: 12px 14px; }
-.detail-ui .metadata > div:nth-child(odd) { border-right: 1px solid var(--dossier-line); }
-.detail-ui .metadata > div:nth-child(-n+2) { border-bottom: 1px solid var(--dossier-line); }
-.detail-ui .metadata dt { color: var(--dossier-muted); font-size: 11px; line-height: 1.6; font-weight: 600; }
-.detail-ui .metadata dd { color: var(--dossier-ink); margin-top: 6px; line-height: 1.55; }
-.detail-ui .metadata dd i { background: var(--dossier-accent); }
-
-.detail-ui .detail-tabs { gap: 5px; padding-left: 4px; border-color: var(--dossier-line); }
-.detail-ui .detail-tabs button { min-height: 44px; padding: 11px 12px; margin-bottom: -1px; border: 1px solid transparent; border-bottom: 0; color: var(--dossier-muted); }
-.detail-ui .detail-tabs button.active { border-color: var(--dossier-line); background: var(--dossier-sheet); color: var(--dossier-ink); box-shadow: inset 0 2px 0 var(--theme-ink, #080a08); }
-.detail-ui .detail-tabs button:focus-visible { outline: 2px solid var(--dossier-accent); outline-offset: -4px; }
-.detail-ui .tab-indicator { z-index: 1; background: var(--dossier-accent); }
-.detail-ui .tab-panel { height: auto; min-height: 150px; max-height: none; overflow: visible; padding: 21px 22px 25px 26px; border: 1px solid var(--dossier-line); border-top: 0; background: var(--dossier-sheet); box-shadow: inset 4px 0 0 var(--dossier-edge), 0 3px 0 var(--dossier-edge), 0 4px 0 var(--dossier-line); }
-.detail-ui .panel-label { display: flex; align-items: center; gap: 8px; color: var(--dossier-muted); font-weight: 600; letter-spacing: 1.2px; }
-.detail-ui .panel-label::before { content: ""; flex: 0 0 15px; height: 2px; background: var(--dossier-accent); }
-.detail-ui .detail-content .tab-panel p { color: var(--dossier-ink); font-size: 18px; line-height: 1.95; text-align: left; }
-.detail-ui .tab-panel .research-notes li { margin: 0; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--dossier-line) 40%, transparent); color: var(--dossier-ink); font-size: 16px; line-height: 1.85; }
-.detail-ui .research-notes li:last-child { border-bottom: 0; padding-bottom: 0; }
-.detail-ui .research-notes li > span { flex: 0 0 20px; color: var(--dossier-accent); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 25px; }
-.detail-ui .log-row { flex-wrap: wrap; margin-top: 16px; padding-bottom: 12px; border-bottom: 1px solid color-mix(in srgb, var(--dossier-line) 40%, transparent); gap: 8px 12px; }
-.detail-ui .log-row b { color: var(--dossier-accent); }
-.detail-ui .detail-actions { margin-top: 25px; gap: 20px; }
+.record-image-tools button { min-width: 36px; min-height: 36px; border: 1px solid var(--optical-line); color: var(--optical-ink); font-size: 10px; padding: 0 9px; }
+.record-image-tools button:hover { background: var(--optical-field); }
+.record-image-tools button:focus-visible { outline: 2px solid var(--optical-accent); outline-offset: 3px; }
+.detail-ui .detail-actions { margin-top: 28px; gap: 20px; }
 .detail-ui .solid-button { min-width: 0; min-height: 48px; height: auto; padding: 12px 16px; flex-wrap: wrap; gap: 5px 12px; line-height: 1.5; }
 .detail-ui .export-button { flex: 0 0 90px; min-height: 48px; white-space: nowrap; overflow-wrap: normal; }
-.detail-ui .detail-footnote { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--dossier-line); color: var(--dossier-muted); line-height: 1.8; gap: 12px; flex-wrap: wrap; }
+.detail-ui .detail-footnote { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--optical-line); color: var(--optical-muted); line-height: 1.8; gap: 12px; flex-wrap: wrap; }
 .detail-ui .detail-footnote > span:last-child { font-variant-numeric: tabular-nums; letter-spacing: 1.5px; }
 
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-content { top: 130px; right: var(--edge); bottom: 48px; left: auto; width: min(52%, 600px); padding: 18px 18px 24px 28px; border: 1px solid var(--dossier-line); border-top: 4px solid var(--theme-ink, #080a08); background: linear-gradient(90deg, var(--dossier-edge) 0 7px, var(--dossier-line) 7px 8px, transparent 8px), var(--dossier-cover); box-shadow: 2px 2px 0 var(--dossier-edge), 3px 3px 0 var(--dossier-line), 5px 5px 0 var(--dossier-sheet), 6px 6px 0 var(--dossier-line), 0 12px 28px #0000001a; }
-:is([data-layout="compact"], [data-layout="portrait"]) .record-image-stage { height: 145px; border-width: 4px; }
-:is([data-layout="compact"], [data-layout="portrait"]) .record-image-tools { gap: 8px; padding-bottom: 20px; font-size: 9px; letter-spacing: .7px; }
-:is([data-layout="compact"], [data-layout="portrait"]) .record-image-tools button { min-height: 44px; min-width: 44px; }
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-content h2 { font-size: 26px; }
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-title-cn { font-size: 19px; }
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .metadata > div { padding: 10px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-content { top: 130px; right: var(--edge); bottom: 48px; left: auto; width: min(52%, 600px); padding: 22px 24px; border: 1px solid var(--optical-line); box-shadow: inset 1px 1px 0 #ffffff28, 2px 0 0 var(--optical-edge); }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-content h2 { font-size: 27px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-title-cn { font-size: 20px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .metadata { gap: 18px; }
 :is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .metadata dt { font-size: 10px; letter-spacing: .3px; }
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-tabs { gap: 3px; padding-left: 0; }
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-tabs button { flex: 1 1 0; min-width: 0; padding: 9px 6px; font-size: 9px; }
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-tabs button span { margin-left: 4px; font-size: 11px; white-space: nowrap; }
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .tab-panel { padding: 18px 14px 21px 18px; }
-:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .tab-panel p, :is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .research-notes li { font-size: 15px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-tabs { gap: 18px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-tabs button { flex: 1 1 0; min-width: 0; padding: 10px 0; font-size: 10px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-tabs button span { margin-left: 5px; font-size: 12px; white-space: nowrap; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .tab-panel { padding-top: 22px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui :is(.tab-panel p, .research-notes li, .record-abstract, .record-story p) { font-size: 16px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .record-story h3 { font-size: 22px; }
 :is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .detail-actions { gap: 12px; }
 :is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .solid-button { padding: 10px 12px; }
 :is([data-layout="compact"], [data-layout="portrait"]) .detail-ui .export-button { flex-basis: 88px; }
-[data-layout="portrait"] .detail-ui .detail-content { top: 125px; right: var(--edge); bottom: 48px; left: var(--edge); width: auto; }
-[data-layout="portrait"] .record-image-stage { height: clamp(150px, 25vh, 240px); }
+:is([data-layout="compact"], [data-layout="portrait"]) .record-image-stage { height: 160px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .record-image-tools { gap: 8px; font-size: 10px; letter-spacing: .6px; }
+:is([data-layout="compact"], [data-layout="portrait"]) .record-image-tools button { min-height: 44px; min-width: 44px; }
+[data-layout="portrait"] .detail-ui .detail-content { top: clamp(220px, 38%, 340px); right: var(--edge); bottom: 48px; left: var(--edge); width: auto; }
+[data-layout="portrait"] .record-image-stage { height: clamp(150px, 24vh, 220px); }
+@media (max-width: 370px) {
+  [data-layout="portrait"] .brand { transform: scale(.36) !important; }
+  [data-layout="portrait"] .detail-ui .detail-content { padding-inline: 18px; }
+  [data-layout="portrait"] .detail-ui .detail-tabs { gap: 10px; }
+  [data-layout="portrait"] .detail-ui .detail-actions { flex-wrap: wrap; }
+  [data-layout="portrait"] .detail-ui .solid-button { flex-basis: 100%; }
+}
+@media (max-height: 440px) and (orientation: landscape) {
+  [data-layout="compact"] .detail-ui .detail-content { top: 92px; bottom: 32px; padding: 18px 20px; }
+}
 @media (prefers-reduced-motion: reduce) { .record-image { transition: none; } }
-
 .brand-analysis { letter-spacing: 3px; }
 [data-mode="detail"] .powered { display: none; }

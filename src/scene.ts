@@ -20,7 +20,7 @@ import { applyTextureQuality, resizeQuality } from "./quality-renderer";
 import { CardAppearance } from "./appearance";
 import { configureInternalOptics } from "./internal-optics";
 import { DecryptionController } from "./decryption";
-import { fileAtSlot, fileLocation } from "./data";
+import { fileAtSlot, fileLocation, columnFiles, archiveLanePeriod, archiveRowPeriod } from "./data";
 import {
   cellKey,
   sameCell,
@@ -63,6 +63,9 @@ const ease = (t: number) => {
   t = THREE.MathUtils.clamp(t, 0, 1);
   return t * t * t * (t * (t * 6 - 15) + 10);
 };
+// Keep the original third-column reference pose where available. A smaller
+// collection starts from an actual record before mode/selection binding runs.
+const initialArchiveLocation = fileLocation(columnFiles(Math.min(2, archiveLanePeriod - 1))[0]);
 export class ArchiveScene {
   private inputEvents = new AbortController();
   private presence = 1;
@@ -193,13 +196,13 @@ export class ArchiveScene {
   private raycaster = new THREE.Raycaster();
   private dummy = new THREE.Object3D();
   private cells: ArchiveCell[] = [];
-  private selectedCell: ArchiveCell = { lane: 2, row: 12 };
+  private selectedCell: ArchiveCell = { lane: initialArchiveLocation.lane, row: initialArchiveLocation.row };
   private looping = false;
   private coordinateOrigin: ArchiveCell = { lane: 0, row: 0 };
   private lift = { value: 0, velocity: 0 };
   private rail = { value: 0, velocity: 0 };
   private shoulder = { value: 12, velocity: 0 };
-  private laneFocus = { value: 2, velocity: 0 };
+  private laneFocus = { value: initialArchiveLocation.lane, velocity: 0 };
   private columnCamera = { value: 0, velocity: 0 };
   private returnY: number | null = null;
   private canInspect = false;
@@ -220,7 +223,7 @@ export class ArchiveScene {
   }[] = [];
   private pulses: SelectionPulse[] = [];
   private pendingPulse: ArchiveCell | null = null;
-  private selectedSlot = 76;
+  private selectedSlot = initialArchiveLocation.slot;
   private detail = 0;
   private targetDetail = 0;
   private reveal = 0;
@@ -682,11 +685,11 @@ export class ArchiveScene {
     const shift = {
       lane:
         Math.abs(this.selectedCell.lane) > 2048
-          ? Math.round((this.selectedCell.lane - 2) / 5) * 5
+          ? Math.round((this.selectedCell.lane - 2) / archiveLanePeriod) * archiveLanePeriod
           : 0,
       row:
         Math.abs(this.selectedCell.row) > 2048
-          ? Math.floor((this.selectedCell.row - 12) / 8) * 8
+          ? Math.floor((this.selectedCell.row - 12) / archiveRowPeriod) * archiveRowPeriod
           : 0,
     };
     if (!shift.lane && !shift.row) return;

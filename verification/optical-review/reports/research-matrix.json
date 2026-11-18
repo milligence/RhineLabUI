@@ -1,0 +1,1553 @@
+{
+  "scope": "Actual isolated product modules and CSS; synthetic research fixture; generic 3³ Cube",
+  "render": "Native DOM/CSS rendering of the research projection; Cube WebGL was not exercised in this run.",
+  "startedAt": "2026-11-18T17:22:26.725Z",
+  "checks": [
+    {
+      "name": "Research pointer node selection synchronizes retrospective",
+      "status": "pass",
+      "ms": 82,
+      "evidence": {
+        "selected": "qa-node-1",
+        "x": -8.399999999999999,
+        "y": 195.3,
+        "scale": 0.84,
+        "playing": false,
+        "nodeCount": 5,
+        "retrospectiveNode": "qa-node-1",
+        "reducedMotion": false
+      }
+    },
+    {
+      "name": "Research timeline scrub selects matching node",
+      "status": "pass",
+      "ms": 25,
+      "evidence": {
+        "selected": "qa-node-2",
+        "x": -8.399999999999999,
+        "y": 195.3,
+        "scale": 0.84,
+        "playing": false,
+        "nodeCount": 5,
+        "retrospectiveNode": "qa-node-2",
+        "reducedMotion": false
+      }
+    },
+    {
+      "name": "Research replay advances and pause freezes its timeline",
+      "status": "pass",
+      "ms": 6060,
+      "evidence": {
+        "before": "1.02",
+        "after": "1.02",
+        "state": {
+          "selected": "qa-node-1",
+          "x": -8.399999999999999,
+          "y": 195.3,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-1",
+          "reducedMotion": false
+        }
+      }
+    },
+    {
+      "name": "Research pan and wheel zoom operate without changing selected node",
+      "status": "pass",
+      "ms": 841,
+      "evidence": {
+        "before": {
+          "selected": "qa-node-1",
+          "x": -8.399999999999999,
+          "y": 195.3,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-1",
+          "reducedMotion": false
+        },
+        "after": {
+          "selected": "qa-node-1",
+          "x": -37.595148849879024,
+          "y": 100.55536364506946,
+          "scale": 1.0259783168545427,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-1",
+          "reducedMotion": false
+        }
+      }
+    },
+    {
+      "name": "Research view state survives close/reopen; Escape restores opener focus",
+      "status": "pass",
+      "ms": 987,
+      "evidence": {
+        "before": {
+          "selected": "qa-node-1",
+          "x": -37.595148849879024,
+          "y": 100.55536364506946,
+          "scale": 1.0259783168545427,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-1",
+          "reducedMotion": false
+        },
+        "after": {
+          "selected": "qa-node-1",
+          "x": -37.595148849879024,
+          "y": 100.55536364506946,
+          "scale": 1.0259783168545427,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-1",
+          "reducedMotion": false
+        }
+      }
+    },
+    {
+      "name": "Projection traps keyboard focus",
+      "status": "pass",
+      "ms": 24,
+      "evidence": {
+        "tag": "INPUT",
+        "inside": true
+      }
+    },
+    {
+      "name": "Research reduced motion can be enabled while open",
+      "status": "pass",
+      "ms": 26,
+      "evidence": {
+        "selected": "qa-node-1",
+        "x": -37.595148849879024,
+        "y": 100.55536364506946,
+        "scale": 1.0259783168545427,
+        "playing": false,
+        "nodeCount": 5,
+        "retrospectiveNode": "qa-node-1",
+        "reducedMotion": true
+      }
+    },
+    {
+      "name": "Desktop research layout stays in viewport",
+      "status": "pass",
+      "ms": 29,
+      "evidence": {
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "document": {
+          "width": 1440,
+          "height": 960
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 960,
+            "scrollWidth": 1440,
+            "clientWidth": 1440,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 48.953125,
+            "y": 28,
+            "width": 1342.09375,
+            "height": 89.6875,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 1342.09375,
+            "height": 796.3125,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".research-stage": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 994.09375,
+            "height": 709.3125,
+            "scrollWidth": 1235,
+            "clientWidth": 994,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-inspector": {
+            "x": 1071.046875,
+            "y": 141.6875,
+            "width": 320,
+            "height": 709.3125,
+            "scrollWidth": 319,
+            "clientWidth": 319,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".projection-timeline": {
+            "x": 48.953125,
+            "y": 875,
+            "width": 1342.09375,
+            "height": 63,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-toolbar": null,
+          ".cube-stage": null,
+          ".cube-inspector": null
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "research visual/layout 1440x960-light",
+      "status": "pass",
+      "ms": 943,
+      "evidence": {
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "document": {
+          "width": 1440,
+          "height": 960
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 960,
+            "scrollWidth": 1440,
+            "clientWidth": 1440,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 48.953125,
+            "y": 28,
+            "width": 1342.09375,
+            "height": 89.6875,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 1342.09375,
+            "height": 796.3125,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".research-stage": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 994.09375,
+            "height": 709.3125,
+            "scrollWidth": 1033,
+            "clientWidth": 994,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-inspector": {
+            "x": 1071.046875,
+            "y": 141.6875,
+            "width": 320,
+            "height": 709.3125,
+            "scrollWidth": 319,
+            "clientWidth": 319,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".projection-timeline": {
+            "x": 48.953125,
+            "y": 875,
+            "width": 1342.09375,
+            "height": 63,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-toolbar": null,
+          ".cube-stage": null,
+          ".cube-inspector": null
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "research visual/layout 1440x960-dark",
+      "status": "pass",
+      "ms": 1186,
+      "evidence": {
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "document": {
+          "width": 1440,
+          "height": 960
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 960,
+            "scrollWidth": 1440,
+            "clientWidth": 1440,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 48.953125,
+            "y": 28,
+            "width": 1342.09375,
+            "height": 89.6875,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 1342.09375,
+            "height": 796.3125,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".research-stage": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 994.09375,
+            "height": 709.3125,
+            "scrollWidth": 1033,
+            "clientWidth": 994,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-inspector": {
+            "x": 1071.046875,
+            "y": 141.6875,
+            "width": 320,
+            "height": 709.3125,
+            "scrollWidth": 319,
+            "clientWidth": 319,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".projection-timeline": {
+            "x": 48.953125,
+            "y": 875,
+            "width": 1342.09375,
+            "height": 63,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-toolbar": null,
+          ".cube-stage": null,
+          ".cube-inspector": null
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "research visual/layout 390x844-light",
+      "status": "pass",
+      "ms": 708,
+      "evidence": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "width": 390,
+          "height": 844
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "scrollWidth": 390,
+            "clientWidth": 390,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 16,
+            "y": 18,
+            "width": 358,
+            "height": 123.75,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 16,
+            "y": 153.75,
+            "width": 358,
+            "height": 676.25,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".research-stage": {
+            "x": 16,
+            "y": 153.75,
+            "width": 358,
+            "height": 300,
+            "scrollWidth": 1078,
+            "clientWidth": 358,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-inspector": {
+            "x": 16,
+            "y": 453.75,
+            "width": 358,
+            "height": 874.921875,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-timeline": {
+            "x": 16,
+            "y": 735,
+            "width": 358,
+            "height": 95,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-toolbar": null,
+          ".cube-stage": null,
+          ".cube-inspector": null
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "research visual/layout 390x844-dark",
+      "status": "pass",
+      "ms": 765,
+      "evidence": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "width": 390,
+          "height": 844
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "scrollWidth": 390,
+            "clientWidth": 390,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 16,
+            "y": 18,
+            "width": 358,
+            "height": 123.75,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 16,
+            "y": 153.75,
+            "width": 358,
+            "height": 676.25,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".research-stage": {
+            "x": 16,
+            "y": 153.75,
+            "width": 358,
+            "height": 300,
+            "scrollWidth": 1078,
+            "clientWidth": 358,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-inspector": {
+            "x": 16,
+            "y": 453.75,
+            "width": 358,
+            "height": 874.921875,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-timeline": {
+            "x": 16,
+            "y": 735,
+            "width": 358,
+            "height": 95,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-toolbar": null,
+          ".cube-stage": null,
+          ".cube-inspector": null
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "research visual/layout 320x740-light",
+      "status": "pass",
+      "ms": 861,
+      "evidence": {
+        "viewport": {
+          "width": 320,
+          "height": 740
+        },
+        "document": {
+          "width": 320,
+          "height": 740
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 320,
+            "height": 740,
+            "scrollWidth": 320,
+            "clientWidth": 320,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 16,
+            "y": 18,
+            "width": 288,
+            "height": 152.5,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 16,
+            "y": 182.5,
+            "width": 288,
+            "height": 543.5,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".research-stage": {
+            "x": 16,
+            "y": 182.5,
+            "width": 288,
+            "height": 300,
+            "scrollWidth": 1043,
+            "clientWidth": 288,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-inspector": {
+            "x": 16,
+            "y": 482.5,
+            "width": 288,
+            "height": 932.265625,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-timeline": {
+            "x": 16,
+            "y": 631,
+            "width": 288,
+            "height": 95,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-toolbar": null,
+          ".cube-stage": null,
+          ".cube-inspector": null
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "research visual/layout 320x740-dark",
+      "status": "pass",
+      "ms": 543,
+      "evidence": {
+        "viewport": {
+          "width": 320,
+          "height": 740
+        },
+        "document": {
+          "width": 320,
+          "height": 740
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 320,
+            "height": 740,
+            "scrollWidth": 320,
+            "clientWidth": 320,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 16,
+            "y": 18,
+            "width": 288,
+            "height": 152.5,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 16,
+            "y": 182.5,
+            "width": 288,
+            "height": 543.5,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".research-stage": {
+            "x": 16,
+            "y": 182.5,
+            "width": 288,
+            "height": 300,
+            "scrollWidth": 1043,
+            "clientWidth": 288,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-inspector": {
+            "x": 16,
+            "y": 482.5,
+            "width": 288,
+            "height": 932.265625,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-timeline": {
+            "x": 16,
+            "y": 631,
+            "width": 288,
+            "height": 95,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-toolbar": null,
+          ".cube-stage": null,
+          ".cube-inspector": null
+        },
+        "fontLoaded": true
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "research-desktop-light",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": -8.399999999999999,
+          "y": 195.3,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": false
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "research-desktop-light.png",
+      "committed": false
+    },
+    {
+      "name": "research-1440x960-light",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": -8.399999999999999,
+          "y": 195.3,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "research-1440x960-light.png",
+      "committed": false
+    },
+    {
+      "name": "research-1440x960-dark",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": -8.399999999999999,
+          "y": 195.3,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "research-1440x960-dark.png",
+      "committed": false
+    },
+    {
+      "name": "research-390x844-light",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 36.20000000000002,
+          "y": 52.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "artifact": "research-390x844-light.png",
+      "committed": false
+    },
+    {
+      "name": "research-390x844-light-reading",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 36.20000000000002,
+          "y": 52.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "artifact": "research-390x844-light-reading.png",
+      "committed": false
+    },
+    {
+      "name": "research-390x844-dark",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 36.20000000000002,
+          "y": 52.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "artifact": "research-390x844-dark.png",
+      "committed": false
+    },
+    {
+      "name": "research-390x844-dark-reading",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 36.20000000000002,
+          "y": 52.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "artifact": "research-390x844-dark-reading.png",
+      "committed": false
+    },
+    {
+      "name": "research-320x740-light",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 1.200000000000017,
+          "y": 61.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "research-320x740-light.png",
+      "committed": false
+    },
+    {
+      "name": "research-320x740-light-reading",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 1.200000000000017,
+          "y": 61.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "research-320x740-light-reading.png",
+      "committed": false
+    },
+    {
+      "name": "research-320x740-dark",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 1.200000000000017,
+          "y": 61.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "research-320x740-dark.png",
+      "committed": false
+    },
+    {
+      "name": "research-320x740-dark-reading",
+      "stats": {
+        "open": true,
+        "kind": "research",
+        "record": "QA-R01",
+        "research": {
+          "selected": "qa-node-0",
+          "x": 1.200000000000017,
+          "y": 61.900000000000006,
+          "scale": 0.84,
+          "playing": false,
+          "nodeCount": 5,
+          "retrospectiveNode": "qa-node-0",
+          "reducedMotion": true
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "research-320x740-dark-reading.png",
+      "committed": false
+    }
+  ],
+  "errors": [],
+  "layouts": [
+    {
+      "name": "research-desktop-light",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "document": {
+        "width": 1440,
+        "height": 960
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 960,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 48.953125,
+          "y": 28,
+          "width": 1342.09375,
+          "height": 89.6875,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 1342.09375,
+          "height": 796.3125,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".research-stage": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 994.09375,
+          "height": 709.3125,
+          "scrollWidth": 1235,
+          "clientWidth": 994,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-inspector": {
+          "x": 1071.046875,
+          "y": 141.6875,
+          "width": 320,
+          "height": 709.3125,
+          "scrollWidth": 319,
+          "clientWidth": 319,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".projection-timeline": {
+          "x": 48.953125,
+          "y": 875,
+          "width": 1342.09375,
+          "height": 63,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-toolbar": null,
+        ".cube-stage": null,
+        ".cube-inspector": null
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "research-1440x960-light",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "document": {
+        "width": 1440,
+        "height": 960
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 960,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 48.953125,
+          "y": 28,
+          "width": 1342.09375,
+          "height": 89.6875,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 1342.09375,
+          "height": 796.3125,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".research-stage": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 994.09375,
+          "height": 709.3125,
+          "scrollWidth": 1033,
+          "clientWidth": 994,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-inspector": {
+          "x": 1071.046875,
+          "y": 141.6875,
+          "width": 320,
+          "height": 709.3125,
+          "scrollWidth": 319,
+          "clientWidth": 319,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".projection-timeline": {
+          "x": 48.953125,
+          "y": 875,
+          "width": 1342.09375,
+          "height": 63,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-toolbar": null,
+        ".cube-stage": null,
+        ".cube-inspector": null
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "research-1440x960-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "document": {
+        "width": 1440,
+        "height": 960
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 960,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 48.953125,
+          "y": 28,
+          "width": 1342.09375,
+          "height": 89.6875,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 1342.09375,
+          "height": 796.3125,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".research-stage": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 994.09375,
+          "height": 709.3125,
+          "scrollWidth": 1033,
+          "clientWidth": 994,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-inspector": {
+          "x": 1071.046875,
+          "y": 141.6875,
+          "width": 320,
+          "height": 709.3125,
+          "scrollWidth": 319,
+          "clientWidth": 319,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".projection-timeline": {
+          "x": 48.953125,
+          "y": 875,
+          "width": 1342.09375,
+          "height": 63,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-toolbar": null,
+        ".cube-stage": null,
+        ".cube-inspector": null
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "research-390x844-light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "document": {
+        "width": 390,
+        "height": 844
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 16,
+          "y": 18,
+          "width": 358,
+          "height": 123.75,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 16,
+          "y": 153.75,
+          "width": 358,
+          "height": 676.25,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".research-stage": {
+          "x": 16,
+          "y": 153.75,
+          "width": 358,
+          "height": 300,
+          "scrollWidth": 1078,
+          "clientWidth": 358,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-inspector": {
+          "x": 16,
+          "y": 453.75,
+          "width": 358,
+          "height": 874.921875,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-timeline": {
+          "x": 16,
+          "y": 735,
+          "width": 358,
+          "height": 95,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-toolbar": null,
+        ".cube-stage": null,
+        ".cube-inspector": null
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "research-390x844-dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "document": {
+        "width": 390,
+        "height": 844
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 16,
+          "y": 18,
+          "width": 358,
+          "height": 123.75,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 16,
+          "y": 153.75,
+          "width": 358,
+          "height": 676.25,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".research-stage": {
+          "x": 16,
+          "y": 153.75,
+          "width": 358,
+          "height": 300,
+          "scrollWidth": 1078,
+          "clientWidth": 358,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-inspector": {
+          "x": 16,
+          "y": 453.75,
+          "width": 358,
+          "height": 874.921875,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-timeline": {
+          "x": 16,
+          "y": 735,
+          "width": 358,
+          "height": 95,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-toolbar": null,
+        ".cube-stage": null,
+        ".cube-inspector": null
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "research-320x740-light",
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "document": {
+        "width": 320,
+        "height": 740
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 740,
+          "scrollWidth": 320,
+          "clientWidth": 320,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 16,
+          "y": 18,
+          "width": 288,
+          "height": 152.5,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 16,
+          "y": 182.5,
+          "width": 288,
+          "height": 543.5,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".research-stage": {
+          "x": 16,
+          "y": 182.5,
+          "width": 288,
+          "height": 300,
+          "scrollWidth": 1043,
+          "clientWidth": 288,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-inspector": {
+          "x": 16,
+          "y": 482.5,
+          "width": 288,
+          "height": 932.265625,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-timeline": {
+          "x": 16,
+          "y": 631,
+          "width": 288,
+          "height": 95,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-toolbar": null,
+        ".cube-stage": null,
+        ".cube-inspector": null
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "research-320x740-dark",
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "document": {
+        "width": 320,
+        "height": 740
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 740,
+          "scrollWidth": 320,
+          "clientWidth": 320,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 16,
+          "y": 18,
+          "width": 288,
+          "height": 152.5,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 16,
+          "y": 182.5,
+          "width": 288,
+          "height": 543.5,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".research-stage": {
+          "x": 16,
+          "y": 182.5,
+          "width": 288,
+          "height": 300,
+          "scrollWidth": 1043,
+          "clientWidth": 288,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-inspector": {
+          "x": 16,
+          "y": 482.5,
+          "width": 288,
+          "height": 932.265625,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-timeline": {
+          "x": 16,
+          "y": 631,
+          "width": 288,
+          "height": 95,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-toolbar": null,
+        ".cube-stage": null,
+        ".cube-inspector": null
+      },
+      "fontLoaded": true
+    }
+  ],
+  "finishedAt": "2026-11-18T17:23:31.181Z",
+  "elapsedSeconds": 64.456,
+  "summary": {
+    "pass": 14,
+    "fail": 0,
+    "pageErrors": 0,
+    "screenshots": 11
+  },
+  "mode": "research",
+  "evidencePhase": "earlier-complete-component-matrix",
+  "artifactPolicy": "Complete check/state/layout evidence is retained. Only four representative generic screenshots are committed; omitted images remain local review artifacts."
+}

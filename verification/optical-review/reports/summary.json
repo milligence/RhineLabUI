@@ -1,0 +1,73 @@
+{
+  "scope": "Actual isolated projection components and shared CSS; synthetic research graph and generic 3³ Cube, without any source research content.",
+  "phases": [
+    {
+      "id": "earlier-complete-component-matrix",
+      "reports": [
+        "research-matrix.json",
+        "cube-matrix.json"
+      ],
+      "result": {
+        "pass": 28,
+        "fail": 0,
+        "pageErrors": 0
+      },
+      "viewports": [
+        "1440x960",
+        "390x844",
+        "320x740"
+      ],
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "earlierReviewEndSourceHashSnapshot": {
+        "src/projection-viewer.ts": "f192ddcd8556da2eeda52dba4711442ec6ee52672c9c483174416c1a8a395669",
+        "src/research-projection.ts": "517d30543a1e1c124860a2228b3d31fb98a72567f9308eeb007457abd47df5c4",
+        "src/cube-projection.ts": "adc4f1de7ad7a18a9c25516cf6064a33d0f4906e99abc34439b2e8ebeba9069a",
+        "src/cube-rotation.ts": "6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972",
+        "src/projection.css": "03ada7330f551b1d4c62c3b02201dca59c229c8bafadb692def45dd3599cfff1",
+        "src/archive-template.css": "f6175d8f9e52ad758be1e0fc83b98920ebc197a534f08b3a06d1536a67b0f6a9",
+        "src/theme-ui.ts": "5fb72944e37878926287de5f66589518842559671c63b1d087fb96c108e293fa"
+      }
+    },
+    {
+      "id": "final-targeted-research-follow-up",
+      "reports": [
+        "research-fit.json"
+      ],
+      "result": {
+        "pass": 7,
+        "fail": 0,
+        "pageErrors": 0,
+        "screenshots": 6
+      },
+      "viewports": [
+        "1440x960",
+        "320x740"
+      ],
+      "checks": "Whole-graph fit, Home, continuous wheel zoom after fit, close/reopen state, dispose during animated close, and current thin-edge screenshots",
+      "sourceHashesAtStart": {
+        "projection-viewer.ts": "ea56269913f27fa6c4e422c160a380328db620d0e8738945699f9899ed4f0d4d",
+        "research-projection.ts": "bc45f9f80258b7de9755a8353961970a1a51f7fa984fa6f720d5cd244845f649",
+        "cube-projection.ts": "adc4f1de7ad7a18a9c25516cf6064a33d0f4906e99abc34439b2e8ebeba9069a",
+        "cube-rotation.ts": "6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972",
+        "projection.css": "03ada7330f551b1d4c62c3b02201dca59c229c8bafadb692def45dd3599cfff1",
+        "archive-template.css": "a1c4aad3639e7ab8e6334337739f797a382e8b19ea98cf7a208a797305e10a8a"
+      }
+    }
+  ],
+  "versionBoundary": "Earlier complete-matrix checks were not all rerun after the final research fit, modal-disposal and cosmetic changes. The later targeted report records those specific follow-up checks and its exact source hashes.",
+  "screenshots": [
+    "research-desktop-light.png",
+    "research-mobile-overview.png",
+    "cube-desktop-dark.png",
+    "cube-mobile-dark.png"
+  ],
+  "notCovered": [
+    "Heavyweight complete archive scene",
+    "Physical iPhone/Safari device performance",
+    "Accuracy or completeness of private source research"
+  ],
+  "environment": "Chromium desktop viewport emulation. Cube screenshots use actual Three.js WebGL and visibility pixel readback; no rendering suppression."
+}

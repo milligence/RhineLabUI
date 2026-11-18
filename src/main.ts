@@ -17,6 +17,9 @@ import "./style.css";
 import "./quality-settings.css";
 import "./responsive.css";
 import "./archive-template.css";
+import "./projection.css";
+import { ProjectionViewer } from "./projection-viewer";
+import { sourceMarkup } from "./research-projection";
 import { viewportLayout, openingLayout } from "./viewport-layout";
 import { assetUrl } from "./asset-url";
 import { initPwa, pwaSettingsMarkup } from "./pwa";
@@ -115,6 +118,11 @@ $("#stage").innerHTML = `
   <div id="loading" class="loading"><div class="loading-mark">${logo}</div><span>CONNECTING TO INTERNAL DATABASE</span><i></i></div>
 `;
 
+$(".archive-callout").insertAdjacentHTML("beforeend", '<button class="archive-project-file" data-action="projection" hidden>LAUNCH PROJECTION <span>启动投影 ↗</span></button>');
+$("#column-number").lastChild!.textContent = ` / ${String(archiveColumns.length).padStart(2, "0")}`;
+const projectionViewer = new ProjectionViewer($("#viewport"));
+let projectionRequest = 0;
+
 $("#boot-background").insertAdjacentHTML(
   "beforeend",
   '<div class="boot-white"></div>',
@@ -136,6 +144,8 @@ let modal: "search" | "saved" | "settings" | null = null,
   filter = "全部档案";
 let activeTab = "overview";
 const reviewParams = new URLSearchParams(location.search);
+const initialRecordIndex = records.findIndex(record => record.id === reviewParams.get("record"));
+if (initialRecordIndex >= 0) selected = initialRecordIndex;
 let frozenTime =
   reviewParams.get("freeze") === "1"
     ? Number(reviewParams.get("time") ?? 0)
@@ -372,6 +382,7 @@ function savePrefs() {
   scene?.setQuality(effectiveRenderQuality());
   viewer?.setQuality(effectiveRenderQuality());
   viewer?.setMotion(prefs.motion);
+  projectionViewer.setReducedMotion(!motionActive("surfaceTransitions"));
   syncQualityUI(prefs.rendering);
   updateQualitySummary();
   fileCounter.update({
@@ -478,11 +489,12 @@ fit();
 $("#file-ticks").innerHTML = columnFiles(fileLocation(selected).lane)
   .map((index) => `<button data-select="${index}"></button>`)
   .join("");
-const fileTicks = [
+let fileTicks = [
   ...$("#file-ticks").querySelectorAll<HTMLButtonElement>("button"),
 ];
 
 function setMode(next: Mode) {
+  if (next !== "detail") projectionRequest++;
   if (workbench?.enabled && next === "detail") next = "archive";
   const previousMode = mode;
   rollingTitles.forEach((title) =>
@@ -578,6 +590,7 @@ function stepColumn(direction: number) {
 }
 function updateSelection(navigation?: ArchiveNavigation) {
   const r = records[selected];
+  $<HTMLButtonElement>(".archive-project-file").hidden = !r.projection;
   const { lane } = fileLocation(selected);
   const files = columnFiles(lane);
   selectionTitle.update({
@@ -626,6 +639,10 @@ function updateSelection(navigation?: ArchiveNavigation) {
   });
   $<HTMLButtonElement>('[data-action="column-prev"]').disabled = false;
   $<HTMLButtonElement>('[data-action="column-next"]').disabled = false;
+  if (fileTicks.length !== files.length) {
+    $("#file-ticks").innerHTML = files.map(index => `<button data-select="${index}"></button>`).join("");
+    fileTicks = [...$("#file-ticks").querySelectorAll<HTMLButtonElement>("button")];
+  }
   fileTicks.forEach((button, slot) => {
     const index = files[slot],
       record = records[index];
@@ -659,6 +676,30 @@ function openFile() {
     audio.play("open");
   });
 }
+function openProjection() {
+  const record = records[selected];
+  if (!ready || !record.projection) return;
+  const entryBounds = document.activeElement instanceof HTMLElement ? document.activeElement.getBoundingClientRect() : undefined;
+  const request = ++projectionRequest;
+  const fromArchive = mode !== "detail";
+  if (fromArchive) setMode("detail");
+  const begun = performance.now();
+  const enter = () => {
+    if (request !== projectionRequest || selected !== records.indexOf(record) || mode !== "detail") return;
+    if (fromArchive && scene && scene.detailVisibility < .65 && performance.now() - begun < 1600 && motionActive("detailTransition")) {
+      requestAnimationFrame(enter); return;
+    }
+    pendingDetailFocus = false;
+    $("#detail-content .record-projection-entry")?.focus({ preventScroll: true });
+    projectionViewer.open(record, {
+      reducedMotion: !motionActive("surfaceTransitions"),
+      origin: entryBounds?.width ? { x: entryBounds.left + entryBounds.width / 2, y: entryBounds.top + entryBounds.height / 2 } : undefined,
+      onClose: () => { audio.setScene(mode); audio.play("page-close"); },
+    });
+    audio.setScene("viewer"); audio.play("page-open");
+  };
+  enter();
+}
 function toggleSaved() {
   const id = records[selected].id;
   if (saved.has(id)) saved.delete(id);
@@ -688,16 +729,13 @@ function renderDetail() {
   const r = records[selected];
   $("#object-id").textContent = "NO." + String(selected + 1).padStart(3, "0");
   $("#detail-content").innerHTML = `
-  <div class="record-image-header"><span>VISUAL / 档案图像</span><span>${r.id}</span></div>
-  <div class="record-image-stage" aria-label="可旋转的档案图像，拖动图片或使用旋转按钮">
-    <img class="record-image" src="${escapeHtml(assetUrl(r.image || "archive-images/placeholder.svg"))}" alt="${escapeHtml(r.title)}的档案图像" draggable="false" />
-  </div>
-  <div class="record-image-tools"><span>DRAG TO ROTATE / 拖动旋转</span><div><button type="button" data-rotate="-30" aria-label="向左旋转图片">←</button><button type="button" data-rotate="reset" aria-label="重置图片角度">RESET</button><button type="button" data-rotate="30" aria-label="向右旋转图片">→</button></div></div>
-  <div class="detail-kicker"><span>FILE ${r.id}</span><span>${escapeHtml(r.clearance)}</span></div>
+  <div class="record-heading"><div class="detail-kicker"><span>FILE ${r.id}</span><span>${escapeHtml(r.clearance)}</span></div>
   <h2>${escapeHtml(r.en)}</h2><div class="detail-title-cn">${escapeHtml(r.title)}<span>${escapeHtml(r.category)}</span></div>
-  <div class="detail-rule"></div>
+  </div><div class="detail-rule"></div>
   <dl class="metadata"><div><dt>FOLDER / 归档单元</dt><dd>${escapeHtml(r.department)}</dd></div><div><dt>COLLECTION / 编目范围</dt><dd>${escapeHtml(r.date)}</dd></div><div><dt>CONTRIBUTOR / 记录人</dt><dd>${escapeHtml(r.lead)}</dd></div><div><dt>STATUS / 状态</dt><dd><i></i>${r.clearance === "RESTRICTED" ? "目录访问" : "已归档 · 可读取"}</dd></div></dl>
-  <div class="detail-tabs" role="tablist"><button id="tab-overview" class="active" role="tab" aria-controls="tab-panel" aria-selected="true" data-tab="overview">01 <span>概述</span></button><button id="tab-notes" role="tab" aria-controls="tab-panel" aria-selected="false" data-tab="notes">02 <span>文字记录</span></button><button id="tab-history" role="tab" aria-controls="tab-panel" aria-selected="false" data-tab="history">03 <span>访问日志</span></button><i class="tab-indicator" aria-hidden="true"></i></div>
+  ${r.projection ? `<button type="button" class="record-projection-entry" data-action="projection"><span><small>LAUNCH PROJECTION</small><strong>${escapeHtml(r.projection.label)}</strong></span><span aria-hidden="true">↗</span></button>` : ""}
+  ${r.image ? `<figure class="record-image-stage"><img class="record-image" src="${escapeHtml(assetUrl(r.image))}" alt="${escapeHtml(r.title)}的档案图像" /></figure>` : ""}
+  <div class="detail-tabs" role="tablist"><button id="tab-overview" class="active" role="tab" aria-controls="tab-panel" aria-selected="true" data-tab="overview">01 <span>档案</span></button><button id="tab-notes" role="tab" aria-controls="tab-panel" aria-selected="false" data-tab="notes">02 <span>研究记录</span></button><button id="tab-history" role="tab" aria-controls="tab-panel" aria-selected="false" data-tab="history">03 <span>来源与访问</span></button><i class="tab-indicator" aria-hidden="true"></i></div>
   <div id="tab-panel" class="tab-panel" role="tabpanel">${overview()}</div>
   <div class="detail-actions"><button class="solid-button" data-action="bookmark">${saved.has(r.id) ? "− REMOVE FROM SAVED" : "＋ SAVE ARCHIVE"}<span>${saved.has(r.id) ? "已收藏" : "收藏档案"}</span></button><a class="export-button" href="${assetUrl(`archives/ARCHIVE-${r.id}.txt`)}" download="ARCHIVE-${r.id}.txt" aria-label="导出 ${r.id} 档案">EXPORT <span>↓</span></a></div>
   <div class="detail-footnote">${r.source ? `<a href="${escapeHtml(r.source)}" target="_blank" rel="noopener">资料来源 ↗</a>` : "<span>资料来源待补充</span>"}<span>${String(selected + 1).padStart(3, "0")} / ${String(records.length).padStart(3, "0")}</span></div>`;
@@ -707,7 +745,6 @@ function renderDetail() {
     "aria-pressed",
     String(saved.has(r.id)),
   );
-  setupRecordImage();
   documentDecryption.reset(
     $("#detail-content"),
     !motionActive("documentReveal") ||
@@ -716,33 +753,9 @@ function renderDetail() {
   );
   setTab(activeTab, false);
 }
-function setupRecordImage() {
-  const stage = $(".record-image-stage");
-  const image = $<HTMLImageElement>(".record-image");
-  image.addEventListener("error", () => {
-    const fallback = assetUrl("archive-images/placeholder.svg");
-    if (!image.src.endsWith(fallback)) image.src = fallback;
-  });
-  let startX = 0, startRotation = 0;
-  stage.addEventListener("pointerdown", (event) => {
-    if (event.button !== 0) return;
-    startX = event.clientX;
-    startRotation = Number(image.dataset.rotation || 0);
-    stage.setPointerCapture(event.pointerId);
-    stage.classList.add("is-dragging");
-  });
-  stage.addEventListener("pointermove", (event) => {
-    if (!stage.hasPointerCapture(event.pointerId)) return;
-    const rotation = startRotation + (event.clientX - startX) * 0.65;
-    image.dataset.rotation = String(rotation);
-    image.style.transform = `rotateY(${rotation}deg)`;
-  });
-  const release = () => stage.classList.remove("is-dragging");
-  stage.addEventListener("pointerup", release);
-  stage.addEventListener("pointercancel", release);
-}
 function overview() {
-  return `<div class="panel-label">ABSTRACT / 摘要</div><p>${escapeHtml(records[selected].abstract)}</p>`;
+  const record = records[selected];
+  return `<div class="panel-label">ARCHIVE NARRATIVE / 档案记录</div><p class="record-abstract">${escapeHtml(record.abstract)}</p>${record.chapters?.length ? `<div class="record-story">${record.chapters.map((chapter, index) => `<section id="chapter-${escapeHtml(chapter.id)}"><div class="record-chapter-meta"><span>${String(index + 1).padStart(2, "0")}</span>${chapter.date ? `<span>${escapeHtml(chapter.date)}</span>` : ""}</div><h3>${escapeHtml(chapter.title)}</h3>${chapter.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("")}</section>`).join("")}</div>` : ""}`;
 }
 function setTab(tab: string, sound = true) {
   if (sound && tab === activeTab) return;
@@ -765,7 +778,7 @@ function setTab(tab: string, sound = true) {
       ? overview()
       : tab === "notes"
         ? `<div class="panel-label">RECORDS / 文字记录</div><ol class="research-notes">${r.findings.map((f, i) => `<li><span>${String(i + 1).padStart(2, "0")}</span>${escapeHtml(f)}</li>`).join("")}</ol>`
-        : `<div class="panel-label">ACCESS LOG / 本次访问</div>${accessLog
+        : `<div class="panel-label">SOURCES / 资料来源</div><div class="projection-sources">${sourceMarkup(r.sources ?? (r.source ? [{ label: "原始资料", url: r.source }] : []))}</div><div class="panel-label">ACCESS LOG / 本次访问</div>${accessLog
             .filter((entry) => entry.id === r.id)
             .slice(0, 4)
             .map(
@@ -774,7 +787,7 @@ function setTab(tab: string, sound = true) {
             )
             .join(
               "",
-            )}<p class="log-note">本次会话已通过身份验证。档案内容以当前终端可访问范围展示。</p>`;
+            )}`;
   $("#tab-panel").scrollTop = 0;
   documentDecryption.refresh();
   if (sound) {
@@ -1045,14 +1058,6 @@ document.addEventListener("click", (e) => {
     setTab(el.dataset.tab);
     return;
   }
-  if (el.dataset.rotate) {
-    const image = $(".record-image");
-    const current = Number(image.dataset.rotation || 0);
-    const rotation = el.dataset.rotate === "reset" ? 0 : current + Number(el.dataset.rotate);
-    image.dataset.rotation = String(rotation);
-    image.style.transform = `rotateY(${rotation}deg)`;
-    return;
-  }
   const action = el.dataset.action;
   if (action === "toggle-three") {
     void toggleThree();
@@ -1068,6 +1073,7 @@ document.addEventListener("click", (e) => {
   if (action === "column-prev") stepColumn(-1);
   if (action === "column-next") stepColumn(1);
   if (action === "open") openFile();
+  if (action === "projection") { el.focus({ preventScroll: true }); openProjection(); }
   if (action === "model-viewer" && mode === "detail" && scene) {
     const activeScene = scene;
     // Safari does not always focus a button when it is tapped. Capture the
@@ -1129,6 +1135,7 @@ document.addEventListener("click", (e) => {
 });
 document.addEventListener("keydown", (e) => {
   if (!started) return;
+  if (projectionViewer.isOpen) return;
   if (viewer?.isOpen) return;
   if (playground?.active && !modal) {
     if (e.key === "Escape") {
@@ -1337,12 +1344,12 @@ function frame(ms: number) {
     motionActive("pointerParallax"),
   );
   // The calibrated 2D opening fully covers the scene until array entry.
-  if (!viewer?.isOpen && (!cinema || cinema.time >= 21.9))
+  if (!viewer?.isOpen && !projectionViewer.isOpen && (!cinema || cinema.time >= 21.9))
     scene?.update(time, cinema);
   viewer?.update(time);
   if (threeState === "closing" && scene?.presentationHidden) releaseThree();
   playground?.position();
-  if (scene && mode === "detail") {
+  if (scene && mode === "detail" && !projectionViewer.isOpen) {
     documentDecryption.update(
       time,
       scene.decryptionFrame,
@@ -1393,11 +1400,11 @@ function frame(ms: number) {
 function bindScene(scene: ArchiveScene, cell?: { lane: number; row: number }) {
   scene.select(selected, cell ? { cell } : undefined);
   scene.onSelect = (i, cell) => {
-    if (mode !== "archive" || modal || viewer?.isOpen) return;
+    if (mode !== "archive" || modal || viewer?.isOpen || projectionViewer.isOpen) return;
     select(i, cell ? { cell } : undefined);
   };
   scene.onNavigate = (axis, direction) => {
-    if (mode !== "archive" || modal || viewer?.isOpen) return;
+    if (mode !== "archive" || modal || viewer?.isOpen || projectionViewer.isOpen) return;
     if (axis === "lane") stepColumn(direction);
     else stepFile(direction);
   };
@@ -1557,7 +1564,7 @@ async function start() {
     if (scene) bindScene(scene);
     savePrefs();
     ready = true;
-    select(0);
+    select(initialRecordIndex >= 0 ? initialRecordIndex : 0);
     if (entry) entry.ready();
     else {
       if (isWallpaper) {
@@ -1801,6 +1808,8 @@ Object.assign(window, {
     },
     archive: () => setMode("archive"),
     detail: () => openFile(),
+    projection: () => openProjection(),
+    projectionStats: () => projectionViewer.getStats(),
     select: (i: number) => select(i),
     stats: () => ({
       ...scene?.getStats(),

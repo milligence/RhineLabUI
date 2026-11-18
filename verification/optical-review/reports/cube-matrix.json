@@ -1,0 +1,2548 @@
+{
+  "scope": "Actual isolated product modules and CSS; synthetic research fixture; generic 3³ Cube",
+  "render": "Native browser rendering, including real WebGL for Cube; no route interception or rendering suppression",
+  "startedAt": "2026-11-18T17:29:03.175Z",
+  "checks": [
+    {
+      "name": "Cube is genuinely rendered with 27 cells and a finite pixel estimate",
+      "status": "pass",
+      "ms": 7,
+      "evidence": {
+        "ready": true,
+        "n": 3,
+        "present": 27,
+        "tool": "inspect",
+        "selected": null,
+        "inspectionQuaternion": [
+          -0.2435087146146865,
+          0.5855288579403553,
+          0.19024985865758084,
+          0.7494427621283277
+        ],
+        "inspectionEye": [
+          11.512659464600658,
+          8.635205530457315,
+          2.954079428526917
+        ],
+        "inspectionDistance": 12.625761998272115,
+        "angularSpeed": 0,
+        "observer": {
+          "mode": "orbit",
+          "eye": [
+            4.471498018498959,
+            3.4049287480466006,
+            4.966101659378882
+          ],
+          "target": [
+            0,
+            0,
+            0
+          ],
+          "up": [
+            0,
+            1,
+            0
+          ],
+          "projection": "perspective",
+          "fov": 44,
+          "orthoSize": 5.550000000000001
+        },
+        "eyeOccupied": [],
+        "visibleCount": 19,
+        "countPending": false,
+        "countPasses": 1,
+        "countRevision": 2,
+        "sampleSize": {
+          "width": 640,
+          "height": 573
+        },
+        "undo": 0,
+        "redo": 0,
+        "reducedMotion": false,
+        "error": ""
+      }
+    },
+    {
+      "name": "Cube free rotation and zoom preserve mathematical observer and visibility revision",
+      "status": "pass",
+      "ms": 664,
+      "evidence": {
+        "before": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            11.512659464600658,
+            8.635205530457315,
+            2.954079428526917
+          ],
+          "inspectionDistance": 12.625761998272115,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": false,
+          "error": ""
+        },
+        "after": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            0.12568824744477816,
+            0.13713216775499926,
+            0.10682580910493894,
+            0.976721802526262
+          ],
+          "inspectionEye": [
+            4.947643430181068,
+            -1.2407893282394051,
+            11.050029767163382
+          ],
+          "inspectionDistance": 11.352722096965184,
+          "angularSpeed": 0.38745394374020053,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": false,
+          "error": ""
+        }
+      }
+    },
+    {
+      "name": "Cube slice remove/undo/redo changes and restores occupied cells",
+      "status": "pass",
+      "ms": 1580,
+      "evidence": {
+        "ready": true,
+        "n": 3,
+        "present": 27,
+        "tool": "remove",
+        "selected": null,
+        "inspectionQuaternion": [
+          0.1326769487413194,
+          0.12746239906004292,
+          0.10468967262949055,
+          0.9773383429208546
+        ],
+        "inspectionEye": [
+          4.702854877105563,
+          -1.391445129243386,
+          10.923562226756056
+        ],
+        "inspectionDistance": 11.198733976799577,
+        "angularSpeed": 0,
+        "observer": {
+          "mode": "orbit",
+          "eye": [
+            4.471498018498959,
+            3.4049287480466006,
+            4.966101659378882
+          ],
+          "target": [
+            0,
+            0,
+            0
+          ],
+          "up": [
+            0,
+            1,
+            0
+          ],
+          "projection": "perspective",
+          "fov": 44,
+          "orthoSize": 5.550000000000001
+        },
+        "eyeOccupied": [],
+        "visibleCount": 19,
+        "countPending": true,
+        "countPasses": 2,
+        "countRevision": 6,
+        "sampleSize": {
+          "width": 640,
+          "height": 573
+        },
+        "undo": 0,
+        "redo": 1,
+        "reducedMotion": false,
+        "error": ""
+      }
+    },
+    {
+      "name": "Cube mathematical observer drag changes point and triggers a new estimate",
+      "status": "pass",
+      "ms": 1089,
+      "evidence": {
+        "before": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "remove",
+          "selected": null,
+          "inspectionQuaternion": [
+            0.1326769487413194,
+            0.12746239906004292,
+            0.10468967262949055,
+            0.9773383429208546
+          ],
+          "inspectionEye": [
+            4.702830275905208,
+            -1.3914244612708744,
+            10.923479404719563
+          ],
+          "inspectionDistance": 11.198645140580187,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": true,
+          "countPasses": 2,
+          "countRevision": 6,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 0,
+          "redo": 1,
+          "reducedMotion": false,
+          "error": ""
+        },
+        "after": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "remove",
+          "selected": null,
+          "inspectionQuaternion": [
+            0.1326769487413194,
+            0.12746239906004292,
+            0.10468967262949055,
+            0.9773383429208546
+          ],
+          "inspectionEye": [
+            4.702664452996052,
+            -1.3912851500470909,
+            10.922921147771326
+          ],
+          "inspectionDistance": 11.198046345394395,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              2.602135525172128,
+              1.6219770478518594,
+              6.844565812736333
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              -0.21970503305280936,
+              0.9647175181852271,
+              -0.14508552153057802
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 4,
+          "countRevision": 16,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 1,
+          "redo": 0,
+          "reducedMotion": false,
+          "error": ""
+        }
+      }
+    },
+    {
+      "name": "Cube preset switch synchronizes retrospective and edited state persists after close",
+      "status": "pass",
+      "ms": 1071,
+      "evidence": {
+        "ready": true,
+        "n": 3,
+        "present": 25,
+        "tool": "inspect",
+        "selected": null,
+        "inspectionQuaternion": [
+          -0.2435087146146865,
+          0.5855288579403553,
+          0.19024985865758084,
+          0.7494427621283277
+        ],
+        "inspectionEye": [
+          11.512659464600658,
+          8.635205530457315,
+          2.954079428526917
+        ],
+        "inspectionDistance": 12.625761998272115,
+        "angularSpeed": 0,
+        "observer": {
+          "mode": "orbit",
+          "eye": [
+            4.471498018498959,
+            3.4049287480466006,
+            4.966101659378882
+          ],
+          "target": [
+            0,
+            0,
+            0
+          ],
+          "up": [
+            0,
+            1,
+            0
+          ],
+          "projection": "perspective",
+          "fov": 44,
+          "orthoSize": 5.550000000000001
+        },
+        "eyeOccupied": [],
+        "visibleCount": null,
+        "countPending": true,
+        "countPasses": 0,
+        "countRevision": 2,
+        "sampleSize": {
+          "width": 0,
+          "height": 0
+        },
+        "undo": 0,
+        "redo": 0,
+        "reducedMotion": false,
+        "error": ""
+      }
+    },
+    {
+      "name": "Cube free inspection orientation and distance survive close/reopen",
+      "status": "pass",
+      "ms": 2768,
+      "evidence": {
+        "before": {
+          "ready": true,
+          "n": 3,
+          "present": 25,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.08933168437570166,
+            0.336984973314426,
+            0.18740761704069064,
+            0.9183351038711336
+          ],
+          "inspectionEye": [
+            8.397794238420612,
+            4.58485028944526,
+            9.269722689159178
+          ],
+          "inspectionDistance": 11.608520213229422,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "after": {
+          "ready": true,
+          "n": 3,
+          "present": 25,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.08933168437570166,
+            0.336984973314426,
+            0.18740761704069064,
+            0.9183351038711336
+          ],
+          "inspectionEye": [
+            8.397794238420612,
+            4.58485028944526,
+            9.269722689159178
+          ],
+          "inspectionDistance": 11.608520213229422,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        }
+      }
+    },
+    {
+      "name": "Desktop cube layout stays in viewport",
+      "status": "pass",
+      "ms": 8,
+      "evidence": {
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "document": {
+          "width": 1440,
+          "height": 960
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 960,
+            "scrollWidth": 1440,
+            "clientWidth": 1440,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 48.953125,
+            "y": 28,
+            "width": 1342.09375,
+            "height": 89.6875,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 1342.09375,
+            "height": 796.3125,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".research-stage": null,
+          ".projection-inspector": null,
+          ".projection-timeline": null,
+          ".cube-toolbar": {
+            "x": 48.953125,
+            "y": 209.6875,
+            "width": 1342.09375,
+            "height": 63,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-stage": {
+            "x": 48.953125,
+            "y": 294.6875,
+            "width": 1090.09375,
+            "height": 585,
+            "scrollWidth": 1090,
+            "clientWidth": 1090,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".cube-inspector": {
+            "x": 1167.046875,
+            "y": 294.6875,
+            "width": 224,
+            "height": 585,
+            "scrollWidth": 223,
+            "clientWidth": 223,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          }
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "cube visual/layout 1440x960-light",
+      "status": "pass",
+      "ms": 1406,
+      "evidence": {
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "document": {
+          "width": 1440,
+          "height": 960
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 960,
+            "scrollWidth": 1440,
+            "clientWidth": 1440,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 48.953125,
+            "y": 28,
+            "width": 1342.09375,
+            "height": 89.6875,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 1342.09375,
+            "height": 796.3125,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".research-stage": null,
+          ".projection-inspector": null,
+          ".projection-timeline": null,
+          ".cube-toolbar": {
+            "x": 48.953125,
+            "y": 209.6875,
+            "width": 1342.09375,
+            "height": 63,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-stage": {
+            "x": 48.953125,
+            "y": 294.6875,
+            "width": 1090.09375,
+            "height": 585,
+            "scrollWidth": 1090,
+            "clientWidth": 1090,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".cube-inspector": {
+            "x": 1167.046875,
+            "y": 294.6875,
+            "width": 224,
+            "height": 585,
+            "scrollWidth": 223,
+            "clientWidth": 223,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          }
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "cube visual/layout 1440x960-dark",
+      "status": "pass",
+      "ms": 1067,
+      "evidence": {
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "document": {
+          "width": 1440,
+          "height": 960
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 960,
+            "scrollWidth": 1440,
+            "clientWidth": 1440,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 48.953125,
+            "y": 28,
+            "width": 1342.09375,
+            "height": 89.6875,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 48.953125,
+            "y": 141.6875,
+            "width": 1342.09375,
+            "height": 796.3125,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".research-stage": null,
+          ".projection-inspector": null,
+          ".projection-timeline": null,
+          ".cube-toolbar": {
+            "x": 48.953125,
+            "y": 209.6875,
+            "width": 1342.09375,
+            "height": 63,
+            "scrollWidth": 1342,
+            "clientWidth": 1342,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-stage": {
+            "x": 48.953125,
+            "y": 294.6875,
+            "width": 1090.09375,
+            "height": 585,
+            "scrollWidth": 1090,
+            "clientWidth": 1090,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".cube-inspector": {
+            "x": 1167.046875,
+            "y": 294.6875,
+            "width": 224,
+            "height": 585,
+            "scrollWidth": 223,
+            "clientWidth": 223,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          }
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "cube visual/layout 390x844-light",
+      "status": "pass",
+      "ms": 955,
+      "evidence": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "width": 390,
+          "height": 844
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "scrollWidth": 390,
+            "clientWidth": 390,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 16,
+            "y": 18,
+            "width": 358,
+            "height": 123.75,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 16,
+            "y": 153.75,
+            "width": 358,
+            "height": 676.25,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".research-stage": null,
+          ".projection-inspector": null,
+          ".projection-timeline": null,
+          ".cube-toolbar": {
+            "x": 16,
+            "y": 278.34375,
+            "width": 358,
+            "height": 105,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-stage": {
+            "x": 16,
+            "y": 401.34375,
+            "width": 358,
+            "height": 330,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".cube-inspector": {
+            "x": 16,
+            "y": 755.34375,
+            "width": 358,
+            "height": 1448.3125,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          }
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "cube native two-finger pinch/twist input",
+      "status": "pass",
+      "ms": 346,
+      "evidence": {
+        "before": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            14.120089750428741,
+            10.572906202846656,
+            3.5205337774408605
+          ],
+          "inspectionDistance": 16.193531542018327,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 393
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "after": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.3121150518605713,
+            0.5511690744442181,
+            0.09665424031628699,
+            0.767759600140082
+          ],
+          "inspectionEye": [
+            7.582411804619403,
+            5.656089761666806,
+            1.9032549193852712
+          ],
+          "inspectionDistance": 7.8550165881779765,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 393
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "input": "Chromium native two-point touch dispatch"
+      }
+    },
+    {
+      "name": "cube visual/layout 390x844-dark",
+      "status": "pass",
+      "ms": 1084,
+      "evidence": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "width": 390,
+          "height": 844
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "scrollWidth": 390,
+            "clientWidth": 390,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 16,
+            "y": 18,
+            "width": 358,
+            "height": 123.75,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 16,
+            "y": 153.75,
+            "width": 358,
+            "height": 676.25,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".research-stage": null,
+          ".projection-inspector": null,
+          ".projection-timeline": null,
+          ".cube-toolbar": {
+            "x": 16,
+            "y": 278.34375,
+            "width": 358,
+            "height": 105,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-stage": {
+            "x": 16,
+            "y": 401.34375,
+            "width": 358,
+            "height": 330,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".cube-inspector": {
+            "x": 16,
+            "y": 755.34375,
+            "width": 358,
+            "height": 1448.3125,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          }
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "cube visual/layout 320x740-light",
+      "status": "pass",
+      "ms": 794,
+      "evidence": {
+        "viewport": {
+          "width": 320,
+          "height": 740
+        },
+        "document": {
+          "width": 320,
+          "height": 740
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 320,
+            "height": 740,
+            "scrollWidth": 320,
+            "clientWidth": 320,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 16,
+            "y": 18,
+            "width": 288,
+            "height": 123.75,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 16,
+            "y": 153.75,
+            "width": 288,
+            "height": 572.25,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".research-stage": null,
+          ".projection-inspector": null,
+          ".projection-timeline": null,
+          ".cube-toolbar": {
+            "x": 16,
+            "y": 299.9375,
+            "width": 288,
+            "height": 105,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-stage": {
+            "x": 16,
+            "y": 422.9375,
+            "width": 288,
+            "height": 330,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".cube-inspector": {
+            "x": 16,
+            "y": 776.9375,
+            "width": 288,
+            "height": 1448.3125,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          }
+        },
+        "fontLoaded": true
+      }
+    },
+    {
+      "name": "cube visual/layout 320x740-dark",
+      "status": "pass",
+      "ms": 792,
+      "evidence": {
+        "viewport": {
+          "width": 320,
+          "height": 740
+        },
+        "document": {
+          "width": 320,
+          "height": 740
+        },
+        "rects": {
+          ".projection-shell": {
+            "x": 0,
+            "y": 0,
+            "width": 320,
+            "height": 740,
+            "scrollWidth": 320,
+            "clientWidth": 320,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".projection-header": {
+            "x": 16,
+            "y": 18,
+            "width": 288,
+            "height": 123.75,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".projection-content": {
+            "x": 16,
+            "y": 153.75,
+            "width": 288,
+            "height": 572.25,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "auto",
+            "overflowY": "auto"
+          },
+          ".research-stage": null,
+          ".projection-inspector": null,
+          ".projection-timeline": null,
+          ".cube-toolbar": {
+            "x": 16,
+            "y": 299.9375,
+            "width": 288,
+            "height": 105,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          },
+          ".cube-stage": {
+            "x": 16,
+            "y": 422.9375,
+            "width": 288,
+            "height": 330,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "hidden",
+            "overflowY": "hidden"
+          },
+          ".cube-inspector": {
+            "x": 16,
+            "y": 776.9375,
+            "width": 288,
+            "height": 1448.3125,
+            "scrollWidth": 288,
+            "clientWidth": 288,
+            "overflowX": "visible",
+            "overflowY": "visible"
+          }
+        },
+        "fontLoaded": true
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "cube-desktop-light",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            11.512659464600658,
+            8.635205530457315,
+            2.954079428526917
+          ],
+          "inspectionDistance": 12.625761998272115,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": false,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "cube-desktop-light.png",
+      "committed": false
+    },
+    {
+      "name": "cube-1440x960-light",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            11.512659464600658,
+            8.635205530457315,
+            2.954079428526917
+          ],
+          "inspectionDistance": 12.625761998272115,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "cube-1440x960-light.png",
+      "committed": false
+    },
+    {
+      "name": "cube-1440x960-dark",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            11.512659464600658,
+            8.635205530457315,
+            2.954079428526917
+          ],
+          "inspectionDistance": 12.625761998272115,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 573
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "artifact": "../screenshots/cube-desktop-dark.png",
+      "committed": true
+    },
+    {
+      "name": "cube-390x844-light",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            14.120089750428741,
+            10.572906202846656,
+            3.5205337774408605
+          ],
+          "inspectionDistance": 16.193531542018327,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 393
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "artifact": "cube-390x844-light.png",
+      "committed": false
+    },
+    {
+      "name": "cube-390x844-light-reading",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            14.120089750428741,
+            10.572906202846656,
+            3.5205337774408605
+          ],
+          "inspectionDistance": 16.193531542018327,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 393
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "artifact": "cube-390x844-light-reading.png",
+      "committed": false
+    },
+    {
+      "name": "cube-390x844-dark",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            14.120089750428741,
+            10.572906202846656,
+            3.5205337774408605
+          ],
+          "inspectionDistance": 16.193531542018327,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 393
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "artifact": "cube-390x844-dark.png",
+      "committed": false
+    },
+    {
+      "name": "cube-390x844-dark-reading",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            14.120089750428741,
+            10.572906202846656,
+            3.5205337774408605
+          ],
+          "inspectionDistance": 16.193531542018327,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 393
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "artifact": "cube-390x844-dark-reading.png",
+      "committed": false
+    },
+    {
+      "name": "cube-320x740-light",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            16.315056852249516,
+            12.216463835699562,
+            4.067800541244319
+          ],
+          "inspectionDistance": 18.771628888618025,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 489
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "cube-320x740-light.png",
+      "committed": false
+    },
+    {
+      "name": "cube-320x740-light-reading",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            16.315056852249516,
+            12.216463835699562,
+            4.067800541244319
+          ],
+          "inspectionDistance": 18.771628888618025,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 489
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": false,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "cube-320x740-light-reading.png",
+      "committed": false
+    },
+    {
+      "name": "cube-320x740-dark",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            16.315056852249516,
+            12.216463835699562,
+            4.067800541244319
+          ],
+          "inspectionDistance": 18.771628888618025,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 489
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "../screenshots/cube-mobile-dark.png",
+      "committed": true
+    },
+    {
+      "name": "cube-320x740-dark-reading",
+      "stats": {
+        "open": true,
+        "kind": "cube",
+        "record": "QA-C01",
+        "cube": {
+          "ready": true,
+          "n": 3,
+          "present": 27,
+          "tool": "inspect",
+          "selected": null,
+          "inspectionQuaternion": [
+            -0.2435087146146865,
+            0.5855288579403553,
+            0.19024985865758084,
+            0.7494427621283277
+          ],
+          "inspectionEye": [
+            16.315056852249516,
+            12.216463835699562,
+            4.067800541244319
+          ],
+          "inspectionDistance": 18.771628888618025,
+          "angularSpeed": 0,
+          "observer": {
+            "mode": "orbit",
+            "eye": [
+              4.471498018498959,
+              3.4049287480466006,
+              4.966101659378882
+            ],
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projection": "perspective",
+            "fov": 44,
+            "orthoSize": 5.550000000000001
+          },
+          "eyeOccupied": [],
+          "visibleCount": 19,
+          "countPending": false,
+          "countPasses": 1,
+          "countRevision": 2,
+          "sampleSize": {
+            "width": 640,
+            "height": 489
+          },
+          "undo": 0,
+          "redo": 0,
+          "reducedMotion": true,
+          "error": ""
+        },
+        "closeCount": 0,
+        "dark": true,
+        "syntheticFixture": true
+      },
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "artifact": "cube-320x740-dark-reading.png",
+      "committed": false
+    }
+  ],
+  "errors": [],
+  "layouts": [
+    {
+      "name": "cube-desktop-light",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "document": {
+        "width": 1440,
+        "height": 960
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 960,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 48.953125,
+          "y": 28,
+          "width": 1342.09375,
+          "height": 89.6875,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 1342.09375,
+          "height": 796.3125,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".research-stage": null,
+        ".projection-inspector": null,
+        ".projection-timeline": null,
+        ".cube-toolbar": {
+          "x": 48.953125,
+          "y": 209.6875,
+          "width": 1342.09375,
+          "height": 63,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-stage": {
+          "x": 48.953125,
+          "y": 294.6875,
+          "width": 1090.09375,
+          "height": 585,
+          "scrollWidth": 1090,
+          "clientWidth": 1090,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".cube-inspector": {
+          "x": 1167.046875,
+          "y": 294.6875,
+          "width": 224,
+          "height": 585,
+          "scrollWidth": 223,
+          "clientWidth": 223,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        }
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "cube-1440x960-light",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "document": {
+        "width": 1440,
+        "height": 960
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 960,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 48.953125,
+          "y": 28,
+          "width": 1342.09375,
+          "height": 89.6875,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 1342.09375,
+          "height": 796.3125,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".research-stage": null,
+        ".projection-inspector": null,
+        ".projection-timeline": null,
+        ".cube-toolbar": {
+          "x": 48.953125,
+          "y": 209.6875,
+          "width": 1342.09375,
+          "height": 63,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-stage": {
+          "x": 48.953125,
+          "y": 294.6875,
+          "width": 1090.09375,
+          "height": 585,
+          "scrollWidth": 1090,
+          "clientWidth": 1090,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".cube-inspector": {
+          "x": 1167.046875,
+          "y": 294.6875,
+          "width": 224,
+          "height": 585,
+          "scrollWidth": 223,
+          "clientWidth": 223,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        }
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "cube-1440x960-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "document": {
+        "width": 1440,
+        "height": 960
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 960,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 48.953125,
+          "y": 28,
+          "width": 1342.09375,
+          "height": 89.6875,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 48.953125,
+          "y": 141.6875,
+          "width": 1342.09375,
+          "height": 796.3125,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".research-stage": null,
+        ".projection-inspector": null,
+        ".projection-timeline": null,
+        ".cube-toolbar": {
+          "x": 48.953125,
+          "y": 209.6875,
+          "width": 1342.09375,
+          "height": 63,
+          "scrollWidth": 1342,
+          "clientWidth": 1342,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-stage": {
+          "x": 48.953125,
+          "y": 294.6875,
+          "width": 1090.09375,
+          "height": 585,
+          "scrollWidth": 1090,
+          "clientWidth": 1090,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".cube-inspector": {
+          "x": 1167.046875,
+          "y": 294.6875,
+          "width": 224,
+          "height": 585,
+          "scrollWidth": 223,
+          "clientWidth": 223,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        }
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "cube-390x844-light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "document": {
+        "width": 390,
+        "height": 844
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 16,
+          "y": 18,
+          "width": 358,
+          "height": 123.75,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 16,
+          "y": 153.75,
+          "width": 358,
+          "height": 676.25,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".research-stage": null,
+        ".projection-inspector": null,
+        ".projection-timeline": null,
+        ".cube-toolbar": {
+          "x": 16,
+          "y": 278.34375,
+          "width": 358,
+          "height": 105,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-stage": {
+          "x": 16,
+          "y": 401.34375,
+          "width": 358,
+          "height": 330,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".cube-inspector": {
+          "x": 16,
+          "y": 755.34375,
+          "width": 358,
+          "height": 1448.3125,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        }
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "cube-390x844-dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "document": {
+        "width": 390,
+        "height": 844
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 16,
+          "y": 18,
+          "width": 358,
+          "height": 123.75,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 16,
+          "y": 153.75,
+          "width": 358,
+          "height": 676.25,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".research-stage": null,
+        ".projection-inspector": null,
+        ".projection-timeline": null,
+        ".cube-toolbar": {
+          "x": 16,
+          "y": 278.34375,
+          "width": 358,
+          "height": 105,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-stage": {
+          "x": 16,
+          "y": 401.34375,
+          "width": 358,
+          "height": 330,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".cube-inspector": {
+          "x": 16,
+          "y": 755.34375,
+          "width": 358,
+          "height": 1448.3125,
+          "scrollWidth": 358,
+          "clientWidth": 358,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        }
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "cube-320x740-light",
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "document": {
+        "width": 320,
+        "height": 740
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 740,
+          "scrollWidth": 320,
+          "clientWidth": 320,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 16,
+          "y": 18,
+          "width": 288,
+          "height": 123.75,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 16,
+          "y": 153.75,
+          "width": 288,
+          "height": 572.25,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".research-stage": null,
+        ".projection-inspector": null,
+        ".projection-timeline": null,
+        ".cube-toolbar": {
+          "x": 16,
+          "y": 299.9375,
+          "width": 288,
+          "height": 105,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-stage": {
+          "x": 16,
+          "y": 422.9375,
+          "width": 288,
+          "height": 330,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".cube-inspector": {
+          "x": 16,
+          "y": 776.9375,
+          "width": 288,
+          "height": 1448.3125,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        }
+      },
+      "fontLoaded": true
+    },
+    {
+      "name": "cube-320x740-dark",
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "document": {
+        "width": 320,
+        "height": 740
+      },
+      "rects": {
+        ".projection-shell": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 740,
+          "scrollWidth": 320,
+          "clientWidth": 320,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".projection-header": {
+          "x": 16,
+          "y": 18,
+          "width": 288,
+          "height": 123.75,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".projection-content": {
+          "x": 16,
+          "y": 153.75,
+          "width": 288,
+          "height": 572.25,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "auto",
+          "overflowY": "auto"
+        },
+        ".research-stage": null,
+        ".projection-inspector": null,
+        ".projection-timeline": null,
+        ".cube-toolbar": {
+          "x": 16,
+          "y": 299.9375,
+          "width": 288,
+          "height": 105,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        },
+        ".cube-stage": {
+          "x": 16,
+          "y": 422.9375,
+          "width": 288,
+          "height": 330,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "hidden",
+          "overflowY": "hidden"
+        },
+        ".cube-inspector": {
+          "x": 16,
+          "y": 776.9375,
+          "width": 288,
+          "height": 1448.3125,
+          "scrollWidth": 288,
+          "clientWidth": 288,
+          "overflowX": "visible",
+          "overflowY": "visible"
+        }
+      },
+      "fontLoaded": true
+    }
+  ],
+  "finishedAt": "2026-11-18T17:29:29.333Z",
+  "elapsedSeconds": 26.159,
+  "summary": {
+    "pass": 14,
+    "fail": 0,
+    "pageErrors": 0,
+    "screenshots": 11
+  },
+  "mode": "cube",
+  "evidencePhase": "earlier-complete-component-matrix",
+  "artifactPolicy": "Complete check/state/layout evidence is retained. Only four representative generic screenshots are committed; omitted images remain local review artifacts."
+}
