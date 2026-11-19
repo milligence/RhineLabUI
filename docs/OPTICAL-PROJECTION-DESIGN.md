@@ -13,7 +13,7 @@ Accepted direction, 2026-11-19. The projection is an intrinsic capability of the
 
 1. **Archive ready.** Selected carrier, identity and two stable actions form one composition. Text does not follow the moving wave. Actions appear only when usable.
 2. **Projection ignition.** Light starts at the actual selected carrier, widens into a shallow optical cone, and opens a shared observation volume. Identity survives the handoff. Background and content do not jump to unrelated coordinates.
-3. **Complete evolution.** Every source node is present. Each node bears only its essential name; temporal phase markers and branch paths give the whole map structure. Panning, zoom, keyboard navigation and an explicit full-tree action remain available.
+3. **Complete evolution.** The complete research genealogy is present. Research mechanisms form the spine; negative tests and alternative directions form branches. Administrative events remain in the source catalogue rather than receiving equal visual weight. Split and merged research nodes retain explicit provenance. Each node bears only its essential name; phase markers and branch paths give the map structure. Panning, zoom, keyboard navigation and an explicit full-tree action remain available.
 4. **Focused node.** The camera continuously approaches a selected node. It grows and settles in the lower left. A cone of restrained light opens upward. Contemporary record, later retrospective and evidence form an asymmetric connected constellation, not three sequential cards. Upstream/downstream links remain reachable and the full tree recedes behind the focus.
 5. **Return.** The focus contracts to the same graph position; leaving the projection returns to the selected carrier and preserves reading state. Interruptions always start from current displayed values.
 
@@ -29,7 +29,7 @@ Chronological, restricted third person. A paragraph advances a question, evidenc
 
 - Real application screenshots at desktop and narrow viewport, both themes, overview, focused record, cube inspection and cube observation.
 - Actual rendered continuous transitions for the opening handoff, archive-to-projection and node focus, including interruption and return. Numeric state tests supplement this review.
-- Full source-node coverage; short, unclipped names in the overview; complete readable contemporary record, retrospective and evidence after focusing.
+- Full source-event coverage through research nodes and retained archive context; short, unclipped names in the overview; complete readable contemporary record, retrospective and evidence after focusing.
 - Mathematical cube state is invariant under inspection rotation; edits/undo and observer changes behave distinctly.
 - No private research content or source-bearing screenshots committed to the public UI repository.
 - Explicitly record any environment-specific visual verification limit; a synthetic isolated component check alone cannot count as full-flow acceptance.
@@ -37,3 +37,11 @@ Chronological, restricted third person. A paragraph advances a question, evidenc
 ## Refinement after actual screenshots
 
 The first focus composition gave all three layers the same rectangular weight. The implemented refinement keeps the contemporary record as the stable foreground, gives hindsight a lighter offset optical plane, and opens evidence into a source rail. The R/H connectors end at actual source-group ports. Narrow screens retain readable graph scale and a complete topology navigator instead of compressing all node labels into one screen. Acceptance and the unresolved full-scene readback limitation are recorded in [the verification report](../verification/ARCHIVE-PROJECTION-2026-11.md).
+
+## Narrative and carrier revision
+
+The next revision makes the extraction, image formation and camera transfer separate visible events on one continuous timeline. Extraction finishes according to the actual carrier height and camera state. The main scene keeps rendering; the aperture and edge are sampled from the real carrier every frame. The optical image forms and holds before the camera moves toward it. A shared reversible quintic curve governs both research and experiment projections. Rotation clearance and vertical-only carrier motion remain unchanged.
+
+The research graph now supports authored positions, primary and secondary relationships, short phase navigation, and an explicit chronological narrative route. Labels are placed in screen space with upper/lower alternatives; viewport clipping prevents a zoomed graph from entering the navigation rail. Switching phases continues from the displayed camera state. Source-association lines use local layout coordinates so the temporary perspective of the whole projection does not displace their endpoints.
+
+The prose contract also requires causal weight: an observation must force a decision, a new operation must answer a specific problem, and a result must change what happens next. Independent cold reading checks for misplaced emphasis, premature hindsight and redundant summaries. See [the current revision report](../verification/RESEARCH-NARRATIVE-CARRIER-2026-11.md) for what was actually verified.

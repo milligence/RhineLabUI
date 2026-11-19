@@ -136,6 +136,9 @@ function validateProjection(projection, label, errors) {
     for (const key of ["question", "attempt", "result", "interpretation"]) if (typeof n[key] !== "string") errors.push(`${label}.${n.id}.${key}：必须为文字`);
     if (!Array.isArray(n.retrospective) || !n.retrospective.every(isText)) errors.push(`${label}.${n.id}：复盘必须为文字段落数组`);
     if (n.phase !== undefined && (!Number.isInteger(n.phase) || n.phase < 0)) errors.push(`${label}.${n.id}：阶段索引无效`);
+    if (n.role !== undefined && !["spine", "component", "branch"].includes(n.role)) errors.push(`${label}.${n.id}：研究节点角色无效`);
+    if (n.position !== undefined && (!n.position || ![n.position.x, n.position.y].every(v => Number.isFinite(v) && v >= 0 && v <= 20000))) errors.push(`${label}.${n.id}：研究布局坐标无效`);
+    if (n.record !== undefined && (!Array.isArray(n.record) || !n.record.every(isText))) errors.push(`${label}.${n.id}：当时记录必须为段落数组`);
     for (const key of ["thread", "dateNote", "retrospectiveDate", "statusLabel"]) if (n[key] !== undefined && !isText(n[key])) errors.push(`${label}.${n.id}.${key}：必须为非空文字`);
     validateSources(n.sources, `${label}.${n.id}`, errors);
     if (n.retrospectiveSources !== undefined) validateSources(n.retrospectiveSources, `${label}.${n.id}.retrospectiveSources`, errors);
@@ -144,6 +147,14 @@ function validateProjection(projection, label, errors) {
     const from = ids.get(edge?.from), to = ids.get(edge?.to);
     if (!from || !to || from.stage >= to.stage) errors.push(`${label}：连线必须指向存在的后续阶段节点`);
     if (edge?.kind !== undefined && !["continuation", "branch", "merge", "correction"].includes(edge.kind)) errors.push(`${label}：研究连线类型无效`);
+    if (edge?.weight !== undefined && !["primary", "secondary"].includes(edge.weight)) errors.push(`${label}：研究连线权重无效`);
+  }
+  if (projection.layout !== undefined && projection.layout !== "evolution") errors.push(`${label}：研究布局类型无效`);
+  if (projection.layout === "evolution" && projection.nodes.some(n => !n.position)) errors.push(`${label}：演化树需要完整布局坐标`);
+  if (projection.entryNodeId !== undefined && !ids.has(projection.entryNodeId)) errors.push(`${label}：研究入口节点不存在`);
+  if (projection.narrativePath !== undefined) {
+    if (!Array.isArray(projection.narrativePath) || projection.narrativePath.length < 2 || new Set(projection.narrativePath).size !== projection.narrativePath.length || projection.narrativePath.some(id => !ids.has(id))) errors.push(`${label}：研究主线节点无效或重复`);
+    else if (projection.narrativePath.some((id, i, route) => i > 0 && ids.get(id).stage <= ids.get(route[i - 1]).stage)) errors.push(`${label}：研究主线必须沿时间推进`);
   }
   if (projection.phases !== undefined) {
     const phases = new Set();
@@ -151,6 +162,7 @@ function validateProjection(projection, label, errors) {
     else for (const phase of projection.phases) {
       if (!phase || !Number.isInteger(phase.id) || phase.id < 0 || phases.has(phase.id) || !isText(phase.title) || !isText(phase.date)) errors.push(`${label}：研究阶段无效或重复`);
       else phases.add(phase.id);
+      if (phase?.entryNodeId !== undefined && !ids.has(phase.entryNodeId)) errors.push(`${label}：研究阶段入口不存在`);
     }
     for (const n of projection.nodes) if (n.phase !== undefined && !phases.has(n.phase)) errors.push(`${label}.${n.id}：研究节点阶段不存在`);
   }

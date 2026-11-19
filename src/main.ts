@@ -124,6 +124,14 @@ $("#archive-ui").insertAdjacentHTML("afterbegin", '<svg class="archive-source-tr
 $("#column-number").lastChild!.textContent = ` / ${String(archiveColumns.length).padStart(2, "0")}`;
 const projectionViewer = new ProjectionViewer($("#viewport"));
 let projectionRequest = 0;
+let projectionStarted = 0;
+let projectionFromArchive = true;
+let projectionEntryTrace: { event: string; elapsed: number }[] = [];
+const markProjectionEntry = (event: string) => {
+  if (projectionEntryTrace.at(-1)?.event === event) return;
+  projectionEntryTrace.push({ event, elapsed: Math.round(performance.now() - projectionStarted) });
+  $("#stage").dataset.projectionPhase = event;
+};
 
 $("#boot-background").insertAdjacentHTML(
   "beforeend",
@@ -503,6 +511,8 @@ function setMode(next: Mode) {
     // when cancelling extraction or returning to its original array.
     if ($("#stage").dataset.projectionPending === "true") detailTransition.hide(true);
     delete $("#stage").dataset.projectionPending;
+    delete $("#stage").dataset.projectionPhase;
+    scene?.setProjectionFocus(0);
   }
   const previousMode = mode;
   rollingTitles.forEach((title) =>
@@ -683,6 +693,7 @@ function openFile() {
     if ($("#stage").dataset.projectionPending === "true") {
       projectionRequest++;
       delete $("#stage").dataset.projectionPending;
+      delete $("#stage").dataset.projectionPhase;
       pendingDetailFocus = true;
     }
     setMode("detail");
@@ -697,37 +708,54 @@ function openProjection(trigger?: HTMLElement) {
   const source = trigger ?? document.querySelector<HTMLElement>(mode === "detail" ? ".record-projection-entry" : ".archive-project-file");
   const request = ++projectionRequest;
   const fromArchive = mode !== "detail";
+  projectionFromArchive = fromArchive;
+  projectionStarted = performance.now();
+  projectionEntryTrace = [];
+  markProjectionEntry(fromArchive ? "extracting" : "carrier-present");
+  $("#stage").dataset.projectionPending = "true";
   if (fromArchive) {
-    $("#stage").dataset.projectionPending = "true";
     setMode("detail");
-    pendingDetailFocus = false;
-    $("#detail-content").inert = true;
   }
-  const begun = performance.now();
+  pendingDetailFocus = false;
+  $("#detail-content").inert = true;
   const enter = () => {
     if (request !== projectionRequest || selected !== records.indexOf(record) || mode !== "detail") return;
-    if (fromArchive && scene && scene.detailVisibility < .65 && performance.now() - begun < 1600 && motionActive("detailTransition")) {
+    if (scene && !scene.projectionReady && motionActive("detailTransition") && motionActive("surfaceTransitions")) {
       requestAnimationFrame(enter); return;
     }
+    markProjectionEntry("carrier-ready");
     pendingDetailFocus = false;
     // Measure the carrier at the actual open frame, after any extraction. Its
     // projected position is in stage coordinates; the viewer uses viewport px.
-    const host = $("#three-scene");
-    const bounds = host.getBoundingClientRect();
-    const anchor = scene?.projectCard(0, 3.7);
+    const sampleCarrier = () => {
+      const host = $("#three-scene"), bounds = host.getBoundingClientRect();
+      if (!scene || !bounds.width || !bounds.height || !host.clientWidth || !host.clientHeight) return undefined;
+      const point = (x: number, y: number) => {
+        const p = scene!.projectCard(x, y);
+        return { x: bounds.left + p[0] * bounds.width / host.clientWidth, y: bounds.top + p[1] * bounds.height / host.clientHeight };
+      };
+      const origin = point(.72, 2.18);
+      if (!Number.isFinite(origin.x) || !Number.isFinite(origin.y)) return undefined;
+      return { origin, edge: [point(.12, 2.18), point(1.32, 2.18)] as [{x: number; y: number}, {x: number; y: number}] };
+    };
     const entryBounds = source?.getBoundingClientRect();
-    const origin = anchor?.every(Number.isFinite) && bounds.width && bounds.height && host.clientWidth && host.clientHeight
-      ? { x: bounds.left + anchor[0] * bounds.width / host.clientWidth, y: bounds.top + anchor[1] * bounds.height / host.clientHeight }
-      : entryBounds?.width
-        ? { x: entryBounds.left + entryBounds.width / 2, y: entryBounds.top + entryBounds.height / 2 }
-        : undefined;
+    const origin = sampleCarrier()?.origin ?? (entryBounds?.width ? { x: entryBounds.left + entryBounds.width / 2, y: entryBounds.top + entryBounds.height / 2 } : undefined);
     $("#detail-content .record-projection-entry")?.focus({ preventScroll: true });
     projectionViewer.open(record, {
       reducedMotion: !motionActive("surfaceTransitions"),
       origin,
+      sampleCarrier,
+      onCameraProgress: progress => scene?.setProjectionFocus(progress),
+      onBeat: markProjectionEntry,
       onClose: () => {
+        markProjectionEntry("returned");
         if (fromArchive) {
           setMode("archive");
+          source?.focus({ preventScroll: true });
+        } else {
+          delete $("#stage").dataset.projectionPending;
+          delete $("#stage").dataset.projectionPhase;
+          $("#detail-content").inert = false;
           source?.focus({ preventScroll: true });
         }
         audio.setScene(mode); audio.play("page-close");
@@ -844,8 +872,15 @@ function openModal(kind: NonNullable<typeof modal>) {
   const opener = document.activeElement as HTMLElement;
   // Search or settings can interrupt the carrier extraction. Cancel before
   // isolating the modal, so a queued RAF cannot open a second surface over it.
-  if ($("#stage").dataset.projectionPending === "true" && !projectionViewer.isOpen)
-    setMode("archive");
+  if ($("#stage").dataset.projectionPending === "true" && !projectionViewer.isOpen) {
+    if (projectionFromArchive) setMode("archive");
+    else {
+      projectionRequest++;
+      delete $("#stage").dataset.projectionPending;
+      delete $("#stage").dataset.projectionPhase;
+      $("#detail-content").inert = false;
+    }
+  }
   if (!modal) {
     previousFocus = opener;
     modalSiblings = [...$("#stage").children]
@@ -1409,7 +1444,7 @@ function frame(ms: number) {
     motionActive("pointerParallax"),
   );
   // The calibrated 2D opening fully covers the scene until array entry.
-  if (!viewer?.isOpen && !projectionViewer.isOpen && (!cinema || cinema.time >= ARRAY_REVEAL_START - 0.12))
+  if (!viewer?.isOpen && (!projectionViewer.isOpen || projectionViewer.needsCarrierScene) && (!cinema || cinema.time >= ARRAY_REVEAL_START - 0.12))
     scene?.update(time, cinema);
   viewer?.update(time);
   updateArchiveSourceTrace();
@@ -1875,7 +1910,7 @@ Object.assign(window, {
     archive: () => setMode("archive"),
     detail: () => openFile(),
     projection: () => openProjection(),
-    projectionStats: () => projectionViewer.getStats(),
+    projectionStats: () => ({ ...projectionViewer.getStats(), entryTrace: [...projectionEntryTrace] }),
     select: (i: number) => select(i),
     stats: () => ({
       ...scene?.getStats(),

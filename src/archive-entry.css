@@ -78,6 +78,8 @@
 /* The projection belongs to the document's identity, above variable metadata. */
 .record-identity-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 [data-projection-pending="true"] #detail-content { visibility: hidden; pointer-events: none; }
+[data-projection-pending="true"] :is(.brand, .system-nav, .system-footer, .back-button, #inspection-marks, #inspection-text) { opacity: 0 !important; pointer-events: none; }
+[data-projection-pending="true"] .archive-atmosphere::after { opacity: 0; }
 .record-identity-row .detail-kicker { min-width: 0; }
 .detail-ui .record-identity-row .record-projection-entry {
   display: inline-flex;

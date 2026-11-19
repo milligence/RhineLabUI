@@ -3,11 +3,19 @@ import { escapeHtml } from "./html";
 import { ResearchProjection, sourceMarkup, type ResearchViewState } from "./research-projection";
 import { CubeProjection } from "./cube-projection";
 import type { CubeProjectionData } from "./projection-types";
+import { CarrierFlight, carrierFrame, type CarrierSample, type FlightBox } from "./carrier-flight";
 import "./projection-atmosphere.css";
 import "./cube-optics.css";
 
-type ProjectionOptions = { reducedMotion: boolean; onClose: () => void; origin?: { x: number; y: number } };
-type OpticalFrame = { element: HTMLElement; opacity: string; transform: string; clipPath: string };
+type ProjectionOptions = {
+  reducedMotion: boolean;
+  onClose: () => void;
+  origin?: { x: number; y: number };
+  /** Sample the physical carrier after the main scene has drawn its current camera. */
+  sampleCarrier?: () => CarrierSample | undefined;
+  onCameraProgress?: (progress: number) => void;
+  onBeat?: (beat: string) => void;
+};
 
 /** A single optical work surface is shared by both kinds of archive. */
 export class ProjectionViewer {
@@ -23,11 +31,13 @@ export class ProjectionViewer {
   private opener: HTMLElement | null = null;
   private siblings: { node: HTMLElement; inert: boolean }[] = [];
   private closing = false;
-  private transition?: Animation;
-  private entranceAnimations: Animation[] = [];
-  private entryTimer?: ReturnType<typeof setTimeout>;
-  private closeTimer?: ReturnType<typeof setTimeout>;
-  private generation = 0;
+  private flight = new CarrierFlight();
+  private flightRaf = 0;
+  private imageBox: FlightBox = { left: 0, top: 0, width: 1, height: 1 };
+  private currentBeat = "";
+  private beatTrace: { beat: string; elapsed: number; progress: number }[] = [];
+  private flightStarted = 0;
+  private frameState?: ReturnType<typeof carrierFrame>;
   private options: ProjectionOptions = { reducedMotion: false, onClose: () => {} };
   isOpen = false;
 
@@ -57,18 +67,15 @@ export class ProjectionViewer {
   open(record: ArchiveRecord, options: ProjectionOptions) {
     if (!record.projection) return;
     const sameOpen = this.isOpen && this.record?.id === record.id;
-    const resume = this.isOpen ? [".projection-environment", ".projection-header", ".projection-content", ".projection-ignition"].map(selector => {
-      const element = this.root.querySelector<HTMLElement>(selector)!;
-      const computed = getComputedStyle(element);
-      return { element, opacity: computed.opacity, transform: computed.transform, clipPath: computed.clipPath };
-    }) : undefined;
-    this.freezeIgnitionRays();
-    this.generation++;
-    clearTimeout(this.closeTimer); clearTimeout(this.entryTimer); this.transition?.cancel();
-    this.entranceAnimations.forEach(animation => animation.cancel()); this.entranceAnimations = [];
+    const resume = this.isOpen;
+    cancelAnimationFrame(this.flightRaf);
     this.closing = false;
     this.options = options;
     if (!this.isOpen) {
+      this.flight.jump(0);
+      this.currentBeat = "";
+      this.beatTrace = [];
+      this.flightStarted = performance.now();
       this.opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       this.siblings = [...this.parent.children].filter(node => node !== this.root && node instanceof HTMLElement).map(node => ({ node: node as HTMLElement, inert: (node as HTMLElement).inert }));
       this.siblings.forEach(({ node }) => node.inert = true);
@@ -94,49 +101,89 @@ export class ProjectionViewer {
     this.root.querySelector<HTMLButtonElement>(".projection-back")!.focus({ preventScroll: true });
   }
 
-  private freezeIgnitionRays() {
-    const rays = this.root.querySelector<SVGPathElement>(".carrier-rays");
-    if (rays) rays.style.strokeDashoffset = getComputedStyle(rays).strokeDashoffset;
+  private enterFromCarrier(options: ProjectionOptions, resume: boolean) {
+    const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
+    this.imageBox = { left: this.host.offsetLeft, top: this.host.offsetTop, width: this.host.offsetWidth, height: this.host.offsetHeight };
+    if (!resume || !ignition.firstChild) {
+      ignition.innerHTML = '<svg preserveAspectRatio="none"><defs><linearGradient id="carrier-light" x1="0" y1="1" x2=".6" y2="0"><stop stop-color="var(--optical-accent)" stop-opacity=".34"/><stop offset=".45" stop-color="var(--optical-accent)" stop-opacity=".07"/><stop offset="1" stop-color="white" stop-opacity=".08"/></linearGradient><radialGradient id="carrier-aperture"><stop stop-color="white" stop-opacity="1"/><stop offset=".12" stop-color="var(--optical-accent)" stop-opacity=".8"/><stop offset="1" stop-color="var(--optical-accent)" stop-opacity="0"/></radialGradient></defs><path class="carrier-volume" fill="url(#carrier-light)"/><path class="carrier-inner-volume" fill="url(#carrier-light)"/><path class="carrier-rays" pathLength="1"/><path class="carrier-image-outline"/><g class="carrier-source"><ellipse class="carrier-emitter" rx="55" ry="25" fill="url(#carrier-aperture)"/><path class="carrier-aperture-edge"/><circle r="3.2" fill="var(--optical-accent)"/><circle r="8" fill="none" stroke="var(--optical-accent)" stroke-width=".65"/></g></svg><div class="carrier-channel"><span class="carrier-channel-id"></span><span>OPTICAL CHANNEL</span><i></i></div>';
+      ignition.querySelector(".carrier-channel-id")!.textContent = this.record!.id;
+    }
+    this.host.inert = true;
+    if (options.reducedMotion) {
+      this.flight.jump(1); this.paintFlight(); this.finishEntrance(); return;
+    }
+    this.flight.move(1, performance.now(), resume ? Math.max(450, (1 - this.flight.value) * 2400) : 2400);
+    this.paintFlight();
+    this.flightRaf = requestAnimationFrame(this.advanceFlight);
   }
 
-  private enterFromCarrier(options: ProjectionOptions, resume?: OpticalFrame[]) {
+  private setBeat(beat: string) {
+    if (beat === this.currentBeat) return;
+    this.currentBeat = beat; this.root.dataset.beat = beat;
+    this.beatTrace.push({ beat, elapsed: Math.round(performance.now() - this.flightStarted), progress: this.flight.value });
+    this.options.onBeat?.(beat);
+  }
+
+  private paintFlight() {
+    const rect = this.parent.getBoundingClientRect();
+    this.imageBox = { left: this.host.offsetLeft, top: this.host.offsetTop, width: this.host.offsetWidth, height: this.host.offsetHeight };
+    const sample = this.options.sampleCarrier?.();
+    const origin = sample?.origin ?? this.options.origin ?? { x: rect.left + rect.width * .25, y: rect.top + rect.height * .65 };
+    const x = origin.x - rect.left, y = origin.y - rect.top;
+    this.root.style.setProperty("--projection-origin-x", x + "px");
+    this.root.style.setProperty("--projection-origin-y", y + "px");
+    const f = this.frameState = carrierFrame(this.flight.value, rect, this.imageBox);
     const environment = this.root.querySelector<HTMLElement>(".projection-environment")!;
     const header = this.root.querySelector<HTMLElement>(".projection-header")!;
     const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
-    const rect = this.parent.getBoundingClientRect();
-    const x = Math.max(0, Math.min(rect.width, (options.origin?.x ?? rect.left + rect.width * .25) - rect.left));
-    const y = Math.max(0, Math.min(rect.height, (options.origin?.y ?? rect.top + rect.height * .65) - rect.top));
-    this.root.style.setProperty("--projection-origin-x", `${x}px`);
-    this.root.style.setProperty("--projection-origin-y", `${y}px`);
-    if (options.reducedMotion) { ignition.replaceChildren(); this.host.inert = false; return; }
-    this.host.inert = true;
-    const generation = this.generation;
-    if (resume) {
-      resume.forEach(({ element, opacity, transform, clipPath }) => this.entranceAnimations.push(element.animate([{ opacity, transform, clipPath }, { opacity: element === ignition ? 0 : 1, transform: "none", clipPath }], { duration: 360, easing: "cubic-bezier(.18,.7,.18,1)", fill: "both" })));
-      this.entryTimer = setTimeout(() => {
-        if (this.generation !== generation || this.closing) return;
-        this.root.dataset.state = "open"; this.host.inert = false;
-        this.entranceAnimations.forEach(animation => animation.cancel()); this.entranceAnimations = []; ignition.replaceChildren();
-      }, 370);
-      return;
+    environment.style.opacity = String(f.environment);
+    header.style.opacity = String(f.header);
+    header.style.transform = "translateY(" + ((1-f.header)*8).toFixed(2) + "px)";
+    this.host.style.opacity = String(f.image);
+    this.host.style.transform = f.transform;
+    this.host.style.setProperty("--carrier-plane-frame", String(f.frame));
+    this.root.style.setProperty("--carrier-light", String(f.light));
+    ignition.style.opacity = String(f.light);
+    const svg = ignition.querySelector("svg");
+    if (svg) {
+      svg.setAttribute("viewBox", "0 0 " + rect.width + " " + rect.height);
+      const [a,b,c,d] = f.corners;
+      const point = (v: { x: number; y: number }) => v.x.toFixed(2) + "," + v.y.toFixed(2);
+      const originText = x.toFixed(2) + "," + y.toFixed(2);
+      ignition.querySelector(".carrier-volume")!.setAttribute("d", "M" + originText + " L" + point(a) + " L" + point(b) + " Z");
+      ignition.querySelector(".carrier-inner-volume")!.setAttribute("d", "M" + originText + " L" + point(d) + " L" + point(c) + " Z");
+      ignition.querySelector(".carrier-rays")!.setAttribute("d", "M" + point(a) + " L" + originText + " L" + point(b) + " M" + point(d) + " L" + originText + " L" + point(c));
+      (ignition.querySelector(".carrier-rays") as SVGElement).style.strokeDashoffset = String(1-f.rayLength);
+      ignition.querySelector(".carrier-image-outline")!.setAttribute("d", "M" + point(a) + " L" + point(b) + " L" + point(c) + " L" + point(d) + " Z");
+      const source = ignition.querySelector(".carrier-source") as SVGGElement;
+      source.setAttribute("transform", "translate(" + x + "," + y + ")");
+      source.style.opacity = String(f.emitter);
+      const edge = sample?.edge;
+      ignition.querySelector(".carrier-aperture-edge")!.setAttribute("d", edge ? "M" + (edge[0].x - origin.x) + "," + (edge[0].y - origin.y) + " L" + (edge[1].x - origin.x) + "," + (edge[1].y - origin.y) : "M-30,0 L30,0");
+      const channel = ignition.querySelector<HTMLElement>(".carrier-channel")!;
+      channel.style.left = Math.max(16, Math.min(rect.width - 160, x + 26)) + "px";
+      channel.style.top = Math.max(20, Math.min(rect.height - 70, y + 28)) + "px";
     }
-    const width = rect.width, height = rect.height;
-    const left = { x: width * .19, y: height * .13 }, right = { x: width * .94, y: height * .28 };
-    ignition.innerHTML = `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"><defs><linearGradient id="carrier-light" x1="0" y1="1" x2=".5" y2="0"><stop stop-color="var(--optical-accent)" stop-opacity=".32"/><stop offset=".45" stop-color="var(--optical-accent)" stop-opacity=".06"/><stop offset="1" stop-color="white" stop-opacity=".015"/></linearGradient><radialGradient id="carrier-aperture"><stop stop-color="white" stop-opacity=".9"/><stop offset=".14" stop-color="var(--optical-accent)" stop-opacity=".45"/><stop offset="1" stop-color="var(--optical-accent)" stop-opacity="0"/></radialGradient></defs><path class="carrier-volume" d="M${x},${y} L${left.x},${left.y} Q${width * .55},${height * .02} ${right.x},${right.y} Z" fill="url(#carrier-light)"/><path class="carrier-rays" pathLength="1" d="M${left.x},${left.y} L${x},${y} L${right.x},${right.y}"/><ellipse class="carrier-emitter" cx="${x}" cy="${y}" rx="44" ry="18" fill="url(#carrier-aperture)"/><path class="carrier-wavefront" d="M${left.x},${left.y} Q${width * .55},${height * .02} ${right.x},${right.y}"/></svg>`;
-    const easing = "cubic-bezier(.18,.7,.18,1)";
-    this.entranceAnimations.push(
-      environment.animate([{ opacity: 0 }, { opacity: 0, offset: .16 }, { opacity: 1 }], { duration: 1120, easing, fill: "both" }),
-      header.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { delay: 410, duration: 640, easing, fill: "both" }),
-      this.host.animate([{ opacity: 0, transform: "translateY(9px)" }, { opacity: 1, transform: "none" }], { delay: 490, duration: 720, easing, fill: "both" }),
-      ignition.animate([{ opacity: 0, clipPath: `circle(0px at ${x}px ${y}px)` }, { opacity: 1, clipPath: `circle(${Math.hypot(width, height)}px at ${x}px ${y}px)`, offset: .58 }, { opacity: 0, clipPath: `circle(${Math.hypot(width, height)}px at ${x}px ${y}px)` }], { duration: 1350, easing: "ease-out", fill: "both" }),
-    );
-    const rays = ignition.querySelector(".carrier-rays")!;
-    this.entranceAnimations.push(rays.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 730, easing, fill: "both" }));
-    this.entryTimer = setTimeout(() => {
-      if (this.generation !== generation || this.closing) return;
-      this.root.dataset.state = "open"; this.host.inert = false;
-      this.entranceAnimations.forEach(animation => animation.cancel()); this.entranceAnimations = []; ignition.replaceChildren();
-    }, 1360);
+    this.options.onCameraProgress?.(f.camera);
+    this.setBeat(this.closing ? "returning" : f.beat);
+  }
+
+  private advanceFlight = (now: number) => {
+    this.flight.step(now);
+    this.paintFlight();
+    if (this.flight.active) this.flightRaf = requestAnimationFrame(this.advanceFlight);
+    else if (this.closing) this.finishClose();
+    else this.finishEntrance();
+  };
+
+  private finishEntrance() {
+    this.flight.jump(1);
+    this.host.style.transform = "none";
+    this.host.style.opacity = "1";
+    this.host.inert = false;
+    this.root.dataset.state = "open";
+    this.root.querySelector<HTMLElement>(".projection-ignition")!.style.opacity = "0";
+    this.setBeat("open");
   }
 
   private openCube(data: CubeProjectionData) {
@@ -178,46 +225,40 @@ export class ProjectionViewer {
   close(immediate = false) {
     if (!this.isOpen || (this.closing && !immediate)) return;
     this.closing = true; this.saveState();
-    const generation = ++this.generation;
     this.root.dataset.state = "closing";
-    clearTimeout(this.entryTimer);
-    const environment = this.root.querySelector<HTMLElement>(".projection-environment")!;
-    const header = this.root.querySelector<HTMLElement>(".projection-header")!;
-    const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
-    const current = [environment, header, this.host, ignition].map(element => {
-      const computed = getComputedStyle(element);
-      return { element, opacity: computed.opacity, transform: computed.transform, clipPath: computed.clipPath };
-    });
-    this.freezeIgnitionRays();
-    this.entranceAnimations.forEach(animation => animation.cancel()); this.entranceAnimations = [];
+    cancelAnimationFrame(this.flightRaf);
     this.host.inert = true;
-    const finish = () => {
-      if (this.generation !== generation) return;
-      this.research?.dispose(); this.cube?.dispose(); this.research = undefined; this.cube = undefined;
-      this.entranceAnimations.forEach(animation => animation.cancel()); this.entranceAnimations = [];
-      ignition.replaceChildren();
-      this.root.hidden = true; this.isOpen = false; this.closing = false; this.host.replaceChildren();
-      this.siblings.forEach(({ node, inert }) => node.inert = inert); this.siblings = [];
-      if (this.opener?.isConnected) this.opener.focus({ preventScroll: true });
-      this.options.onClose();
-    };
-    this.transition?.cancel();
-    if (immediate || this.options.reducedMotion) finish();
-    else {
-      current.forEach(({ element, opacity, transform, clipPath }, index) => {
-        this.entranceAnimations.push(element.animate([{ opacity, transform, clipPath }, { opacity: 0, transform: index === 0 || element === ignition ? "none" : "translateY(5px)", clipPath }], { duration: index === 0 ? 420 : 220, delay: index === 0 ? 100 : 0, easing: "ease-out", fill: "both" }));
-      });
-      this.closeTimer = setTimeout(finish, 530);
+    if (immediate || this.options.reducedMotion) {
+      this.flight.jump(0); this.options.onCameraProgress?.(0); this.finishClose();
     }
+    else {
+      // Leave the current painted frame untouched until the next RAF. Its
+      // derivatives are retained by CarrierFlight when the intent reverses.
+      this.flight.move(0, performance.now(), Math.max(650, this.flight.value * 1200));
+      this.setBeat("returning");
+      this.flightRaf = requestAnimationFrame(this.advanceFlight);
+    }
+  }
+  private finishClose() {
+    cancelAnimationFrame(this.flightRaf);
+    this.flight.jump(0);
+    this.options.onCameraProgress?.(0);
+    this.research?.dispose(); this.cube?.dispose(); this.research = undefined; this.cube = undefined;
+    this.root.querySelector(".projection-ignition")!.replaceChildren();
+    this.root.hidden = true; this.isOpen = false; this.closing = false; this.host.replaceChildren();
+    this.siblings.forEach(({ node, inert }) => node.inert = inert); this.siblings = [];
+    if (this.opener?.isConnected) this.opener.focus({ preventScroll: true });
+    this.options.onClose();
   }
   setReducedMotion(value: boolean) {
     this.options.reducedMotion = value; this.root.dataset.reduced = String(value); this.research?.setReducedMotion(value); this.cube?.setReducedMotion(value);
     if (value && this.root.dataset.state === "opening") {
-      clearTimeout(this.entryTimer); this.entranceAnimations.forEach(animation => animation.cancel()); this.entranceAnimations = [];
-      this.root.querySelector(".projection-ignition")!.replaceChildren(); this.host.inert = false; this.root.dataset.state = "open";
+      cancelAnimationFrame(this.flightRaf); this.flight.jump(1); this.paintFlight(); this.finishEntrance();
     }
+    if (value && this.closing) this.close(true);
   }
   refreshTheme() { this.cube?.refreshTheme(); }
-  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
-  dispose() { this.close(true); this.transition?.cancel(); clearTimeout(this.closeTimer); clearTimeout(this.entryTimer); this.entranceAnimations.forEach(animation => animation.cancel()); this.root.remove(); }
+  get needsCarrierScene() { return this.isOpen && this.root.dataset.state !== "open"; }
+  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, velocity: this.flight.velocity, camera: this.frameState?.camera, image: this.frameState?.image, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
+  dispose() { this.close(true); cancelAnimationFrame(this.flightRaf); this.root.remove(); }
 }

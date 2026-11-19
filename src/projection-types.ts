@@ -21,6 +21,11 @@ export interface ResearchNode {
   /** Chronological chapter, distinct from the node's strict order (`stage`). */
   phase?: number;
   thread?: string;
+  /** Authored genealogy: the main argument and its experiments are not equal rows. */
+  role?: "spine" | "component" | "branch";
+  position?: { x: number; y: number };
+  record?: string[];
+  originNodeIds?: string[];
   dateNote?: string;
   status: "question" | "tested" | "supported" | "negative" | "paused" | "open";
   statusLabel?: string;
@@ -40,8 +45,12 @@ export interface ResearchProjectionData {
   label: string;
   description: string;
   nodes: ResearchNode[];
-  edges: { from: string; to: string; label?: string; kind?: "continuation" | "branch" | "merge" | "correction" }[];
-  phases?: { id: number; title: string; date: string }[];
+  edges: { from: string; to: string; label?: string; kind?: "continuation" | "branch" | "merge" | "correction"; weight?: "primary" | "secondary" }[];
+  phases?: { id: number; title: string; date: string; entryNodeId?: string; summary?: string }[];
+  layout?: "evolution";
+  entryNodeId?: string;
+  narrativePath?: string[];
+  archiveContext?: { id: string; title: string; date: string; sources: ArchiveSource[] }[];
   retrospectiveDate?: string;
 }
 

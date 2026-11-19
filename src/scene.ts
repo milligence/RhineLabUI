@@ -216,6 +216,11 @@ export class ArchiveScene {
   private scanTime = 29.1;
   private scanBlend = 0;
   private cameraAim = new THREE.Vector3();
+  private projectionFocus = 0;
+  /** Only the camera changes when the optical image takes over the viewport. */
+  setProjectionFocus(progress: number) {
+    this.projectionFocus = THREE.MathUtils.clamp(progress, 0, 1);
+  }
   private outgoing: {
     group: THREE.Group;
     slot: number;
@@ -1692,9 +1697,19 @@ export class ArchiveScene {
       detailAim.addScaledVector(up, (framing.detailY - 0.5) * height / pixelScale);
       cameraAim.lerp(detailAim, detail);
     }
+    const projection = cinematic ? 0 : this.projectionFocus;
+    if (projection > 0) {
+      const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), viewDirection).normalize();
+      const up = new THREE.Vector3().crossVectors(viewDirection, right).normalize();
+      // Look up and across to the image growing out of the cassette. The
+      // carrier remains on its physical slot and leaves the frame by parallax.
+      cameraAim.addScaledVector(right, framing.span * .20 * projection);
+      cameraAim.addScaledVector(up, framing.span * .25 * projection);
+    }
+    const opticalDistance = distance * (1 - .16 * projection);
     const cameraPosition = cameraAim
       .clone()
-      .addScaledVector(viewDirection, distance);
+      .addScaledVector(viewDirection, opticalDistance);
     if (!cinematic && this.motion.pointerParallax && !this.uiOnlyParallax) {
       cameraPosition.x += this.pointer.x * 0.12;
       cameraPosition.y -= this.pointer.y * 0.12;
@@ -1709,7 +1724,7 @@ export class ArchiveScene {
     this.camera.fov = THREE.MathUtils.lerp(
       this.camera.fov,
       THREE.MathUtils.radToDeg(
-        2 * Math.atan((cinematic ? openingSpan(THREE.MathUtils.lerp(span, 5.9, detail)) : framing.span) / (2 * distance)),
+        2 * Math.atan((cinematic ? openingSpan(THREE.MathUtils.lerp(span, 5.9, detail)) : framing.span * (1 - .12 * projection)) / (2 * opticalDistance)),
       ),
       cameraBlend,
     );
@@ -1876,6 +1891,9 @@ export class ArchiveScene {
   get detailVisibility() {
     return ease((this.detail - 0.25) / 0.55);
   }
+  get projectionReady() {
+    return this.loaded && this.lift.value > 3.78 && this.detail > .78;
+  }
   getStats() {
     this.model.updateMatrixWorld(true);
     const project = (x: number, y: number, z: number) => {
@@ -1897,6 +1915,8 @@ export class ArchiveScene {
         .toArray()
         .map((v) => Math.round(v * 10000) / 10000),
       fieldOfView: this.camera.fov,
+      projectionFocus: this.projectionFocus,
+      projectionReady: this.projectionReady,
       openingHandoff: this.openingHandoff ? { sourceTime: this.openingHandoff.shot, progress: ease((this.clock - this.openingHandoff.start) / 0.95) } : null,
       loaded: this.loaded,
       drawCalls: this.renderer.info.render.calls,

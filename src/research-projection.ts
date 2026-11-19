@@ -1,6 +1,7 @@
 import { escapeHtml } from "./html";
 import { researchStatus, safeSourceUrl, type ArchiveSource, type ResearchProjectionData } from "./projection-types";
 import "./research-optics.css";
+import "./research-tree.css";
 
 export function sourceMarkup(sources: ArchiveSource[]) {
   return sources.map(source => {
@@ -26,7 +27,8 @@ export class ResearchProjection {
   private nodes: HTMLButtonElement[];
   private ordered: Node[];
   private positions = new Map<string, Point>();
-  private phasePositions: { id: number; x: number; title: string; date: string }[] = [];
+  private labelMetrics = new Map<string, { width: number; height: number }>();
+  private phasePositions: { id: number; x: number; title: string; date: string; left?: number; width?: number }[] = [];
   private lanePositions: { lane: number; y: number; title: string }[] = [];
   private selected = 0;
   private x = 0;
@@ -43,6 +45,7 @@ export class ResearchProjection {
   private flightLast = 0;
   private playing = false;
   private playPosition = 0;
+  private route: number[];
   private playFrame = 0;
   private playLast = 0;
   private elapsed = 0;
@@ -55,33 +58,41 @@ export class ResearchProjection {
   constructor(private host: HTMLElement, private data: ResearchProjectionData, options: { reducedMotion?: boolean; state?: ResearchViewState } = {}) {
     this.reduced = options.reducedMotion ?? false;
     this.ordered = [...data.nodes].sort((a, b) => a.stage - b.stage || a.lane - b.lane);
+    this.route = (data.narrativePath ?? this.ordered.map(n => n.id)).map(id => this.ordered.findIndex(n => n.id === id)).filter(i => i >= 0);
     this.layout();
     const edges = data.edges.map(edge => {
       const a = this.positions.get(edge.from), b = this.positions.get(edge.to);
       if (!a || !b) return "";
       const bend = Math.max(36, Math.abs(b.x - a.x) * .48);
       const result = this.ordered.find(node => node.id === edge.to)?.status;
-      return `<path data-from="${escapeHtml(edge.from)}" data-to="${escapeHtml(edge.to)}" data-kind="${edge.kind ?? "continuation"}" data-result="${result ?? "tested"}" d="M${a.x},${a.y} C${a.x + bend},${a.y} ${b.x - bend},${b.y} ${b.x},${b.y}"/>`;
+      let path = `M${a.x},${a.y} C${a.x + bend},${a.y} ${b.x - bend},${b.y} ${b.x},${b.y}`;
+      if (data.layout === "evolution" && b.x - a.x > 620) {
+        const rail = edge.kind === "branch" ? Math.min(a.y, b.y) - 100 : Math.max(a.y, b.y) + 100;
+        path = `M${a.x},${a.y} C${a.x + 80},${a.y} ${a.x + 70},${rail} ${a.x + 160},${rail} L${b.x - 160},${rail} C${b.x - 70},${rail} ${b.x - 80},${b.y} ${b.x},${b.y}`;
+      }
+      return `<path data-from="${escapeHtml(edge.from)}" data-to="${escapeHtml(edge.to)}" data-kind="${edge.kind ?? "continuation"}" data-weight="${edge.weight ?? "secondary"}" data-result="${result ?? "tested"}" d="${path}"/>`;
     }).join("");
     const particles = Array.from({ length: 24 }, (_, i) => `<i style="--px:${7 + (i * 37 % 88)}%;--py:${12 + (i * 19 % 76)}%;--delay:${-(i * 1.7)}s;--travel:${18 + i % 5 * 7}px"></i>`).join("");
-    host.innerHTML = `<div class="projection-body research-body" data-view="overview" data-settled="true">
+    host.innerHTML = `<div class="projection-body research-body" data-view="overview" data-layout="${data.layout ?? "catalogue"}" data-settled="true">
       <div class="research-optical-volume" aria-hidden="true"><div class="research-optical-floor"></div><div class="research-optical-plane"></div><div class="research-optical-lamina rear"></div><div class="research-optical-lamina front"></div><div class="research-particles">${particles}</div></div>
       <div class="research-stage" tabindex="0" aria-label="完整研究进化树。拖动浏览，滚轮缩放，选择节点展开记录。方向键切换，Home 返回全图。">
-        <div class="research-stage-label"><span>EVOLUTION FIELD <b>${String(this.ordered.length).padStart(2, "0")}</b></span><span>研究历程 <i></i> 选择节点展开记录</span></div>
+        <div class="research-stage-label"><span>RESEARCH LINEAGE <b>${String(this.ordered.length).padStart(2, "0")}</b></span><span>主干、分歧与回流 <i></i> 选择节点展开记录</span></div>
+        ${data.layout === "evolution" ? `<nav class="research-acts" aria-label="按研究阶段浏览">${(data.phases ?? []).map((phase, i) => `<button type="button" data-phase="${phase.id}" title="${escapeHtml(phase.summary ?? phase.title)}"><small>${String(i + 1).padStart(2, "0")}</small><span>${escapeHtml(phase.title)}</span><time>${escapeHtml(phase.date)}</time></button>`).join("")}</nav>` : ""}
         <div class="research-status-key" aria-label="节点状态图例"><span><i class="question"></i>问题</span><span><i class="tested"></i>已检验</span><span><i class="negative"></i>负结果</span><span><i class="paused"></i>暂缓</span></div>
-        <div class="research-map" style="width:${this.mapWidth}px;height:${this.mapHeight}px">
+        <div class="research-map-viewport"><div class="research-map" style="width:${this.mapWidth}px;height:${this.mapHeight}px">
+          ${data.layout === "evolution" ? this.phasePositions.map(p => `<div class="research-era" data-phase-id="${p.id}" style="left:${p.left}px;width:${p.width}px;height:${this.mapHeight - 90}px"><span>${escapeHtml(p.title)}</span></div>`).join("") : ""}
           <svg class="research-links" width="${this.mapWidth}" height="${this.mapHeight}" aria-hidden="true">${edges}</svg>
           ${this.phasePositions.map(p => `<div class="research-phase" style="left:${p.x}px;top:8px"><small>${escapeHtml(p.date)}</small><span>${escapeHtml(p.title)}</span></div>`).join("")}
           ${this.lanePositions.map(p => `<div class="research-thread" style="left:0;top:${p.y}px">${escapeHtml(p.title)}</div>`).join("")}
-          ${this.ordered.map(node => { const p = this.positions.get(node.id)!; return `<button type="button" class="research-node" data-node="${escapeHtml(node.id)}" data-status="${node.status}" style="left:${p.x}px;top:${p.y}px" aria-label="${escapeHtml(node.title)}，${escapeHtml(node.date)}，${escapeHtml(node.statusLabel ?? researchStatus[node.status])}" aria-pressed="false"><span class="research-node-core" aria-hidden="true"><i></i></span><strong class="research-node-title">${escapeHtml(node.title)}</strong></button>`; }).join("")}
-        </div>
+          ${this.ordered.map(node => { const p = this.positions.get(node.id)!; return `<button type="button" class="research-node" data-node="${escapeHtml(node.id)}" data-status="${node.status}" data-role="${node.role ?? "branch"}" style="left:${p.x}px;top:${p.y}px" aria-label="${escapeHtml(node.title)}，${escapeHtml(node.date)}，${escapeHtml(node.statusLabel ?? researchStatus[node.status])}" aria-pressed="false"><span class="research-node-core" aria-hidden="true"><i></i></span><strong class="research-node-title">${escapeHtml(node.title)}</strong></button>`; }).join("")}
+        </div></div>
       </div>
       <svg class="research-focus-light" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="focus-beam" x1="0" y1="1" x2=".45" y2="0"><stop stop-color="var(--optical-accent)" stop-opacity=".20"/><stop offset=".28" stop-color="var(--optical-accent)" stop-opacity=".055"/><stop offset="1" stop-color="var(--optical-accent)" stop-opacity="0"/></linearGradient><linearGradient id="focus-white" x1="0" y1="1" x2="0" y2="0"><stop stop-color="white" stop-opacity=".36"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs><path class="focus-cone-fill" d="M170 452 L290 55 Q530 5 765 130 Z" fill="url(#focus-beam)"/><path d="M170 452 L290 55 Q440 35 555 75 Z" fill="url(#focus-white)"/><path class="focus-cone-edge" d="M170 452 L290 55 M170 452 L765 130"/><path class="focus-section-rim" d="M290 55 Q530 5 765 130 Q520 84 290 55 Z"/><ellipse class="focus-aperture" cx="170" cy="458" rx="58" ry="12"/><ellipse class="focus-aperture inner" cx="170" cy="458" rx="37" ry="7"/><path class="focus-guide record-guide" d="M170 452 L280 247 L321 247"/><path class="focus-guide retrospective-guide" d="M170 452 L635 318 L692 318"/><path class="focus-guide evidence-guide" d="M170 452 L335 508 L408 508"/></svg>
       <aside class="projection-inspector" aria-label="节点的当时记录、事后复盘与依据" aria-hidden="true" inert></aside>
       <button type="button" class="research-navigator" data-map="navigate" aria-label="完整研究进化树定位图，点击区域移动主视图"><span>全树定位</span><svg viewBox="0 0 ${this.mapWidth} ${this.mapHeight}" preserveAspectRatio="none" aria-hidden="true">${edges}${this.ordered.map(node => { const p = this.positions.get(node.id)!; return `<circle cx="${p.x}" cy="${p.y}" r="10"/>`; }).join("")}<rect class="research-navigator-window" x="0" y="0" width="1" height="1"/></svg></button>
       <div class="research-map-tools"><button type="button" data-map="fit" class="research-overview-action">↖ 完整进化树</button><span class="research-map-hint">拖动浏览 · 滚轮缩放</span><button type="button" data-map="out" aria-label="缩小研究图">−</button><output class="research-zoom">100%</output><button type="button" data-map="in" aria-label="放大研究图">＋</button></div>
     </div>
-    <footer class="projection-timeline"><div class="projection-play-controls"><button type="button" data-research="prev" aria-label="上一个研究节点">←</button><button type="button" data-research="play" aria-pressed="false">回放历程</button><button type="button" data-research="next" aria-label="下一个研究节点">→</button></div><label class="projection-scrubber"><span>时间</span><input type="range" min="0" max="${Math.max(0, this.ordered.length - 1)}" step="0.01" value="0" aria-label="研究历程进度"/></label><output class="projection-step"></output></footer>`;
+    <footer class="projection-timeline"><div class="projection-play-controls"><button type="button" data-research="prev" aria-label="上一个研究节点">←</button><button type="button" data-research="play" aria-pressed="false">${data.narrativePath ? "回放研究主线" : "回放历程"}</button><button type="button" data-research="next" aria-label="下一个研究节点">→</button></div><label class="projection-scrubber"><span>时间</span><input type="range" min="0" max="${Math.max(0, this.ordered.length - 1)}" step="0.01" value="0" aria-label="全部研究节点的时间进度"/></label><output class="projection-step"></output></footer>`;
     this.body = host.querySelector(".research-body")!;
     this.stage = host.querySelector(".research-stage")!;
     this.map = host.querySelector(".research-map")!;
@@ -101,7 +112,8 @@ export class ResearchProjection {
       previous = { width, height };
     });
     this.observer.observe(this.stage);
-    this.selectNode(0, false);
+    void document.fonts.ready.then(() => { if (!this.abort.signal.aborted) { this.labelMetrics.clear(); this.paintMap(); } });
+    this.selectNode(Math.max(0, this.ordered.findIndex(n => n.id === data.entryNodeId)), false);
     requestAnimationFrame(() => {
       if (this.abort.signal.aborted) return;
       if (options.state && this.positions.has(options.state.selected)) {
@@ -114,6 +126,17 @@ export class ResearchProjection {
   }
 
   private layout() {
+    if (this.data.layout === "evolution" && this.ordered.every(n => n.position)) {
+      this.ordered.forEach(node => this.positions.set(node.id, { x: node.position!.x, y: node.position!.y + 105 }));
+      this.mapWidth = Math.max(...this.ordered.map(n => n.position!.x)) + 160;
+      this.mapHeight = Math.max(...this.ordered.map(n => n.position!.y)) + 240;
+      this.phasePositions = (this.data.phases ?? []).map(phase => {
+        const group = this.ordered.filter(n => n.phase === phase.id);
+        const min = Math.min(...group.map(n => n.position!.x)), max = Math.max(...group.map(n => n.position!.x));
+        return { ...phase, x: (min + max) / 2, left: min - 65, width: max - min + 130 };
+      });
+      return;
+    }
     const phases = [...new Set(this.ordered.map(n => n.phase ?? Math.floor(n.stage / 5)))].sort((a, b) => a - b);
     const lanes = [...new Set(this.ordered.map(n => n.lane))].sort((a, b) => a - b);
     // Extra vertical slots preserve every node in dense phases without stacking labels.
@@ -149,6 +172,7 @@ export class ResearchProjection {
         this.stage.focus({ preventScroll: true });
       }
       if (button.dataset.research === "play") this.playing ? this.pause() : this.play();
+      if (button.dataset.phase !== undefined) { this.pause(); this.framePhase(Number(button.dataset.phase)); }
       if (["prev", "next"].includes(button.dataset.research ?? "")) {
         this.pause(); this.selectNode(this.selected + (button.dataset.research === "next" ? 1 : -1), true);
       }
@@ -227,12 +251,37 @@ export class ResearchProjection {
     this.map.style.setProperty("--label-scale", String(Math.max(1, .92 / this.scale)));
     this.map.style.setProperty("--focus-label-scale", String(1 / this.scale));
     this.host.querySelector(".research-zoom")!.textContent = `${Math.round(this.scale * 100)}%`;
-    this.body.dataset.density = this.scale < .3 ? "compact" : "readable";
+    this.body.dataset.density = this.scale < (this.data.layout === "evolution" ? .21 : .3) ? "compact" : "readable";
+    this.placeLabels();
     const viewport = this.host.querySelector<SVGRectElement>(".research-navigator-window")!;
     const left = Math.max(0, -this.x / this.scale), top = Math.max(0, (55 - this.y) / this.scale);
     viewport.setAttribute("x", String(left)); viewport.setAttribute("y", String(top));
     viewport.setAttribute("width", String(Math.max(0, Math.min(this.mapWidth - left, this.stage.clientWidth / this.scale))));
     viewport.setAttribute("height", String(Math.max(0, Math.min(this.mapHeight - top, (this.stage.clientHeight - 165) / this.scale))));
+  }
+  private placeLabels() {
+    if (this.data.layout !== "evolution" || this.focused) return;
+    // Layout in screen space: inverse-scaled text must not inherit the tiny
+    // spacing of the world graph. Alternate above/below before using a tier.
+    const boxes: { left: number; right: number; top: number; bottom: number }[] = [];
+    const textScale = Math.max(this.scale, .92);
+    for (const node of this.nodes) {
+      const p = this.positions.get(node.dataset.node!)!;
+      const label = node.querySelector<HTMLElement>(".research-node-title")!;
+      let metrics = this.labelMetrics.get(node.dataset.node!);
+      if (!metrics) { metrics = { width: label.offsetWidth, height: label.offsetHeight }; this.labelMetrics.set(node.dataset.node!, metrics); }
+      const width = metrics.width * textScale, height = metrics.height * textScale;
+      const x = p.x * this.scale, y = p.y * this.scale;
+      const offsets = [14, -14 - height, 20 + height, -20 - height * 2];
+      let chosen = offsets[0];
+      for (const offset of offsets) {
+        const box = { left: x - width / 2 - 4, right: x + width / 2 + 4, top: y + offset - 3, bottom: y + offset + height + 3 };
+        if (!boxes.some(b => box.left < b.right && box.right > b.left && box.top < b.bottom && box.bottom > b.top)) {
+          chosen = offset; boxes.push(box); break;
+        }
+      }
+      node.style.setProperty("--label-offset", `${chosen / this.scale}px`);
+    }
   }
   private stopFlight() { cancelAnimationFrame(this.flightFrame); this.flightFrame = 0; this.flightLast = 0; this.velocity = { x: 0, y: 0, scale: 0 }; }
   private flyTo(x: number, y: number, scale: number, animate = true) {
@@ -272,12 +321,31 @@ export class ResearchProjection {
     this.body.scrollTop = 0;
     const w = this.stage.clientWidth, h = this.stage.clientHeight;
     const mobile = w < 760;
-    const scale = mobile ? .43 : Math.max(.06, Math.min(1, (w - 80) / this.mapWidth, (h - 140) / this.mapHeight));
+    const top = this.data.layout === "evolution" ? 140 : 80;
+    const scale = mobile ? .49 : Math.max(.06, Math.min(1, (w - 74) / this.mapWidth, (h - top - 70) / this.mapHeight));
     const selected = this.positions.get(this.ordered[this.selected].id)!;
     const x = mobile ? Math.min(24, Math.max(w - this.mapWidth * scale - 24, w / 2 - selected.x * scale)) : (w - this.mapWidth * scale) / 2;
-    const y = mobile ? 92 : 80 + (h - 150 - this.mapHeight * scale) / 2;
+    const y = mobile ? (this.data.layout === "evolution" ? 125 : 92) : top + (h - top - 70 - this.mapHeight * scale) / 2;
     this.flyTo(x, y, scale, animate);
     this.host.querySelector(".research-map-hint")!.textContent = mobile ? "拖动浏览 · 双指缩放" : "拖动浏览 · 滚轮缩放";
+    this.host.querySelectorAll("[data-phase]").forEach(button => button.classList.remove("is-active"));
+  }
+  private framePhase(id: number) {
+    const group = this.ordered.filter(n => n.phase === id);
+    if (!group.length) return;
+    const restoreFocus = this.inspector.contains(document.activeElement);
+    this.focused = false; this.body.dataset.view = "overview";
+    this.inspector.inert = true; this.inspector.setAttribute("aria-hidden", "true");
+    this.body.scrollTop = 0;
+    if (restoreFocus) this.stage.focus({ preventScroll: true });
+    this.host.querySelector(".research-map-hint")!.textContent = this.stage.clientWidth < 760 ? "拖动浏览 · 双指缩放" : "拖动浏览 · 滚轮缩放";
+    const points = group.map(n => this.positions.get(n.id)!);
+    const left = Math.min(...points.map(p => p.x)) - 95, right = Math.max(...points.map(p => p.x)) + 95;
+    const top = Math.min(...points.map(p => p.y)) - 75, bottom = Math.max(...points.map(p => p.y)) + 105;
+    const w = this.stage.clientWidth, h = this.stage.clientHeight, mobile = w < 760;
+    const scale = Math.max(mobile ? .44 : .35, Math.min(.95, (w - 50) / (right - left), (h - (mobile ? 270 : 220)) / (bottom - top)));
+    this.flyTo((w - (right - left) * scale) / 2 - left * scale, 145 + (h - 230 - (bottom - top) * scale) / 2 - top * scale, scale);
+    this.host.querySelectorAll<HTMLElement>("[data-phase]").forEach(button => button.classList.toggle("is-active", Number(button.dataset.phase) === id));
   }
   private zoom(factor: number, cx = this.stage.clientWidth / 2, cy = this.stage.clientHeight / 2) {
     if (this.focused) return;
@@ -315,6 +383,7 @@ export class ResearchProjection {
     if (!this.ordered.length) return;
     this.selected = Math.max(0, Math.min(this.ordered.length - 1, index)); this.dragged = false;
     const node = this.ordered[this.selected];
+    this.host.querySelectorAll<HTMLElement>("[data-phase]").forEach(button => button.classList.toggle("is-active", Number(button.dataset.phase) === node.phase));
     this.nodes.forEach((button, i) => { button.classList.toggle("is-selected", i === this.selected); button.setAttribute("aria-pressed", String(i === this.selected)); button.tabIndex = i === this.selected ? 0 : -1; });
     this.map.querySelectorAll<SVGPathElement>("path").forEach(path => path.classList.toggle("is-active", path.dataset.from === node.id || path.dataset.to === node.id));
     this.paintInspector(node);
@@ -335,7 +404,7 @@ export class ResearchProjection {
     const refs = (sources: ArchiveSource[], type: string) => sources.map((source, i) => `<button type="button" class="research-source-ref" data-source-ref="${type}${String(i + 1).padStart(2, "0")}" aria-label="核对${type}${String(i + 1).padStart(2, "0")}：${escapeHtml(source.label)}">${type}${String(i + 1).padStart(2, "0")}</button>`).join("");
     const evidence = (sources: ArchiveSource[], type: string) => sources.length ? sources.map((source, i) => `<div class="research-evidence-item" data-source-id="${type}${String(i + 1).padStart(2, "0")}" data-layer="${type === "R" ? "record" : "retrospective"}"><small>${type}${String(i + 1).padStart(2, "0")}</small>${sourceMarkup([source])}</div>`).join("") : '<p class="research-source-empty">未单独收录来源</p>';
     this.inspector.innerHTML = `<nav class="research-layer-nav" aria-label="投影的三个关联层次"><button type="button" data-layer-jump="record"><small>01</small>当时记录<span>↗</span></button><button type="button" data-layer-jump="retrospective"><small>02</small>事后复盘<span>↗</span></button><button type="button" data-layer-jump="evidence"><small>03</small>依据<span>↗</span></button></nav><h2 class="research-focus-name">${escapeHtml(node.title)}</h2><div class="research-focus-identity"><span class="research-focus-index">${escapeHtml(node.id)} <i></i> ${escapeHtml(node.thread ?? "研究节点")}</span><div class="research-focus-meta"><time>${escapeHtml(node.date)}</time><span>${escapeHtml(node.statusLabel ?? researchStatus[node.status])}</span></div><p>${escapeHtml(node.evidence)}</p></div>
-      <section class="research-reading-plane research-contemporary" data-layer="record" aria-labelledby="contemporary-title"><header><span class="research-layer-number">01</span><div><small>CONTEMPORARY RECORD</small><h2 id="contemporary-title">当时记录</h2></div><span class="research-layer-datum">${escapeHtml(node.date)}</span></header><div class="research-plane-scroll" tabindex="0"><div class="research-question">${p(node.question)}<div class="research-reference-row"><span>对应记录</span>${refs(node.sources, "R")}</div></div>${[["尝试", node.attempt], ["观察", node.result], ["当时判断", node.interpretation]].filter(([, value]) => value).map(([label, value]) => `<section class="research-record-section"><h3>${label}</h3>${p(value)}</section>`).join("")}${node.dateNote ? `<p class="research-date-note">${escapeHtml(node.dateNote)}</p>` : ""}</div><footer><span>记录依据</span><a href="#research-evidence" data-evidence-link="record">R01—${String(node.sources.length).padStart(2, "0")} ↘</a></footer></section>
+      <section class="research-reading-plane research-contemporary" data-layer="record" aria-labelledby="contemporary-title"><header><span class="research-layer-number">01</span><div><small>CONTEMPORARY RECORD</small><h2 id="contemporary-title">当时记录</h2></div><span class="research-layer-datum">${escapeHtml(node.date)}</span></header><div class="research-plane-scroll" tabindex="0"><div class="research-question">${p(node.question)}<div class="research-reference-row"><span>对应记录</span>${refs(node.sources, "R")}</div></div>${node.record?.length ? `<div class="research-authored-record">${node.record.map(text => p(text)).join("")}</div><section class="research-record-consequence"><h3>此后改变</h3>${p(node.interpretation)}</section>` : [["尝试", node.attempt], ["观察", node.result], ["当时判断", node.interpretation]].filter(([, value]) => value).map(([label, value]) => `<section class="research-record-section"><h3>${label}</h3>${p(value)}</section>`).join("")}${node.dateNote ? `<p class="research-date-note">${escapeHtml(node.dateNote)}</p>` : ""}</div><footer><span>记录依据</span><a href="#research-evidence" data-evidence-link="record">R01—${String(node.sources.length).padStart(2, "0")} ↘</a></footer></section>
       <section class="research-reading-plane research-hindsight" data-layer="retrospective" aria-labelledby="hindsight-title"><header><span class="research-layer-number">02</span><div><small>RETROSPECTIVE</small><h2 id="hindsight-title">事后复盘</h2></div></header><div class="research-plane-scroll" tabindex="0"><div class="research-retrospective-date">${escapeHtml(node.retrospective.length ? (node.retrospectiveDate ?? this.data.retrospectiveDate ?? "未记录复盘日期") : "未留独立复盘")}</div>${node.retrospective.length ? node.retrospective.map(text => `<p>${escapeHtml(text)}</p>`).join("") + `<div class="research-reference-row"><span>复盘来源</span>${refs(node.retrospectiveSources ?? [], "H")}</div>` : '<p class="research-source-empty">此节点尚未收录事后复盘。保留当时记录，等待后续材料。</p>'}${relations ? `<nav class="research-branch-context" aria-label="当前节点的研究关联"><h3>研究关联</h3>${relations}</nav>` : ""}</div><footer><span>回看当时判断</span><a href="#research-evidence" data-evidence-link="retrospective">复盘依据 ↙</a></footer></section>
       <section id="research-evidence" class="research-reading-plane research-evidence" data-layer="evidence" aria-labelledby="evidence-title"><header><span class="research-layer-number">03</span><div><small>EVIDENCE & CONNECTIONS</small><h2 id="evidence-title">依据与关联</h2></div><span class="research-evidence-key">R 记录 <i></i> H 复盘</span></header><div class="research-evidence-scroll" tabindex="0"><div class="research-source-columns"><div>${evidence(node.sources, "R")}</div><div>${evidence(node.retrospectiveSources ?? [], "H")}</div></div></div></section>
       <div class="research-layer-connection contemporary-connection" aria-hidden="true"><span>回看当时</span></div><div class="research-layer-connection evidence-connection" aria-hidden="true"><span>核对依据</span></div>`;
@@ -354,10 +423,18 @@ export class ResearchProjection {
   private paintAssociations() {
     const svg = this.inspector.querySelector<SVGSVGElement>(".research-relationship-wires");
     if (!svg || !this.focused || this.stage.clientWidth < 760) return;
-    const bounds = this.inspector.getBoundingClientRect();
+    // Connector coordinates belong to the local reading plane. An entering
+    // projection has a perspective transform above it; viewport rectangles
+    // would bake that temporary camera pose into permanent SVG coordinates.
+    const bounds = { width: this.inspector.clientWidth, height: this.inspector.clientHeight };
     const box = (selector: string) => {
-      const rect = this.inspector.querySelector(selector)!.getBoundingClientRect();
-      return { x: rect.left - bounds.left, y: rect.top - bounds.top, width: rect.width, height: rect.height };
+      const element = this.inspector.querySelector<HTMLElement>(selector)!;
+      let x = 0, y = 0, current: HTMLElement | null = element;
+      while (current && current !== this.inspector) {
+        x += current.offsetLeft; y += current.offsetTop;
+        current = current.offsetParent as HTMLElement | null;
+      }
+      return { x, y, width: element.offsetWidth, height: element.offsetHeight };
     };
     const record = box(".research-contemporary"), hindsight = box(".research-hindsight");
     const r = box('[data-source-group="R"] .research-source-port'), h = box('[data-source-group="H"] .research-source-port');
@@ -373,39 +450,42 @@ export class ResearchProjection {
     svg.innerHTML = `<g class="connection-review"><path d="M${hindsightPort.x},${hindsightPort.y} H${middle} V${recordPort.y} H${recordPort.x}"/><rect x="${recordPort.x - 2}" y="${recordPort.y - 2}" width="4" height="4"/><rect x="${hindsightPort.x - 2}" y="${hindsightPort.y - 2}" width="4" height="4"/><text x="${middle + 5}" y="${recordPort.y + 12}">回看</text></g>${connection(record, r, "record")}${connection(hindsight, h, "hindsight")}`;
   }
   private play() {
-    if (this.ordered.length < 2) return;
-    if (this.selected === this.ordered.length - 1) this.selectNode(0, this.focused);
-    this.playing = true; this.playPosition = this.selected; this.elapsed = 0; this.playLast = 0;
+    if (this.route.length < 2) return;
+    const next = this.route.findIndex(index => index >= this.selected);
+    this.playPosition = next < 0 || next === this.route.length - 1 ? 0 : next;
+    this.selectNode(this.route[this.playPosition], true);
+    this.playing = true; this.elapsed = 0; this.playLast = 0;
     this.playButton.textContent = "暂停回放"; this.playButton.setAttribute("aria-pressed", "true"); this.host.dataset.replaying = "true";
     const tick = (ms: number) => {
       if (!this.playing) return;
       if (this.playLast && !document.hidden) this.elapsed += Math.min(.1, (ms - this.playLast) / 1000);
       this.playLast = ms;
-      const position = Math.min(this.ordered.length - 1, this.playPosition + this.elapsed / 8), index = Math.floor(position);
-      if (index !== this.selected) this.selectNode(index, this.focused);
-      this.timeline.value = String(position);
-      this.nodes.forEach((node, i) => node.classList.toggle("is-future", i > index));
+      const position = Math.min(this.route.length - 1, this.playPosition + this.elapsed / 9), step = Math.floor(position);
+      const index = this.route[step], after = this.route[Math.min(step + 1, this.route.length - 1)];
+      if (index !== this.selected) this.selectNode(index, true);
+      this.timeline.value = String(index + (after - index) * (position - step));
+      this.nodes.forEach((node, i) => node.classList.toggle("is-future", i > after));
       this.map.querySelectorAll<SVGPathElement>("path").forEach(path => {
         const destination = this.ordered.findIndex(node => node.id === path.dataset.to);
-        path.classList.toggle("is-future", destination > index + 1);
-        if (!this.reduced && destination === index + 1) {
-          const length = path.getTotalLength(); path.style.strokeDasharray = String(length); path.style.strokeDashoffset = String(length * (1 - (position - index)));
+        path.classList.toggle("is-future", destination > after);
+        if (!this.reduced && path.dataset.from === this.ordered[index].id && destination === after) {
+          const length = path.getTotalLength(); path.style.strokeDasharray = String(length); path.style.strokeDashoffset = String(length * (1 - (position - step)));
         } else { path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; }
       });
-      if (position >= this.ordered.length - 1) this.pause();
+      if (position >= this.route.length - 1) this.pause();
       else this.playFrame = requestAnimationFrame(tick);
     };
     this.playFrame = requestAnimationFrame(tick);
   }
   private pause() {
-    this.playing = false; cancelAnimationFrame(this.playFrame); this.playButton.textContent = "回放历程"; this.playButton.setAttribute("aria-pressed", "false"); delete this.host.dataset.replaying;
+    this.playing = false; cancelAnimationFrame(this.playFrame); this.playButton.textContent = this.data.narrativePath ? "回放研究主线" : "回放历程"; this.playButton.setAttribute("aria-pressed", "false"); delete this.host.dataset.replaying;
     this.nodes.forEach(node => node.classList.remove("is-future"));
     this.map.querySelectorAll<SVGPathElement>("path").forEach(path => { path.classList.remove("is-future"); path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; });
   }
   getState(): ResearchViewState { return { selected: this.ordered[this.selected]?.id ?? "", x: this.x, y: this.y, scale: this.scale, focused: this.focused }; }
   getStats() {
     const node = this.positions.get(this.ordered[this.selected]?.id);
-    return { ...this.getState(), playing: this.playing, nodeCount: this.ordered.length, edgeCount: this.data.edges.length, retrospectiveNode: this.inspector.dataset.nodeId, activeSource: this.body.dataset.source, reducedMotion: this.reduced, settled: this.settled, anchor: node ? { x: this.x + node.x * this.scale, y: this.y + node.y * this.scale } : null, viewport: { width: this.stage.clientWidth, height: this.stage.clientHeight } };
+    return { ...this.getState(), playing: this.playing, nodeCount: this.ordered.length, narrativeSteps: this.route.length, layout: this.data.layout ?? "catalogue", edgeCount: this.data.edges.length, retrospectiveNode: this.inspector.dataset.nodeId, activeSource: this.body.dataset.source, reducedMotion: this.reduced, settled: this.settled, anchor: node ? { x: this.x + node.x * this.scale, y: this.y + node.y * this.scale } : null, viewport: { width: this.stage.clientWidth, height: this.stage.clientHeight } };
   }
   setReducedMotion(value: boolean) { this.reduced = value; this.host.dataset.reduced = String(value); if (value && this.flightFrame) this.flyTo(this.target.x, this.target.y, Math.exp(this.target.scale), false); }
   dispose() { this.pause(); this.stopFlight(); this.abort.abort(); this.observer.disconnect(); this.host.replaceChildren(); }
