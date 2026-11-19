@@ -42,6 +42,10 @@
 .detail-ui .detail-content .detail-rule { height: 1px; margin-top: 25px; background: var(--optical-edge); }
 .detail-ui .detail-content .record-abstract { margin: 24px 0; color: var(--optical-body); font-size: 18px; line-height: 1.9; text-align: left; }
 .detail-ui .detail-content .record-abstract p { margin: 0; color: inherit; font: inherit; }
+.detail-ui .detail-content .record-abstract p + p { margin-top: 14px; }
+.record-brief { margin-top: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--optical-line); }
+.detail-ui .record-brief .record-abstract { margin: 12px 0 0; font-size: 16px; line-height: 1.85; }
+.detail-ui .record-brief + .metadata { margin-top: 20px; }
 
 /* Catalog fields use alignment and a shared datum, without individual boxes. */
 .detail-ui .metadata { margin: 22px 0; padding: 0 0 22px; gap: 20px 28px; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 0; border-bottom: 1px solid var(--optical-line); background: none; }

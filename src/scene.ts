@@ -40,6 +40,7 @@ import { ArchiveDrag, ArchivePlaneMomentum, type DragAxis, type DragProjection, 
 import { assetUrl as publicAsset } from "./asset-url";
 import { fullMotion, reducedMotion, type MotionPreferences } from "./motion-preferences";
 import { ARRAY_REVEAL_START } from "./boot-motion";
+import { carrierCamera, type CarrierCameraSample } from "./carrier-flight";
 import {
   archiveWave,
   extraction,
@@ -217,9 +218,32 @@ export class ArchiveScene {
   private scanBlend = 0;
   private cameraAim = new THREE.Vector3();
   private projectionFocus = 0;
-  /** Only the camera changes when the optical image takes over the viewport. */
-  setProjectionFocus(progress: number) {
+  private projectionRendered = 0;
+  private projectionCamera?: {
+    position: THREE.Vector3; aim: THREE.Vector3; up: THREE.Vector3;
+    right: THREE.Vector3; vertical: THREE.Vector3; backward: THREE.Vector3;
+    span: number; perspective: number; fov: number;
+  };
+  /** Seed from the displayed camera, not its still-damped ordinary target. The
+   * ordinary baseline continues to settle while the optical path is applied. */
+  setProjectionFocus(progress: number): CarrierCameraSample {
     this.projectionFocus = THREE.MathUtils.clamp(progress, 0, 1);
+    if (this.projectionFocus > 0 && !this.projectionCamera) {
+      const backward = this.camera.position.clone().sub(this.cameraAim).normalize();
+      const right = new THREE.Vector3().crossVectors(this.camera.up, backward).normalize();
+      const perspective = 1 / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2));
+      this.projectionCamera = {
+        position: this.camera.position.clone(), aim: this.cameraAim.clone(), up: this.camera.up.clone(),
+        right, vertical: new THREE.Vector3().crossVectors(backward, right), backward,
+        span: this.camera.position.distanceTo(this.cameraAim) / perspective,
+        perspective, fov: this.camera.fov,
+      };
+      this.projectionRendered = 0;
+    }
+    return {
+      perspective: this.projectionCamera?.perspective ?? 1 / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2)),
+      progress: this.projectionRendered,
+    };
   }
   private outgoing: {
     group: THREE.Group;
@@ -1697,19 +1721,9 @@ export class ArchiveScene {
       detailAim.addScaledVector(up, (framing.detailY - 0.5) * height / pixelScale);
       cameraAim.lerp(detailAim, detail);
     }
-    const projection = cinematic ? 0 : this.projectionFocus;
-    if (projection > 0) {
-      const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), viewDirection).normalize();
-      const up = new THREE.Vector3().crossVectors(viewDirection, right).normalize();
-      // Look up and across to the image growing out of the cassette. The
-      // carrier remains on its physical slot and leaves the frame by parallax.
-      cameraAim.addScaledVector(right, framing.span * .20 * projection);
-      cameraAim.addScaledVector(up, framing.span * .25 * projection);
-    }
-    const opticalDistance = distance * (1 - .16 * projection);
     const cameraPosition = cameraAim
       .clone()
-      .addScaledVector(viewDirection, opticalDistance);
+      .addScaledVector(viewDirection, distance);
     if (!cinematic && this.motion.pointerParallax && !this.uiOnlyParallax) {
       cameraPosition.x += this.pointer.x * 0.12;
       cameraPosition.y -= this.pointer.y * 0.12;
@@ -1718,16 +1732,55 @@ export class ArchiveScene {
       ? this.motion.detailTransition
       : this.motion.selectionTransition;
     const cameraBlend = handingOff ? 0 : cinematic ? 1 : cameraTransition ? 1 - Math.exp(-dt * 5) : 1;
-    this.camera.position.lerp(cameraPosition, cameraBlend);
-    this.cameraAim.lerp(cameraAim, cameraBlend);
-    this.camera.lookAt(this.cameraAim);
-    this.camera.fov = THREE.MathUtils.lerp(
-      this.camera.fov,
-      THREE.MathUtils.radToDeg(
-        2 * Math.atan((cinematic ? openingSpan(THREE.MathUtils.lerp(span, 5.9, detail)) : framing.span * (1 - .12 * projection)) / (2 * opticalDistance)),
-      ),
-      cameraBlend,
+    const ordinaryFov = THREE.MathUtils.radToDeg(
+      2 * Math.atan((cinematic ? openingSpan(THREE.MathUtils.lerp(span, 5.9, detail)) : framing.span) / (2 * distance)),
     );
+    const opticalBase = this.projectionCamera;
+    if (opticalBase && !cinematic) {
+      // Keep the ordinary camera's residual motion alive underneath the optical
+      // path. Freezing it at entry would lose its velocity; releasing that old
+      // snapshot at exit would then restart the unfinished detail movement.
+      opticalBase.position.lerp(cameraPosition, cameraBlend);
+      opticalBase.aim.lerp(cameraAim, cameraBlend);
+      opticalBase.fov = THREE.MathUtils.lerp(opticalBase.fov, ordinaryFov, cameraBlend);
+      opticalBase.perspective = 1 / (2 * Math.tan(THREE.MathUtils.degToRad(opticalBase.fov) / 2));
+      opticalBase.backward.copy(opticalBase.position).sub(opticalBase.aim).normalize();
+      opticalBase.right.crossVectors(opticalBase.up, opticalBase.backward).normalize();
+      opticalBase.vertical.crossVectors(opticalBase.backward, opticalBase.right);
+      opticalBase.span = opticalBase.position.distanceTo(opticalBase.aim) / opticalBase.perspective;
+      const optical = carrierCamera(this.projectionFocus, { width: this.container.clientWidth, height: this.container.clientHeight }, opticalBase.perspective);
+      const point = (v: { x: number; y: number; z: number }) => opticalBase.aim.clone()
+        .addScaledVector(opticalBase.right, v.x * opticalBase.span)
+        .addScaledVector(opticalBase.vertical, v.y * opticalBase.span)
+        .addScaledVector(opticalBase.backward, v.z * opticalBase.span);
+      // This path already has continuous velocity and acceleration. Another
+      // ordinary camera low-pass would make the carrier lag behind its image.
+      this.camera.position.copy(point(optical.position));
+      this.cameraAim.copy(point(optical.aim));
+      this.camera.up.copy(opticalBase.vertical);
+      this.camera.fov = opticalBase.fov;
+      this.projectionRendered = this.projectionFocus;
+      if (this.projectionFocus === 0) {
+        this.camera.position.copy(opticalBase.position);
+        this.cameraAim.copy(opticalBase.aim);
+        this.camera.up.copy(opticalBase.up);
+        this.projectionCamera = undefined;
+      }
+    } else {
+      if (opticalBase) {
+        this.camera.up.copy(opticalBase.up);
+        this.projectionCamera = undefined;
+        this.projectionFocus = this.projectionRendered = 0;
+      }
+      this.camera.position.lerp(cameraPosition, cameraBlend);
+      this.cameraAim.lerp(cameraAim, cameraBlend);
+      this.camera.fov = THREE.MathUtils.lerp(
+        this.camera.fov,
+        ordinaryFov,
+        cameraBlend,
+      );
+    }
+    this.camera.lookAt(this.cameraAim);
     const fog = this.scene.fog as THREE.Fog;
     // The camera position is damped after its target distance changes. Anchor
     // fog to the rendered camera, or entry puts the array behind the far plane
@@ -1916,6 +1969,7 @@ export class ArchiveScene {
         .map((v) => Math.round(v * 10000) / 10000),
       fieldOfView: this.camera.fov,
       projectionFocus: this.projectionFocus,
+      projectionRendered: this.projectionRendered,
       projectionReady: this.projectionReady,
       openingHandoff: this.openingHandoff ? { sourceTime: this.openingHandoff.shot, progress: ease((this.clock - this.openingHandoff.start) / 0.95) } : null,
       loaded: this.loaded,

@@ -3,7 +3,7 @@ import { escapeHtml } from "./html";
 import { ResearchProjection, sourceMarkup, type ResearchViewState } from "./research-projection";
 import { CubeProjection } from "./cube-projection";
 import type { CubeProjectionData } from "./projection-types";
-import { CarrierFlight, carrierFrame, type CarrierSample, type FlightBox } from "./carrier-flight";
+import { CarrierFlight, carrierFrame, carrierCameraProgress, type CarrierCameraSample, type CarrierSample, type FlightBox } from "./carrier-flight";
 import "./projection-atmosphere.css";
 import "./cube-optics.css";
 
@@ -13,7 +13,7 @@ type ProjectionOptions = {
   origin?: { x: number; y: number };
   /** Sample the physical carrier after the main scene has drawn its current camera. */
   sampleCarrier?: () => CarrierSample | undefined;
-  onCameraProgress?: (progress: number) => void;
+  onCameraProgress?: (progress: number) => CarrierCameraSample | void;
   onBeat?: (beat: string) => void;
 };
 
@@ -112,7 +112,7 @@ export class ProjectionViewer {
     if (options.reducedMotion) {
       this.flight.jump(1); this.paintFlight(); this.finishEntrance(); return;
     }
-    this.flight.move(1, performance.now(), resume ? Math.max(450, (1 - this.flight.value) * 2400) : 2400);
+    this.flight.move(1, performance.now(), resume ? Math.max(450, (1 - this.flight.value) * 2200) : 2200);
     this.paintFlight();
     this.flightRaf = requestAnimationFrame(this.advanceFlight);
   }
@@ -127,12 +127,16 @@ export class ProjectionViewer {
   private paintFlight() {
     const rect = this.parent.getBoundingClientRect();
     this.imageBox = { left: this.host.offsetLeft, top: this.host.offsetTop, width: this.host.offsetWidth, height: this.host.offsetHeight };
+    // Queue the desired phase, then use the scene's returned *drawn* phase for
+    // both plane projection and carrier sampling. The scene and DOM have
+    // separate RAF callbacks; neither is allowed to run one visible frame ahead.
+    const rendered = this.options.onCameraProgress?.(carrierCameraProgress(this.flight.value));
     const sample = this.options.sampleCarrier?.();
     const origin = sample?.origin ?? this.options.origin ?? { x: rect.left + rect.width * .25, y: rect.top + rect.height * .65 };
     const x = origin.x - rect.left, y = origin.y - rect.top;
     this.root.style.setProperty("--projection-origin-x", x + "px");
     this.root.style.setProperty("--projection-origin-y", y + "px");
-    const f = this.frameState = carrierFrame(this.flight.value, rect, this.imageBox);
+    const f = this.frameState = carrierFrame(this.flight.value, rect, this.imageBox, this.options.reducedMotion ? undefined : rendered || undefined);
     const environment = this.root.querySelector<HTMLElement>(".projection-environment")!;
     const header = this.root.querySelector<HTMLElement>(".projection-header")!;
     const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
@@ -161,17 +165,17 @@ export class ProjectionViewer {
       const edge = sample?.edge;
       ignition.querySelector(".carrier-aperture-edge")!.setAttribute("d", edge ? "M" + (edge[0].x - origin.x) + "," + (edge[0].y - origin.y) + " L" + (edge[1].x - origin.x) + "," + (edge[1].y - origin.y) : "M-30,0 L30,0");
       const channel = ignition.querySelector<HTMLElement>(".carrier-channel")!;
-      channel.style.left = Math.max(16, Math.min(rect.width - 160, x + 26)) + "px";
-      channel.style.top = Math.max(20, Math.min(rect.height - 70, y + 28)) + "px";
+      channel.style.left = (x + 26) + "px";
+      channel.style.top = (y + 28) + "px";
+      channel.style.opacity = String(f.emitter);
     }
-    this.options.onCameraProgress?.(f.camera);
     this.setBeat(this.closing ? "returning" : f.beat);
   }
 
   private advanceFlight = (now: number) => {
     this.flight.step(now);
     this.paintFlight();
-    if (this.flight.active) this.flightRaf = requestAnimationFrame(this.advanceFlight);
+    if (this.flight.active || Math.abs((this.frameState?.camera ?? this.flight.target) - this.flight.target) > 1e-9) this.flightRaf = requestAnimationFrame(this.advanceFlight);
     else if (this.closing) this.finishClose();
     else this.finishEntrance();
   };
@@ -234,7 +238,7 @@ export class ProjectionViewer {
     else {
       // Leave the current painted frame untouched until the next RAF. Its
       // derivatives are retained by CarrierFlight when the intent reverses.
-      this.flight.move(0, performance.now(), Math.max(650, this.flight.value * 1200));
+      this.flight.move(0, performance.now(), Math.max(650, this.flight.value * 1500));
       this.setBeat("returning");
       this.flightRaf = requestAnimationFrame(this.advanceFlight);
     }
@@ -259,6 +263,6 @@ export class ProjectionViewer {
   }
   refreshTheme() { this.cube?.refreshTheme(); }
   get needsCarrierScene() { return this.isOpen && this.root.dataset.state !== "open"; }
-  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, velocity: this.flight.velocity, camera: this.frameState?.camera, image: this.frameState?.image, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
+  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, velocity: this.flight.velocity, camera: this.frameState?.camera, requestedCamera: this.frameState?.requestedCamera, perspective: this.frameState?.rig.perspective, position: this.frameState?.rig.position, aim: this.frameState?.rig.aim, image: this.frameState?.image, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
   dispose() { this.close(true); cancelAnimationFrame(this.flightRaf); this.root.remove(); }
 }

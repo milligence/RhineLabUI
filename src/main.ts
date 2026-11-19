@@ -21,6 +21,7 @@ import "./projection.css";
 import "./archive-entry.css";
 import { ProjectionViewer } from "./projection-viewer";
 import { sourceMarkup } from "./research-projection";
+import { archiveBriefMarkup, archiveNarrativeMarkup } from "./archive-narrative";
 import { viewportLayout, openingLayout } from "./viewport-layout";
 import { assetUrl } from "./asset-url";
 import { initPwa, pwaSettingsMarkup } from "./pwa";
@@ -609,6 +610,9 @@ function stepColumn(direction: number) {
 function updateSelection(navigation?: ArchiveNavigation) {
   const r = records[selected];
   $<HTMLButtonElement>(".archive-project-file").hidden = !r.projection;
+  $(".read-file small").textContent = r.projection ? "UNSEAL ARCHIVE" : "READ ARCHIVE";
+  $(".read-file > span").firstChild!.textContent = r.projection ? "启封档案 " : "读取档案 ";
+  $(".read-file").setAttribute("aria-label", `${r.projection ? "启封" : "读取"}${r.title}档案`);
   const { lane } = fileLocation(selected);
   const files = columnFiles(lane);
   selectionTitle.update({
@@ -798,6 +802,7 @@ function renderDetail() {
   ${r.projection ? `<button type="button" class="record-projection-entry" data-action="projection" aria-label="展开 ${escapeHtml(r.title)}的全息投影"><span>全息投影</span><span aria-hidden="true">↗</span></button>` : ""}</div>
   <h2>${escapeHtml(r.en)}</h2><div class="detail-title-cn">${escapeHtml(r.title)}<span>${escapeHtml(r.category)}</span></div>
   </div><div class="detail-rule"></div>
+  ${archiveBriefMarkup(r)}
   <dl class="metadata"><div><dt>FOLDER / 归档单元</dt><dd>${escapeHtml(r.department)}</dd></div><div><dt>COLLECTION / 编目范围</dt><dd>${escapeHtml(r.date)}</dd></div><div><dt>CONTRIBUTOR / 记录人</dt><dd>${escapeHtml(r.lead)}</dd></div><div><dt>STATUS / 状态</dt><dd><i></i>${r.clearance === "RESTRICTED" ? "目录访问" : "已归档 · 可读取"}</dd></div></dl>
   ${r.image ? `<figure class="record-image-stage"><img class="record-image" src="${escapeHtml(assetUrl(r.image))}" alt="${escapeHtml(r.title)}的档案图像" /></figure>` : ""}
   <div class="detail-tabs" role="tablist"><button id="tab-overview" class="active" role="tab" aria-controls="tab-panel" aria-selected="true" data-tab="overview">01 <span>档案</span></button><button id="tab-notes" role="tab" aria-controls="tab-panel" aria-selected="false" data-tab="notes">02 <span>研究记录</span></button><button id="tab-history" role="tab" aria-controls="tab-panel" aria-selected="false" data-tab="history">03 <span>来源与访问</span></button><i class="tab-indicator" aria-hidden="true"></i></div>
@@ -819,8 +824,7 @@ function renderDetail() {
   setTab(activeTab, false);
 }
 function overview() {
-  const record = records[selected];
-  return `<div class="panel-label">ARCHIVE NARRATIVE / 档案记录</div><p class="record-abstract">${escapeHtml(record.abstract)}</p>${record.chapters?.length ? `<div class="record-story">${record.chapters.map((chapter, index) => `<section id="chapter-${escapeHtml(chapter.id)}"><div class="record-chapter-meta"><span>${String(index + 1).padStart(2, "0")}</span>${chapter.date ? `<span>${escapeHtml(chapter.date)}</span>` : ""}</div><h3>${escapeHtml(chapter.title)}</h3>${chapter.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("")}</section>`).join("")}</div>` : ""}`;
+  return archiveNarrativeMarkup(records[selected]);
 }
 function setTab(tab: string, sound = true) {
   if (sound && tab === activeTab) return;
@@ -867,20 +871,29 @@ function notify(message: string) {
   toastTimer = setTimeout(() => $("#toast").classList.remove("visible"), 2600);
 }
 
+function cancelProjectionEntry(restoreFocus = false) {
+  if ($("#stage").dataset.projectionPending !== "true" || projectionViewer.isOpen) return false;
+  if (projectionFromArchive) {
+    setMode("archive");
+    if (restoreFocus) $(".archive-project-file").focus({ preventScroll: true });
+  }
+  else {
+    projectionRequest++;
+    delete $("#stage").dataset.projectionPending;
+    delete $("#stage").dataset.projectionPhase;
+    $("#detail-content").inert = false;
+    pendingDetailFocus = false;
+    if (restoreFocus) $(".record-projection-entry").focus({ preventScroll: true });
+  }
+  return true;
+}
+
 function openModal(kind: NonNullable<typeof modal>) {
   if (!ready) return;
   const opener = document.activeElement as HTMLElement;
   // Search or settings can interrupt the carrier extraction. Cancel before
   // isolating the modal, so a queued RAF cannot open a second surface over it.
-  if ($("#stage").dataset.projectionPending === "true" && !projectionViewer.isOpen) {
-    if (projectionFromArchive) setMode("archive");
-    else {
-      projectionRequest++;
-      delete $("#stage").dataset.projectionPending;
-      delete $("#stage").dataset.projectionPhase;
-      $("#detail-content").inert = false;
-    }
-  }
+  cancelProjectionEntry();
   if (!modal) {
     previousFocus = opener;
     modalSiblings = [...$("#stage").children]
@@ -1239,6 +1252,7 @@ document.addEventListener("keydown", (e) => {
   const typing = e.target instanceof HTMLInputElement;
   if (e.key === "Escape") {
     if (modal) closeModal();
+    else if (cancelProjectionEntry(true)) audio.play("page-close");
     else if (mode === "detail" || (mode === "boot" && ready)) {
       const sound = mode === "detail" ? "back" : "ui-tick";
       setMode("archive");
@@ -1291,15 +1305,16 @@ document.addEventListener("keydown", (e) => {
     e.preventDefault();
     openModal("saved");
   }
-  if (e.key === "ArrowLeft" && mode !== "boot") {
+  const navigateArray = mode === "archive" || (mode === "detail" && isGamepadEvent(e));
+  if (e.key === "ArrowLeft" && navigateArray) {
     e.preventDefault();
     stepColumn(-1);
   }
-  if (e.key === "ArrowRight" && mode !== "boot") {
+  if (e.key === "ArrowRight" && navigateArray) {
     e.preventDefault();
     stepColumn(1);
   }
-  if (["ArrowUp", "ArrowDown"].includes(e.key) && mode !== "boot") {
+  if (["ArrowUp", "ArrowDown"].includes(e.key) && navigateArray) {
     e.preventDefault();
     stepFile(e.key === "ArrowUp" ? -1 : 1);
   }
@@ -1328,13 +1343,12 @@ function bootFrame(t: number) {
     return undefined;
   }
   if (
-    isWallpaper &&
     frozenTime === null &&
     t >= ARRAY_OPENING_END &&
-    !openingShowsDetail(
+    (!isWallpaper || !openingShowsDetail(
       wallpaperHost()?.properties.openingdetail?.value,
       !!workbench?.enabled,
-    )
+    ))
   ) {
     setMode("archive");
     return undefined;

@@ -381,7 +381,11 @@ export class ResearchProjection {
   }
   private selectNode(index: number, focus = true) {
     if (!this.ordered.length) return;
-    this.selected = Math.max(0, Math.min(this.ordered.length - 1, index)); this.dragged = false;
+    const next = Math.max(0, Math.min(this.ordered.length - 1, index));
+    // Narrow and short viewports scroll the whole constellation. A new node
+    // starts at its source, not at the old node's hindsight or evidence footer.
+    if (focus && next !== this.selected) this.body.scrollTop = 0;
+    this.selected = next; this.dragged = false;
     const node = this.ordered[this.selected];
     this.host.querySelectorAll<HTMLElement>("[data-phase]").forEach(button => button.classList.toggle("is-active", Number(button.dataset.phase) === node.phase));
     this.nodes.forEach((button, i) => { button.classList.toggle("is-selected", i === this.selected); button.setAttribute("aria-pressed", String(i === this.selected)); button.tabIndex = i === this.selected ? 0 : -1; });
