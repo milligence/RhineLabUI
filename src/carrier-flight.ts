@@ -1,9 +1,18 @@
 /** The optical image has a source, a held projection plane and a camera transfer.
  * This timeline is shared by research and experiment archives. All coordinates
- * are viewport pixels; no archive geometry is moved to achieve the framing. */
+ * are surface-local CSS pixels; no archive geometry is moved to frame them. */
 export type OpticalPoint = { x: number; y: number };
 export type CarrierSample = { origin: OpticalPoint; edge?: [OpticalPoint, OpticalPoint] };
 export type FlightBox = { left: number; top: number; width: number; height: number };
+/** Carrier samples arrive in screen CSS pixels, while the stage itself may be
+ * scaled. Convert once at the boundary; image boxes, SVG and camera projection
+ * must all use the same unscaled surface coordinates. */
+export function carrierLocalPoint(point: OpticalPoint, bounds: FlightBox, surface: { width: number; height: number }): OpticalPoint {
+  return {
+    x: (point.x - bounds.left) * surface.width / Math.max(1e-6, bounds.width),
+    y: (point.y - bounds.top) * surface.height / Math.max(1e-6, bounds.height),
+  };
+}
 export type OpticalVector = { x: number; y: number; z: number };
 /** Lens distance in units of the initial vertical field of view. The rendered
  * phase lets the DOM follow the frame actually drawn by the physical scene. */
@@ -11,6 +20,15 @@ export type CarrierCameraSample = { perspective: number; progress: number };
 const clamp = (v: number) => Math.max(0, Math.min(1, v));
 const smooth = (v: number) => { const t = clamp(v); return t * t * t * (t * (t * 6 - 15) + 10); };
 const between = (v: number, a: number, b: number) => smooth((v - a) / (b - a));
+// Join a stationary phase to linear travel with zero first/second derivatives
+// at departure. The flight itself supplies the final arrival ease, so the
+// camera must not ease twice and spend its last second apparently motionless.
+const depart = (value: number, ramp = .22) => {
+  const t = clamp(value), speed = 1 / (1 - ramp / 2);
+  if (t >= ramp) return speed * (t - ramp / 2);
+  const u = t / ramp;
+  return speed * ramp * (u ** 6 - 3 * u ** 5 + 2.5 * u ** 4);
+};
 const add = (a: OpticalVector, b: OpticalVector): OpticalVector => ({ x: a.x + b.x, y: a.y + b.y, z: a.z + b.z });
 const multiply = (a: OpticalVector, k: number): OpticalVector => ({ x: a.x * k, y: a.y * k, z: a.z * k });
 const subtract = (a: OpticalVector, b: OpticalVector) => add(a, multiply(b, -1));
@@ -21,6 +39,24 @@ const cross = (a: OpticalVector, b: OpticalVector): OpticalVector => ({ x: a.y *
 const mix = (a: OpticalVector, b: OpticalVector, t: number) => add(multiply(a, 1 - t), multiply(b, t));
 const zero: OpticalVector = { x: 0, y: 0, z: 0 };
 const vertical: OpticalVector = { x: 0, y: 1, z: 0 };
+
+export const CARRIER_ENTRANCE_MS = 5200;
+export const CARRIER_RETURN_MS = 2400;
+
+/** A stalled render must not consume the light-up and image-formation beats.
+ * This is presentation time, shared by the flight and its reversals; the
+ * ordinary 30/60/144 Hz path is unchanged. Hidden tabs do not run the show. */
+export class CarrierPresentationClock {
+  value = 0;
+  private previous = 0;
+  reset(now: number) { this.value = 0; this.previous = now; }
+  step(now: number, visible = true) {
+    const elapsed = Math.max(0, now - this.previous);
+    this.previous = Math.max(this.previous, now);
+    if (visible) this.value += Math.min(64, elapsed);
+    return this.value;
+  }
+}
 
 function shortArc(a: OpticalVector, b: OpticalVector, t: number) {
   const angle = Math.acos(Math.max(-1, Math.min(1, dot(a, b))));
@@ -101,9 +137,11 @@ export class CarrierFlight {
   }
 }
 
-// CarrierFlight already supplies a C2 ease in time. Applying another ease to
-// the camera phase would squeeze the whole journey into its middle frames.
-export const carrierCameraProgress = (progress: number) => clamp(progress);
+/** Separate the projection ritual from the later camera approach. The small
+ * first arc clears space for the image; its held position makes the physical
+ * source, growing beam and suspended image readable as one optical system. */
+export const carrierCameraProgress = (progress: number) =>
+  .16 * between(progress, .07, .16) + .84 * depart((progress - .48) / .52);
 
 /** The image is a stationary plane. A camera travels around its focus on a
  * short spherical arc, then closes the distance with a fixed lens. Positions
@@ -162,19 +200,25 @@ export function carrierFrame(progress: number, viewport: { width: number; height
   const matrix = [a,b,0,g, c,d,0,h, 0,0,1,0, e,f,0,1];
   const project = (x: number, y: number) => projectOpticalPoint(add(planeCentre, add(multiply(unitX, x - box.width / 2), multiply(unitY, y - box.height / 2))), rig, viewport);
   const corners = [project(0,0), project(box.width,0), project(box.width,box.height), project(0,box.height)];
+  const separated = between(camera, .08, .155);
+  const reveal = between(p, .14, .38) * separated;
   return {
     progress: p, camera, requestedCamera, rig,
-    beat: p < .11 ? "ignition" : p < .31 ? "image-formed" : p < .92 ? "camera-transfer" : "settling",
-    // Keep the source readable only for the short formation handoff. Once the
-    // camera has cleared it, the observation field can take over unobstructed.
-    environment: between(camera, .45, .77),
-    image: between(p, .12, .31),
-    header: between(p, .89, 1),
-    light: between(p, 0, .11) * (1 - between(camera, .28, .58)),
-    emitter: between(p, 0, .08) * (1 - between(camera, .24, .48)),
-    rayLength: between(p, .025, .19),
-    frame: between(p, .08, .22) * (1 - between(camera, .64, .92)),
+    beat: p < .025 ? "ignition" : p < .14 ? "beam-forming" : reveal < .999 ? "image-forming" : p < .48 ? "image-held" : camera < .96 ? "camera-transfer" : "settling",
+    environment: between(camera, .5, .84),
+    image: between(p, .14, .30) * separated,
+    reveal,
+    interface: between(camera, .67, .96),
+    header: between(camera, .76, .98),
+    light: between(p, 0, .012) * (1 - between(camera, .34, .62)),
+    emitter: 1 - between(camera, .26, .5),
+    charge: between(p, 0, .025),
+    beamReach: between(p, .025, .15),
+    beamSpread: between(p, .055, .15),
+    rayLength: between(p, .025, .15),
+    frame: between(p, .08, .15) * (1 - between(camera, .64, .92)),
     transform: "matrix3d(" + matrix.map(v => Number(v.toFixed(12))).join(",") + ")",
     matrix, corners,
+    scanLine: [project(0, box.height * (1 - reveal)), project(box.width, box.height * (1 - reveal))],
   };
 }

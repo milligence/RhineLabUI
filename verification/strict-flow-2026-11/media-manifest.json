@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "title": "Strict archive flow public media evidence",
+  "reviewDate": "2026-11-19",
+  "scope": "Fifteen actual review screenshots containing only the public fictional 5 x 10 fixture. Private archive prose is absent.",
+  "capture": {
+    "windowWidth": 900,
+    "windowHeight": 700,
+    "contentViewportWidth": 900,
+    "contentViewportHeight": 614,
+    "method": "Actual scene and production components rendered at selected review checkpoints; Cube interaction also observed through the UI.",
+    "timingNote": "Projection filename times denote presentation time after ignition, not measured wall-clock playback.",
+    "evidenceLimit": "Fixed 60 Hz state integration and selected rendered checkpoints do not certify continuous 60 FPS rendering."
+  },
+  "collectionAudit": {
+    "receipt": "array-5x10.json",
+    "created": "2026-11-19T11:53:08.400Z",
+    "auditedBuildVersion": "9630ae718c672bda",
+    "finalPublicBuildVersion": "d0ce53429496298e",
+    "buildIdentifierType": "Production build version; not a Git commit hash.",
+    "assertions": 236,
+    "failures": 0,
+    "subsequentChangeScope": "Responsive opening-mask CSS and review opening-size variables; no changes to the five audited state/fixture sources. This is the original 236-assertion run, not a rerun after the CSS correction.",
+    "rerunAfterFinalCssCorrection": false,
+    "auditedSources": [
+      {
+        "path": "src/scene.ts",
+        "sha256": "2161230d8be70a494ecf3d4547890d1b63c74052f7698d6170a3ff6d011ff525",
+        "matchesFinalSource": true
+      },
+      {
+        "path": "src/archive-arrival.ts",
+        "sha256": "decb904c96cf699c884396680df50fdf1796e3baa1949a984c5224b0bf8e5ac2",
+        "matchesFinalSource": true
+      },
+      {
+        "path": "src/carrier-flight.ts",
+        "sha256": "58dc45928e91887d2c0baec0a0aadf4db4e5f60d508bf0b0b21043496f753678",
+        "matchesFinalSource": true
+      },
+      {
+        "path": "src/projection-viewer.ts",
+        "sha256": "10c8f70102065db2d9b41edf5d18ad78eee982a4f83e8587a3d930c997fe9276",
+        "matchesFinalSource": true
+      },
+      {
+        "path": "content/fixtures/array-5x10.json",
+        "sha256": "0f692641a6df58baddf5844caaa6d560a237fe67fb1a6dbd17ee5376f0bd4506",
+        "matchesFinalSource": true
+      }
+    ]
+  },
+  "hashes": {
+    "sha256": "SHA-256 of the original local file bytes.",
+    "gitBlobSha": "Git SHA-1 of the blob header followed by the original local file bytes."
+  },
+  "mediaCount": 15,
+  "media": [
+    {
+      "path": "media/arrival-brand-before-handoff.png",
+      "group": "arrival",
+      "caption": "Brand settles before the opening layout releases.",
+      "bytes": 74640,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "0b2fe0615face444152fa02b762ab0aa89aaa2425334ac6d3e24b4e40d1b9048",
+      "gitBlobSha": "67a353c06a4ce6cf9f4229094d923008026ecfde"
+    },
+    {
+      "path": "media/arrival-brand-after-handoff.png",
+      "group": "arrival",
+      "caption": "Brand and array after the interactive layout handoff.",
+      "bytes": 82836,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "a04e5bee9044f893a14f3819392a46a944012cbcae1709592420bf9a2a252516",
+      "gitBlobSha": "b5307c3cbdcea07f56dbff5fa0d17be4f6dc408c"
+    },
+    {
+      "path": "media/unseal-1s.png",
+      "group": "unseal",
+      "caption": "Carrier extraction at one second; reading paper remains hidden.",
+      "bytes": 67879,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "cc75c1a506daae9b623057ceed355821f4f250de24eded0e363f984a162d3dce",
+      "gitBlobSha": "10a0db15efd5688149f87b314297c0421ca4f401"
+    },
+    {
+      "path": "media/unseal-4p5s.png",
+      "group": "unseal",
+      "caption": "Paper begins appearing after carrier clearance and camera convergence.",
+      "bytes": 71987,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "31aef1eb64e44ea6059c26267ccea27e602c943e5123d9e3c1bd8fb04082c349",
+      "gitBlobSha": "bf88e72204b968e1b64b9c3bf4c5e40c02f3cefb"
+    },
+    {
+      "path": "media/projection-0p5s.png",
+      "group": "research-projection",
+      "caption": "The archive source lights before a full research image appears.",
+      "bytes": 54752,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "c9e3d862f13e65ce8f206a9b00e1955fbe55b615c47dd5c199190e6665acb4aa",
+      "gitBlobSha": "3128223ff98894b19902721ec007498539285e6f"
+    },
+    {
+      "path": "media/projection-1p6s.png",
+      "group": "research-projection",
+      "caption": "The cone and projected-plane boundary establish the optical connection.",
+      "bytes": 58464,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "9c0a03c493152b1a75ece6eca655c9faf91131ff5c40350629a9839e596e0f4d",
+      "gitBlobSha": "fff50a4f6c2d2e225bc935309ecf21306c316918"
+    },
+    {
+      "path": "media/projection-2p6s.png",
+      "group": "research-projection",
+      "caption": "The formed research image holds above its archive.",
+      "bytes": 60376,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "de86b5cbcf4ea352236ebcea5cb205e427b7e9efd11029b748070d4803254c1f",
+      "gitBlobSha": "5196d62b50a7ee97f7ff27fa806841477d299f0f"
+    },
+    {
+      "path": "media/projection-3p6s.png",
+      "group": "research-projection",
+      "caption": "The camera approaches the research image.",
+      "bytes": 55728,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "703ad2cba90edb3a7f4578400f2ef28a611733098c3c9a86eb095773eb0a1f3c",
+      "gitBlobSha": "2bc1668d12d532a503b98c8ac20bd6597c4fa48a"
+    },
+    {
+      "path": "media/projection-5p6s.png",
+      "group": "research-projection",
+      "caption": "The research projection settles into its interactive view.",
+      "bytes": 67300,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "ee01fc1fc09c680d320493e3b8d256c144eea0bb34d4a30abf166d189c93f2d4",
+      "gitBlobSha": "0048d70d2dcb8fcbedbddb8c6961ed5ecf05c948"
+    },
+    {
+      "path": "media/projection-return-1p5s.png",
+      "group": "research-projection",
+      "caption": "Archive, cone and contracting image reconnect during return.",
+      "bytes": 60636,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "1639f9be631bbf09ea84927e47bd268cb3fc2563b4523a41cf855d064c456966",
+      "gitBlobSha": "1638bc64e3aaaf66d80512310d6b631a88a45276"
+    },
+    {
+      "path": "media/cube-held-image.png",
+      "group": "cube",
+      "caption": "The Cube image holds in its projected plane.",
+      "bytes": 59900,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "f20d535b4b6a5d44b2e26eda2709b967b895ebb402c6154f0f350c6247bc216e",
+      "gitBlobSha": "5e55d6d4e4b84b5d6e912fadb2728058c95ce207"
+    },
+    {
+      "path": "media/cube-camera-approach.png",
+      "group": "cube",
+      "caption": "The camera approaches the Cube projection.",
+      "bytes": 60582,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "9fab793df8d76b59ed2b8d846770b1737474e599a376871e856e4990baad8601",
+      "gitBlobSha": "1298246f77cdc763420b762f60ce86993fc3cd93"
+    },
+    {
+      "path": "media/cube-open.png",
+      "group": "cube",
+      "caption": "The Cube interaction surface is open.",
+      "bytes": 45187,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "25699f93a2000bfdcfc26f8b73ff8a5c0d152f705fa3edde0b08ce6b285f9055",
+      "gitBlobSha": "ddcb3cca6bfb63a687239faddf7db4e854bb8565"
+    },
+    {
+      "path": "media/cube-rotated.png",
+      "group": "cube",
+      "caption": "Dragging changes the Cube faces and tilt.",
+      "bytes": 44428,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "04d8a826e018d3438d94c2e72e6266a2339671c71f465ec78fcd828eda0dc4f6",
+      "gitBlobSha": "05db48e10b4d2822a26cf49f7f3c1bb57644f5e5"
+    },
+    {
+      "path": "media/cube-excavated.png",
+      "group": "cube",
+      "caption": "An excavated cell reveals a cavity with an amber outline.",
+      "bytes": 45459,
+      "width": 900,
+      "height": 700,
+      "detectedMimeType": "image/jpeg",
+      "sha256": "2313dc0057dff846ad18f1b240c0cad9e7aa70815f8910223e5c6a3b0e5d04fa",
+      "gitBlobSha": "51f7f732a717698416d6caf6df99282eab4fac05"
+    }
+  ]
+}

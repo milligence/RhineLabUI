@@ -1,5 +1,36 @@
 /* The archive owns both routes. Keep actions on one fixed, legible datum;
    only the source leader follows the physical carrier. */
+[data-arrival-layout] {
+  --arrival-brand-left: calc(59px * var(--arrival-final-stage-scale, 1));
+  --arrival-brand-top: calc(114px * var(--arrival-final-stage-scale, 1));
+  --arrival-brand-scale: var(--arrival-final-stage-scale, 1);
+}
+/* These are the existing responsive brand endpoints, expressed in viewport
+   pixels. The opening remains on its own stage until its camera has settled. */
+:is([data-arrival-layout="compact"], [data-arrival-layout="portrait"]) {
+  --arrival-brand-left: max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
+  --arrival-brand-top: max(16px, env(safe-area-inset-top));
+  --arrival-brand-scale: .48;
+}
+[data-arrival-layout="portrait"] { --arrival-brand-scale: .42; }
+[data-mode="boot"][data-arrival="web"][data-arrival-layout] .brand {
+  left: calc(59px * (1 - var(--arrival-brand-progress)) + var(--arrival-brand-left) / var(--arrival-stage-scale) * var(--arrival-brand-progress));
+  top: calc(114px * (1 - var(--arrival-brand-progress)) + var(--arrival-brand-top) / var(--arrival-stage-scale) * var(--arrival-brand-progress));
+  scale: calc(1 + (var(--arrival-brand-scale) / var(--arrival-stage-scale) - 1) * var(--arrival-brand-progress));
+  transform-origin: top left;
+}
+@media (max-width: 370px) {
+  [data-arrival-layout="portrait"] { --arrival-brand-left: max(14px, env(safe-area-inset-left), env(safe-area-inset-right)); }
+}
+@media (max-height: 440px) and (orientation: landscape) {
+  [data-arrival-layout="compact"] { --arrival-brand-scale: .36; }
+}
+[data-mode="boot"][data-arrival="web"] .archive-ui {
+  /* The final layout fades in after arrival. A temporary film callout would
+     draw a detached bar, then jump when the responsive layout takes over. */
+  opacity: 0;
+  transition: none;
+}
 [data-mode="archive"] .archive-callout {
   left: 50.5%;
   top: 43.6%;
@@ -77,7 +108,18 @@
 
 /* The projection belongs to the document's identity, above variable metadata. */
 .record-identity-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-[data-projection-pending="true"] #detail-content { visibility: hidden; pointer-events: none; }
+[data-projection-route="reading"] #detail-content {
+  /* The paper yields during ignition, before the beam reaches its image plane.
+     Scope this to an already-open reading route so the physical unseal keeps
+     its own presented clock and a direct projection never exposes a page. */
+  transition: opacity 420ms cubic-bezier(.22,1,.36,1), visibility 0s;
+}
+[data-projection-pending="true"] #detail-content { opacity: 0 !important; visibility: hidden; pointer-events: none; }
+[data-projection-pending="true"][data-projection-route="reading"] #detail-content {
+  transition: opacity 340ms cubic-bezier(.4,0,.2,1), visibility 0s 340ms;
+}
+.reduce-surfaces [data-projection-route="reading"] #detail-content,
+[data-projection-route="reading"].reduce-surfaces #detail-content { transition: none; }
 [data-projection-pending="true"] :is(.brand, .system-nav, .system-footer, .back-button, #inspection-marks, #inspection-text) { opacity: 0 !important; pointer-events: none; }
 [data-projection-pending="true"] .archive-atmosphere::after { opacity: 0; }
 .record-identity-row .detail-kicker { min-width: 0; }

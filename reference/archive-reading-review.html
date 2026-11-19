@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Archive reading · Text and tree review</title>
+  <style>
+    #reading-controls { position:fixed;z-index:500;left:12px;bottom:12px;max-width:calc(100vw - 24px);padding:10px 14px;background:#eeece6f5;border:1px solid #938c7c;color:#24251f;font:12px/1.5 sans-serif; }
+    #reading-controls > div { display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0; }
+    #reading-controls strong { font-size:10px;letter-spacing:1px; }
+    #reading-controls button,#reading-controls select { font:inherit;min-height:28px;padding:3px 8px;border:1px solid #a59a87;background:#f9f7f0;color:#222;max-width:320px; }
+    #reading-controls button:disabled { opacity:.45; }
+    #reading-controls[hidden] { display:none; }
+  </style>
+</head>
+<body><div id="viewport"><main id="stage" data-mode="detail"><section id="detail-ui" class="detail-ui"><article id="detail-content" class="detail-content" tabindex="0"></article></section></main></div>
+<aside id="reading-controls" aria-label="文字与进化树静态核查">
+  <div><strong>TEXT / TREE REVIEW</strong><span>正文 / 进化树静态核查 · 无载体动画</span></div>
+  <div><select id="reading-record" aria-label="选择档案"></select><button id="reading-document">正文</button><button id="reading-tree">完整进化树</button><select id="reading-chapter" aria-label="跳转章节"></select><button id="reading-hide">隐藏工具栏 H</button></div>
+  <div id="reading-status" role="status"></div>
+</aside><script type="module" src="./archive-reading-review.js"></script></body>
+</html>

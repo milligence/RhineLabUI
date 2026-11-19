@@ -2,6 +2,8 @@ import { bootMotion } from "./boot-motion";
 import { bootMarkContour } from "./brand";
 import { themeAmount } from "./theme-ui";
 import { BootLettering } from "./boot-lettering";
+import type { WebArrayArrival } from "./archive-arrival";
+import { openingLayout, viewportLayout } from "./viewport-layout";
 
 const ns = "http://www.w3.org/2000/svg";
 const arc = (r: number, start: number, sweep: number, x = 960, y = 540) => {
@@ -126,9 +128,21 @@ export class BootSequence {
   private opacity(selector: string, value: number | boolean) {
     this.el(selector).style.opacity = String(Number(value));
   }
-  update(time: number) {
+  update(time: number, arrival?: WebArrayArrival) {
     const s = bootMotion(time),
       t = s.t;
+    let compactArrival = false;
+    if (arrival && this.stage.parentElement) {
+      const viewport = this.stage.parentElement;
+      const final = viewportLayout(viewport.clientWidth, viewport.clientHeight,
+        matchMedia("(pointer: coarse)").matches);
+      const opening = openingLayout(viewport.clientWidth, viewport.clientHeight);
+      this.stage.dataset.arrivalLayout = final.kind;
+      this.stage.style.setProperty("--arrival-brand-progress", String(arrival.brand));
+      this.stage.style.setProperty("--arrival-stage-scale", String(opening.scale));
+      this.stage.style.setProperty("--arrival-final-stage-scale", String(final.scale));
+      compactArrival = final.kind !== "desktop";
+    }
     this.stage.dataset.bootFrame = String(s.f);
     this.accessLettering.setText(s.access);
     this.opacity(".access-text", s.accessOpacity);
@@ -163,7 +177,7 @@ export class BootSequence {
       node.style.opacity = String(s.brand[i].opacity);
       node.style.transform = `translateX(${s.brand[i].x}px)`;
     });
-    this.opacity(".powered", s.poweredLetters > 0);
+    this.opacity(".powered", Number(s.poweredLetters > 0) * (arrival && compactArrival ? 1 - arrival.brand : 1));
     this.el(".powered").style.clipPath =
       `inset(0 ${100 * (1 - s.poweredLetters / 19)}% 0 0)`;
     this.opacity(".scan", s.scanVisible);
@@ -187,7 +201,7 @@ export class BootSequence {
       `inset(0 ${100 * (1 - s.highlight)}% 0 0)`;
     this.opacity(".welcome-database", s.databaseOpacity);
     this.opacity(".welcome-logo", s.welcomeLogo);
-    this.opacity("#boot-background", s.backgroundOpacity);
+    this.opacity("#boot-background", arrival ? 1 - arrival.opacity : s.backgroundOpacity);
     this.opacity(".boot-white", s.white);
     this.el(".boot-background svg").style.transform =
       `translate(${Math.sin(t * 0.16) * 18}px, ${-(t - 6) * 5}px) scale(1.08)`;

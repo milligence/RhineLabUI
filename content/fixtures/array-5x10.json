@@ -1,0 +1,5519 @@
+{
+  "layout": "collection",
+  "categories": [
+    "样本 A",
+    "样本 B",
+    "样本 C",
+    "样本 D",
+    "样本 E"
+  ],
+  "columns": [
+    "样本 A",
+    "样本 B",
+    "样本 C",
+    "样本 D",
+    "样本 E"
+  ],
+  "records": [
+    {
+      "id": "X-001",
+      "title": "初始样本 1·01",
+      "en": "REVIEW 1 / 01",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "research",
+      "abstract": "这是 样本 A 的第 1 份占位档案。编号 X-001 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 1 份占位档案。编号 X-001 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 1 份占位档案。编号 X-001 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "research",
+        "label": "占位研究投影",
+        "description": "用于检查节点、光束和镜头衔接的公开占位图。",
+        "layout": "evolution",
+        "entryNodeId": "Q1",
+        "narrativePath": [
+          "Q1",
+          "Q2",
+          "Q4",
+          "Q6",
+          "Q7",
+          "Q8"
+        ],
+        "phases": [
+          {
+            "id": 0,
+            "title": "建立记录",
+            "date": "01—03"
+          },
+          {
+            "id": 1,
+            "title": "展开分支",
+            "date": "04—06"
+          },
+          {
+            "id": 2,
+            "title": "完成回路",
+            "date": "07—08"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "Q1",
+            "title": "起点",
+            "date": "REVIEW 01",
+            "stage": 0,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 100,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "起点阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q2",
+            "title": "初测",
+            "date": "REVIEW 02",
+            "stage": 1,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 310,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "初测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q3",
+            "title": "偏差",
+            "date": "REVIEW 03",
+            "stage": 2,
+            "lane": -1,
+            "phase": 0,
+            "role": "branch",
+            "position": {
+              "x": 520,
+              "y": 130
+            },
+            "status": "negative",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "偏差阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q4",
+            "title": "拆分",
+            "date": "REVIEW 04",
+            "stage": 3,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 730,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "拆分阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q5",
+            "title": "支路",
+            "date": "REVIEW 05",
+            "stage": 4,
+            "lane": 1,
+            "phase": 1,
+            "role": "branch",
+            "position": {
+              "x": 940,
+              "y": 510
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "支路阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q6",
+            "title": "合流",
+            "date": "REVIEW 06",
+            "stage": 5,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 1150,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "合流阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q7",
+            "title": "复测",
+            "date": "REVIEW 07",
+            "stage": 6,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1360,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "复测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q8",
+            "title": "归档",
+            "date": "REVIEW 08",
+            "stage": 7,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1570,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "归档阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "from": "Q1",
+            "to": "Q2",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q3",
+            "kind": "branch",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q4",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q5",
+            "kind": "branch",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q6",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q5",
+            "to": "Q6",
+            "kind": "merge",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q6",
+            "to": "Q7",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q7",
+            "to": "Q8",
+            "kind": "continuation",
+            "weight": "primary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-002",
+      "title": "光学切片 1·02",
+      "en": "REVIEW 1 / 02",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 A 的第 2 份占位档案。编号 X-002 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 2 份占位档案。编号 X-002 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 2 份占位档案。编号 X-002 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-003",
+      "title": "连续轨迹 1·03",
+      "en": "REVIEW 1 / 03",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 A 的第 3 份占位档案。编号 X-003 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 3 份占位档案。编号 X-003 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 3 份占位档案。编号 X-003 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-004",
+      "title": "边界记录 1·04",
+      "en": "REVIEW 1 / 04",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 A 的第 4 份占位档案。编号 X-004 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 4 份占位档案。编号 X-004 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 4 份占位档案。编号 X-004 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-005",
+      "title": "空间构造 1·05",
+      "en": "REVIEW 1 / 05",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "question",
+      "abstract": "这是 样本 A 的第 5 份占位档案。编号 X-005 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 5 份占位档案。编号 X-005 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 5 份占位档案。编号 X-005 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "cube",
+        "label": "占位空间投影",
+        "description": "用于检查实际三维成像及自由旋转。",
+        "retrospectiveLabel": "构造说明",
+        "experiments": [
+          {
+            "id": "complete",
+            "title": "完整格阵",
+            "description": "三阶完整格阵，可自由旋转和挖除。",
+            "state": {
+              "format": "cube-projection/v2",
+              "n": 3,
+              "present": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              "colors": [
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              ],
+              "observer": {
+                "mode": "orbit",
+                "eye": [
+                  4.471498018498959,
+                  3.4049287480466006,
+                  4.966101659378882
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "projection": "perspective",
+                "fov": 44,
+                "orthoSize": 5.550000000000001
+              }
+            },
+            "retrospective": [
+              "完整格阵用于观察镜头连续性、格缝和不同面的交接。"
+            ],
+            "sources": [
+              {
+                "label": "公开测试格阵"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-006",
+      "title": "长标题与换行的视觉核查 1·06",
+      "en": "REVIEW 1 / 06",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-3",
+          "title": "收回与接续",
+          "date": "PASS 3",
+          "paragraphs": [
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-4",
+          "title": "收回与接续",
+          "date": "PASS 4",
+          "paragraphs": [
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-5",
+          "title": "收回与接续",
+          "date": "PASS 5",
+          "paragraphs": [
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 A 的第 6 份占位档案。编号 X-006 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-007",
+      "title": "归位样本 1·07",
+      "en": "REVIEW 1 / 07",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 A 的第 7 份占位档案。编号 X-007 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 7 份占位档案。编号 X-007 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 7 份占位档案。编号 X-007 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-008",
+      "title": "反向切换 1·08",
+      "en": "REVIEW 1 / 08",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 A 的第 8 份占位档案。编号 X-008 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 8 份占位档案。编号 X-008 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 8 份占位档案。编号 X-008 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-009",
+      "title": "末端观察 1·09",
+      "en": "REVIEW 1 / 09",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 A 的第 9 份占位档案。编号 X-009 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 9 份占位档案。编号 X-009 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 9 份占位档案。编号 X-009 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-010",
+      "title": "循环连接 1·10",
+      "en": "REVIEW 1 / 10",
+      "department": "样本 A / 占位样本",
+      "category": "样本 A",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 A 的第 10 份占位档案。编号 X-010 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 A 的第 10 份占位档案。编号 X-010 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 A 的第 10 份占位档案。编号 X-010 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-011",
+      "title": "初始样本 2·01",
+      "en": "REVIEW 2 / 01",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "research",
+      "abstract": "这是 样本 B 的第 1 份占位档案。编号 X-011 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 1 份占位档案。编号 X-011 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 1 份占位档案。编号 X-011 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "research",
+        "label": "占位研究投影",
+        "description": "用于检查节点、光束和镜头衔接的公开占位图。",
+        "layout": "evolution",
+        "entryNodeId": "Q1",
+        "narrativePath": [
+          "Q1",
+          "Q2",
+          "Q4",
+          "Q6",
+          "Q7",
+          "Q8"
+        ],
+        "phases": [
+          {
+            "id": 0,
+            "title": "建立记录",
+            "date": "01—03"
+          },
+          {
+            "id": 1,
+            "title": "展开分支",
+            "date": "04—06"
+          },
+          {
+            "id": 2,
+            "title": "完成回路",
+            "date": "07—08"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "Q1",
+            "title": "起点",
+            "date": "REVIEW 01",
+            "stage": 0,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 100,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "起点阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q2",
+            "title": "初测",
+            "date": "REVIEW 02",
+            "stage": 1,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 310,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "初测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q3",
+            "title": "偏差",
+            "date": "REVIEW 03",
+            "stage": 2,
+            "lane": -1,
+            "phase": 0,
+            "role": "branch",
+            "position": {
+              "x": 520,
+              "y": 130
+            },
+            "status": "negative",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "偏差阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q4",
+            "title": "拆分",
+            "date": "REVIEW 04",
+            "stage": 3,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 730,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "拆分阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q5",
+            "title": "支路",
+            "date": "REVIEW 05",
+            "stage": 4,
+            "lane": 1,
+            "phase": 1,
+            "role": "branch",
+            "position": {
+              "x": 940,
+              "y": 510
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "支路阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q6",
+            "title": "合流",
+            "date": "REVIEW 06",
+            "stage": 5,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 1150,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "合流阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q7",
+            "title": "复测",
+            "date": "REVIEW 07",
+            "stage": 6,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1360,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "复测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q8",
+            "title": "归档",
+            "date": "REVIEW 08",
+            "stage": 7,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1570,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "归档阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "from": "Q1",
+            "to": "Q2",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q3",
+            "kind": "branch",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q4",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q5",
+            "kind": "branch",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q6",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q5",
+            "to": "Q6",
+            "kind": "merge",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q6",
+            "to": "Q7",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q7",
+            "to": "Q8",
+            "kind": "continuation",
+            "weight": "primary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-012",
+      "title": "光学切片 2·02",
+      "en": "REVIEW 2 / 02",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 B 的第 2 份占位档案。编号 X-012 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 2 份占位档案。编号 X-012 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 2 份占位档案。编号 X-012 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-013",
+      "title": "连续轨迹 2·03",
+      "en": "REVIEW 2 / 03",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 B 的第 3 份占位档案。编号 X-013 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 3 份占位档案。编号 X-013 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 3 份占位档案。编号 X-013 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-014",
+      "title": "边界记录 2·04",
+      "en": "REVIEW 2 / 04",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 B 的第 4 份占位档案。编号 X-014 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 4 份占位档案。编号 X-014 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 4 份占位档案。编号 X-014 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-015",
+      "title": "空间构造 2·05",
+      "en": "REVIEW 2 / 05",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "question",
+      "abstract": "这是 样本 B 的第 5 份占位档案。编号 X-015 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 5 份占位档案。编号 X-015 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 5 份占位档案。编号 X-015 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "cube",
+        "label": "占位空间投影",
+        "description": "用于检查实际三维成像及自由旋转。",
+        "retrospectiveLabel": "构造说明",
+        "experiments": [
+          {
+            "id": "complete",
+            "title": "完整格阵",
+            "description": "三阶完整格阵，可自由旋转和挖除。",
+            "state": {
+              "format": "cube-projection/v2",
+              "n": 3,
+              "present": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              "colors": [
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              ],
+              "observer": {
+                "mode": "orbit",
+                "eye": [
+                  4.471498018498959,
+                  3.4049287480466006,
+                  4.966101659378882
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "projection": "perspective",
+                "fov": 44,
+                "orthoSize": 5.550000000000001
+              }
+            },
+            "retrospective": [
+              "完整格阵用于观察镜头连续性、格缝和不同面的交接。"
+            ],
+            "sources": [
+              {
+                "label": "公开测试格阵"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-016",
+      "title": "长标题与换行的视觉核查 2·06",
+      "en": "REVIEW 2 / 06",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-3",
+          "title": "收回与接续",
+          "date": "PASS 3",
+          "paragraphs": [
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-4",
+          "title": "收回与接续",
+          "date": "PASS 4",
+          "paragraphs": [
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-5",
+          "title": "收回与接续",
+          "date": "PASS 5",
+          "paragraphs": [
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 B 的第 6 份占位档案。编号 X-016 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-017",
+      "title": "归位样本 2·07",
+      "en": "REVIEW 2 / 07",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 B 的第 7 份占位档案。编号 X-017 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 7 份占位档案。编号 X-017 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 7 份占位档案。编号 X-017 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-018",
+      "title": "反向切换 2·08",
+      "en": "REVIEW 2 / 08",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 B 的第 8 份占位档案。编号 X-018 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 8 份占位档案。编号 X-018 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 8 份占位档案。编号 X-018 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-019",
+      "title": "末端观察 2·09",
+      "en": "REVIEW 2 / 09",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 B 的第 9 份占位档案。编号 X-019 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 9 份占位档案。编号 X-019 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 9 份占位档案。编号 X-019 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-020",
+      "title": "循环连接 2·10",
+      "en": "REVIEW 2 / 10",
+      "department": "样本 B / 占位样本",
+      "category": "样本 B",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 B 的第 10 份占位档案。编号 X-020 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 B 的第 10 份占位档案。编号 X-020 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 B 的第 10 份占位档案。编号 X-020 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-021",
+      "title": "初始样本 3·01",
+      "en": "REVIEW 3 / 01",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "research",
+      "abstract": "这是 样本 C 的第 1 份占位档案。编号 X-021 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 1 份占位档案。编号 X-021 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 1 份占位档案。编号 X-021 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "research",
+        "label": "占位研究投影",
+        "description": "用于检查节点、光束和镜头衔接的公开占位图。",
+        "layout": "evolution",
+        "entryNodeId": "Q1",
+        "narrativePath": [
+          "Q1",
+          "Q2",
+          "Q4",
+          "Q6",
+          "Q7",
+          "Q8"
+        ],
+        "phases": [
+          {
+            "id": 0,
+            "title": "建立记录",
+            "date": "01—03"
+          },
+          {
+            "id": 1,
+            "title": "展开分支",
+            "date": "04—06"
+          },
+          {
+            "id": 2,
+            "title": "完成回路",
+            "date": "07—08"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "Q1",
+            "title": "起点",
+            "date": "REVIEW 01",
+            "stage": 0,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 100,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "起点阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q2",
+            "title": "初测",
+            "date": "REVIEW 02",
+            "stage": 1,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 310,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "初测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q3",
+            "title": "偏差",
+            "date": "REVIEW 03",
+            "stage": 2,
+            "lane": -1,
+            "phase": 0,
+            "role": "branch",
+            "position": {
+              "x": 520,
+              "y": 130
+            },
+            "status": "negative",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "偏差阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q4",
+            "title": "拆分",
+            "date": "REVIEW 04",
+            "stage": 3,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 730,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "拆分阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q5",
+            "title": "支路",
+            "date": "REVIEW 05",
+            "stage": 4,
+            "lane": 1,
+            "phase": 1,
+            "role": "branch",
+            "position": {
+              "x": 940,
+              "y": 510
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "支路阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q6",
+            "title": "合流",
+            "date": "REVIEW 06",
+            "stage": 5,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 1150,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "合流阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q7",
+            "title": "复测",
+            "date": "REVIEW 07",
+            "stage": 6,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1360,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "复测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q8",
+            "title": "归档",
+            "date": "REVIEW 08",
+            "stage": 7,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1570,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "归档阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "from": "Q1",
+            "to": "Q2",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q3",
+            "kind": "branch",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q4",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q5",
+            "kind": "branch",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q6",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q5",
+            "to": "Q6",
+            "kind": "merge",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q6",
+            "to": "Q7",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q7",
+            "to": "Q8",
+            "kind": "continuation",
+            "weight": "primary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-022",
+      "title": "光学切片 3·02",
+      "en": "REVIEW 3 / 02",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 C 的第 2 份占位档案。编号 X-022 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 2 份占位档案。编号 X-022 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 2 份占位档案。编号 X-022 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-023",
+      "title": "连续轨迹 3·03",
+      "en": "REVIEW 3 / 03",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 C 的第 3 份占位档案。编号 X-023 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 3 份占位档案。编号 X-023 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 3 份占位档案。编号 X-023 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-024",
+      "title": "边界记录 3·04",
+      "en": "REVIEW 3 / 04",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 C 的第 4 份占位档案。编号 X-024 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 4 份占位档案。编号 X-024 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 4 份占位档案。编号 X-024 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-025",
+      "title": "空间构造 3·05",
+      "en": "REVIEW 3 / 05",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "question",
+      "abstract": "这是 样本 C 的第 5 份占位档案。编号 X-025 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 5 份占位档案。编号 X-025 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 5 份占位档案。编号 X-025 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "cube",
+        "label": "占位空间投影",
+        "description": "用于检查实际三维成像及自由旋转。",
+        "retrospectiveLabel": "构造说明",
+        "experiments": [
+          {
+            "id": "complete",
+            "title": "完整格阵",
+            "description": "三阶完整格阵，可自由旋转和挖除。",
+            "state": {
+              "format": "cube-projection/v2",
+              "n": 3,
+              "present": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              "colors": [
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              ],
+              "observer": {
+                "mode": "orbit",
+                "eye": [
+                  4.471498018498959,
+                  3.4049287480466006,
+                  4.966101659378882
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "projection": "perspective",
+                "fov": 44,
+                "orthoSize": 5.550000000000001
+              }
+            },
+            "retrospective": [
+              "完整格阵用于观察镜头连续性、格缝和不同面的交接。"
+            ],
+            "sources": [
+              {
+                "label": "公开测试格阵"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-026",
+      "title": "长标题与换行的视觉核查 3·06",
+      "en": "REVIEW 3 / 06",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-3",
+          "title": "收回与接续",
+          "date": "PASS 3",
+          "paragraphs": [
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-4",
+          "title": "收回与接续",
+          "date": "PASS 4",
+          "paragraphs": [
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-5",
+          "title": "收回与接续",
+          "date": "PASS 5",
+          "paragraphs": [
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 C 的第 6 份占位档案。编号 X-026 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-027",
+      "title": "归位样本 3·07",
+      "en": "REVIEW 3 / 07",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 C 的第 7 份占位档案。编号 X-027 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 7 份占位档案。编号 X-027 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 7 份占位档案。编号 X-027 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-028",
+      "title": "反向切换 3·08",
+      "en": "REVIEW 3 / 08",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 C 的第 8 份占位档案。编号 X-028 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 8 份占位档案。编号 X-028 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 8 份占位档案。编号 X-028 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-029",
+      "title": "末端观察 3·09",
+      "en": "REVIEW 3 / 09",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 C 的第 9 份占位档案。编号 X-029 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 9 份占位档案。编号 X-029 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 9 份占位档案。编号 X-029 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-030",
+      "title": "循环连接 3·10",
+      "en": "REVIEW 3 / 10",
+      "department": "样本 C / 占位样本",
+      "category": "样本 C",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 C 的第 10 份占位档案。编号 X-030 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 C 的第 10 份占位档案。编号 X-030 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 C 的第 10 份占位档案。编号 X-030 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-031",
+      "title": "初始样本 4·01",
+      "en": "REVIEW 4 / 01",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "research",
+      "abstract": "这是 样本 D 的第 1 份占位档案。编号 X-031 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 1 份占位档案。编号 X-031 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 1 份占位档案。编号 X-031 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "research",
+        "label": "占位研究投影",
+        "description": "用于检查节点、光束和镜头衔接的公开占位图。",
+        "layout": "evolution",
+        "entryNodeId": "Q1",
+        "narrativePath": [
+          "Q1",
+          "Q2",
+          "Q4",
+          "Q6",
+          "Q7",
+          "Q8"
+        ],
+        "phases": [
+          {
+            "id": 0,
+            "title": "建立记录",
+            "date": "01—03"
+          },
+          {
+            "id": 1,
+            "title": "展开分支",
+            "date": "04—06"
+          },
+          {
+            "id": 2,
+            "title": "完成回路",
+            "date": "07—08"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "Q1",
+            "title": "起点",
+            "date": "REVIEW 01",
+            "stage": 0,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 100,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "起点阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q2",
+            "title": "初测",
+            "date": "REVIEW 02",
+            "stage": 1,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 310,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "初测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q3",
+            "title": "偏差",
+            "date": "REVIEW 03",
+            "stage": 2,
+            "lane": -1,
+            "phase": 0,
+            "role": "branch",
+            "position": {
+              "x": 520,
+              "y": 130
+            },
+            "status": "negative",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "偏差阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q4",
+            "title": "拆分",
+            "date": "REVIEW 04",
+            "stage": 3,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 730,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "拆分阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q5",
+            "title": "支路",
+            "date": "REVIEW 05",
+            "stage": 4,
+            "lane": 1,
+            "phase": 1,
+            "role": "branch",
+            "position": {
+              "x": 940,
+              "y": 510
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "支路阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q6",
+            "title": "合流",
+            "date": "REVIEW 06",
+            "stage": 5,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 1150,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "合流阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q7",
+            "title": "复测",
+            "date": "REVIEW 07",
+            "stage": 6,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1360,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "复测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q8",
+            "title": "归档",
+            "date": "REVIEW 08",
+            "stage": 7,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1570,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "归档阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "from": "Q1",
+            "to": "Q2",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q3",
+            "kind": "branch",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q4",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q5",
+            "kind": "branch",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q6",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q5",
+            "to": "Q6",
+            "kind": "merge",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q6",
+            "to": "Q7",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q7",
+            "to": "Q8",
+            "kind": "continuation",
+            "weight": "primary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-032",
+      "title": "光学切片 4·02",
+      "en": "REVIEW 4 / 02",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 D 的第 2 份占位档案。编号 X-032 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 2 份占位档案。编号 X-032 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 2 份占位档案。编号 X-032 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-033",
+      "title": "连续轨迹 4·03",
+      "en": "REVIEW 4 / 03",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 D 的第 3 份占位档案。编号 X-033 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 3 份占位档案。编号 X-033 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 3 份占位档案。编号 X-033 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-034",
+      "title": "边界记录 4·04",
+      "en": "REVIEW 4 / 04",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 D 的第 4 份占位档案。编号 X-034 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 4 份占位档案。编号 X-034 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 4 份占位档案。编号 X-034 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-035",
+      "title": "空间构造 4·05",
+      "en": "REVIEW 4 / 05",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "question",
+      "abstract": "这是 样本 D 的第 5 份占位档案。编号 X-035 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 5 份占位档案。编号 X-035 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 5 份占位档案。编号 X-035 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "cube",
+        "label": "占位空间投影",
+        "description": "用于检查实际三维成像及自由旋转。",
+        "retrospectiveLabel": "构造说明",
+        "experiments": [
+          {
+            "id": "complete",
+            "title": "完整格阵",
+            "description": "三阶完整格阵，可自由旋转和挖除。",
+            "state": {
+              "format": "cube-projection/v2",
+              "n": 3,
+              "present": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              "colors": [
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              ],
+              "observer": {
+                "mode": "orbit",
+                "eye": [
+                  4.471498018498959,
+                  3.4049287480466006,
+                  4.966101659378882
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "projection": "perspective",
+                "fov": 44,
+                "orthoSize": 5.550000000000001
+              }
+            },
+            "retrospective": [
+              "完整格阵用于观察镜头连续性、格缝和不同面的交接。"
+            ],
+            "sources": [
+              {
+                "label": "公开测试格阵"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-036",
+      "title": "长标题与换行的视觉核查 4·06",
+      "en": "REVIEW 4 / 06",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-3",
+          "title": "收回与接续",
+          "date": "PASS 3",
+          "paragraphs": [
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-4",
+          "title": "收回与接续",
+          "date": "PASS 4",
+          "paragraphs": [
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-5",
+          "title": "收回与接续",
+          "date": "PASS 5",
+          "paragraphs": [
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 D 的第 6 份占位档案。编号 X-036 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-037",
+      "title": "归位样本 4·07",
+      "en": "REVIEW 4 / 07",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 D 的第 7 份占位档案。编号 X-037 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 7 份占位档案。编号 X-037 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 7 份占位档案。编号 X-037 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-038",
+      "title": "反向切换 4·08",
+      "en": "REVIEW 4 / 08",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 D 的第 8 份占位档案。编号 X-038 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 8 份占位档案。编号 X-038 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 8 份占位档案。编号 X-038 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-039",
+      "title": "末端观察 4·09",
+      "en": "REVIEW 4 / 09",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 D 的第 9 份占位档案。编号 X-039 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 9 份占位档案。编号 X-039 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 9 份占位档案。编号 X-039 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-040",
+      "title": "循环连接 4·10",
+      "en": "REVIEW 4 / 10",
+      "department": "样本 D / 占位样本",
+      "category": "样本 D",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 D 的第 10 份占位档案。编号 X-040 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 D 的第 10 份占位档案。编号 X-040 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 D 的第 10 份占位档案。编号 X-040 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-041",
+      "title": "初始样本 5·01",
+      "en": "REVIEW 5 / 01",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "research",
+      "abstract": "这是 样本 E 的第 1 份占位档案。编号 X-041 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 1 份占位档案。编号 X-041 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 1 份占位档案。编号 X-041 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "research",
+        "label": "占位研究投影",
+        "description": "用于检查节点、光束和镜头衔接的公开占位图。",
+        "layout": "evolution",
+        "entryNodeId": "Q1",
+        "narrativePath": [
+          "Q1",
+          "Q2",
+          "Q4",
+          "Q6",
+          "Q7",
+          "Q8"
+        ],
+        "phases": [
+          {
+            "id": 0,
+            "title": "建立记录",
+            "date": "01—03"
+          },
+          {
+            "id": 1,
+            "title": "展开分支",
+            "date": "04—06"
+          },
+          {
+            "id": 2,
+            "title": "完成回路",
+            "date": "07—08"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "Q1",
+            "title": "起点",
+            "date": "REVIEW 01",
+            "stage": 0,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 100,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "起点阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q2",
+            "title": "初测",
+            "date": "REVIEW 02",
+            "stage": 1,
+            "lane": 0,
+            "phase": 0,
+            "role": "spine",
+            "position": {
+              "x": 310,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "初测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q3",
+            "title": "偏差",
+            "date": "REVIEW 03",
+            "stage": 2,
+            "lane": -1,
+            "phase": 0,
+            "role": "branch",
+            "position": {
+              "x": 520,
+              "y": 130
+            },
+            "status": "negative",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "偏差阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q4",
+            "title": "拆分",
+            "date": "REVIEW 04",
+            "stage": 3,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 730,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "拆分阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q5",
+            "title": "支路",
+            "date": "REVIEW 05",
+            "stage": 4,
+            "lane": 1,
+            "phase": 1,
+            "role": "branch",
+            "position": {
+              "x": 940,
+              "y": 510
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "支路阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q6",
+            "title": "合流",
+            "date": "REVIEW 06",
+            "stage": 5,
+            "lane": 0,
+            "phase": 1,
+            "role": "spine",
+            "position": {
+              "x": 1150,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "合流阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q7",
+            "title": "复测",
+            "date": "REVIEW 07",
+            "stage": 6,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1360,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "复测阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          },
+          {
+            "id": "Q8",
+            "title": "归档",
+            "date": "REVIEW 08",
+            "stage": 7,
+            "lane": 0,
+            "phase": 2,
+            "role": "spine",
+            "position": {
+              "x": 1570,
+              "y": 320
+            },
+            "status": "tested",
+            "evidence": "公开占位记录，不代表实际研究结果。",
+            "question": "归档阶段需要回答哪一个问题？",
+            "attempt": "保留一次具体操作，检查内容层次是否清楚。",
+            "result": "记录完成，下一节点承接这次操作。",
+            "interpretation": "该段文字用于检查字数、换行和信息密度。",
+            "record": [
+              "本页使用公开占位文字。光源、节点、正文和依据沿同一条视线组织。",
+              "打开另一节点后，应从新的题名与记录起点开始阅读。"
+            ],
+            "retrospective": [
+              "这一步改变了后续选择。分支保留在图中，便于沿关系返回检查。"
+            ],
+            "retrospectiveDate": "REVIEW",
+            "sources": [
+              {
+                "label": "占位记录"
+              }
+            ],
+            "retrospectiveSources": [
+              {
+                "label": "占位复盘"
+              }
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "from": "Q1",
+            "to": "Q2",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q3",
+            "kind": "branch",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q2",
+            "to": "Q4",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q5",
+            "kind": "branch",
+            "weight": "primary"
+          },
+          {
+            "from": "Q4",
+            "to": "Q6",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q5",
+            "to": "Q6",
+            "kind": "merge",
+            "weight": "secondary"
+          },
+          {
+            "from": "Q6",
+            "to": "Q7",
+            "kind": "continuation",
+            "weight": "primary"
+          },
+          {
+            "from": "Q7",
+            "to": "Q8",
+            "kind": "continuation",
+            "weight": "primary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-042",
+      "title": "光学切片 5·02",
+      "en": "REVIEW 5 / 02",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 E 的第 2 份占位档案。编号 X-042 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 2 份占位档案。编号 X-042 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 2 份占位档案。编号 X-042 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-043",
+      "title": "连续轨迹 5·03",
+      "en": "REVIEW 5 / 03",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 E 的第 3 份占位档案。编号 X-043 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 3 份占位档案。编号 X-043 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 3 份占位档案。编号 X-043 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-044",
+      "title": "边界记录 5·04",
+      "en": "REVIEW 5 / 04",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 E 的第 4 份占位档案。编号 X-044 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 4 份占位档案。编号 X-044 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 4 份占位档案。编号 X-044 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-045",
+      "title": "空间构造 5·05",
+      "en": "REVIEW 5 / 05",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "question",
+      "abstract": "这是 样本 E 的第 5 份占位档案。编号 X-045 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 5 份占位档案。编号 X-045 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 5 份占位档案。编号 X-045 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ],
+      "projection": {
+        "kind": "cube",
+        "label": "占位空间投影",
+        "description": "用于检查实际三维成像及自由旋转。",
+        "retrospectiveLabel": "构造说明",
+        "experiments": [
+          {
+            "id": "complete",
+            "title": "完整格阵",
+            "description": "三阶完整格阵，可自由旋转和挖除。",
+            "state": {
+              "format": "cube-projection/v2",
+              "n": 3,
+              "present": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              "colors": [
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              ],
+              "observer": {
+                "mode": "orbit",
+                "eye": [
+                  4.471498018498959,
+                  3.4049287480466006,
+                  4.966101659378882
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "projection": "perspective",
+                "fov": 44,
+                "orthoSize": 5.550000000000001
+              }
+            },
+            "retrospective": [
+              "完整格阵用于观察镜头连续性、格缝和不同面的交接。"
+            ],
+            "sources": [
+              {
+                "label": "公开测试格阵"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "X-046",
+      "title": "长标题与换行的视觉核查 5·06",
+      "en": "REVIEW 5 / 06",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-3",
+          "title": "收回与接续",
+          "date": "PASS 3",
+          "paragraphs": [
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-4",
+          "title": "收回与接续",
+          "date": "PASS 4",
+          "paragraphs": [
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        },
+        {
+          "id": "part-5",
+          "title": "收回与接续",
+          "date": "PASS 5",
+          "paragraphs": [
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+            "这是 样本 E 的第 6 份占位档案。编号 X-046 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。",
+            "列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-047",
+      "title": "归位样本 5·07",
+      "en": "REVIEW 5 / 07",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 E 的第 7 份占位档案。编号 X-047 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 7 份占位档案。编号 X-047 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 7 份占位档案。编号 X-047 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-048",
+      "title": "反向切换 5·08",
+      "en": "REVIEW 5 / 08",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 E 的第 8 份占位档案。编号 X-048 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 8 份占位档案。编号 X-048 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 8 份占位档案。编号 X-048 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-049",
+      "title": "末端观察 5·09",
+      "en": "REVIEW 5 / 09",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 E 的第 9 份占位档案。编号 X-049 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 9 份占位档案。编号 X-049 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 9 份占位档案。编号 X-049 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "X-050",
+      "title": "循环连接 5·10",
+      "en": "REVIEW 5 / 10",
+      "department": "样本 E / 占位样本",
+      "category": "样本 E",
+      "date": "VISUAL REVIEW",
+      "lead": "测试记录",
+      "clearance": "OPEN",
+      "image": "",
+      "source": "",
+      "kind": "record",
+      "abstract": "这是 样本 E 的第 10 份占位档案。编号 X-050 用于核对选档、抽取、启封和归位是否始终指向同一份记录。\n\n镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。\n\n列内连续切换、跨列记忆和首尾循环使用同一套动作。快速反向应从当前状态接续，不能重新播放开头。",
+      "findings": [
+        "核对档案编号与实体选择一致。",
+        "核对开启和关闭途中没有遮挡、跳帧或二次入场。"
+      ],
+      "chapters": [
+        {
+          "id": "part-1",
+          "title": "开启与观察",
+          "date": "PASS 1",
+          "paragraphs": [
+            "这是 样本 E 的第 10 份占位档案。编号 X-050 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "收回与接续",
+          "date": "PASS 2",
+          "paragraphs": [
+            "这是 样本 E 的第 10 份占位档案。编号 X-050 用于核对选档、抽取、启封和归位是否始终指向同一份记录。",
+            "镜头尚在移动时，纸面应保留空间，随后逐渐展开。关闭档案时，纸面先收回，实体再完成转正和归位。"
+          ]
+        }
+      ]
+    }
+  ]
+}

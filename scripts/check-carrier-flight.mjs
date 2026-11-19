@@ -1,29 +1,50 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import vm from "node:vm";
+import ts from "typescript";
 import * as THREE from "three";
-import { CarrierFlight, carrierCamera, carrierFrame, projectOpticalPoint } from "../src/carrier-flight.ts";
-import { archiveFraming } from "../src/viewport-layout.ts";
+import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierCameraProgress, carrierCamera, carrierFrame, carrierLocalPoint, projectOpticalPoint } from "../src/carrier-flight.ts";
+import { archiveFraming, viewportLayout } from "../src/viewport-layout.ts";
 
 const close = (a, b, message, epsilon = 1e-7) => assert(Math.abs(a - b) < epsilon, message + ": " + a + " / " + b);
 const viewport = { width: 1440, height: 960 };
 const box = { left: 46, top: 98, width: 1348, height: 824 };
 const flight = new CarrierFlight();
-flight.move(1, 0, 2200);
+flight.move(1, 0, CARRIER_ENTRANCE_MS);
 const sample = time => carrierFrame(flight.step(time), viewport, box);
-const ignition = sample(500), forming = sample(800), separated = sample(1000), approaching = sample(1500), arrived = sample(2200);
-assert.equal(ignition.image, 0, "The image must not predate optical ignition");
+const ignition = sample(600), beam = sample(1100), forming = sample(1850), held = sample(2400), transfer = sample(3500), arrived = sample(CARRIER_ENTRANCE_MS);
+assert.equal(ignition.image, 0, "The physical source lights before any image appears");
 assert(ignition.light > .1 && ignition.environment === 0);
-assert(ignition.camera > 0, "The carrier starts to separate before the image is readable");
-assert(forming.image > .8 && forming.image < 1 && forming.environment === 0);
-assert.equal(separated.image, 1);
-assert.equal(separated.environment, 0, "Camera movement must precede the environment covering the carrier");
-assert(approaching.camera > .7 && approaching.camera < .9);
-assert(approaching.corners[1].x - approaching.corners[0].x < box.width, "The camera continues to approach rather than stopping early");
-assert.equal(arrived.header, 1);
-assert.equal(arrived.light, 0);
-assert.equal(flight.active, false);
+assert.equal(ignition.camera, 0, "Ignition must be readable on the stationary carrier");
+assert(beam.beamReach > 0 && beam.beamReach < .5 && beam.reveal === 0, "The beam grows before the image forms");
+assert(forming.image > .1 && forming.image < 1 && forming.reveal > .1 && forming.reveal < .7, "The image is spatially revealed over time, not faded in as a complete page");
+assert.equal(forming.camera, .16);
+assert.equal(held.image, 1); assert.equal(held.reveal, 1);
+assert.equal(held.camera, .16); assert.equal(held.environment, 0);
+assert.equal(held.beat, "image-held", "The suspended image has a readable hold before the camera approaches");
+assert.deepEqual(carrierFrame(.4,viewport,box).matrix, carrierFrame(.47,viewport,box).matrix, "Formation hold preserves a real stationary plane");
+assert(transfer.camera > .6 && transfer.camera < .8);
+assert(transfer.corners[1].x - transfer.corners[0].x < box.width, "The camera continues to approach rather than stopping early");
+assert.equal(arrived.header, 1); assert.equal(arrived.reveal, 1);
+assert.equal(arrived.light, 0); assert.equal(flight.active, false);
 const expected = [{ x: box.left, y: box.top }, { x: box.left + box.width, y: box.top },
   { x: box.left + box.width, y: box.top + box.height }, { x: box.left, y: box.top + box.height }];
 arrived.corners.forEach((point, i) => { close(point.x, expected[i].x, "Exact landing X"); close(point.y, expected[i].y, "Exact landing Y"); });
+const waitingForCamera = carrierFrame(.4,viewport,box,{perspective:12,progress:.04});
+assert.equal(waitingForCamera.image,0,"A delayed physical camera must not be overpainted by an advanced image");
+assert.equal(waitingForCamera.reveal,0);
+
+const clock = new CarrierPresentationClock(); clock.reset(100);
+clock.step(116); close(clock.value,16,"Normal frame time is preserved");
+clock.step(5116); close(clock.value,80,"A render stall cannot consume the whole projection ritual");
+clock.step(10116,false); close(clock.value,80,"A hidden tab does not play through the projection");
+clock.step(10132); close(clock.value,96,"Returning from a hidden tab resumes from its shown state");
+clock.step(10132); close(clock.value,96,"A drawn-scene repaint at the same review time does not advance the timeline");
+for (const hz of [30,60,120,144]) {
+  const timed = new CarrierPresentationClock(); timed.reset(0);
+  for(let frame=1;frame<=hz*3;frame++)timed.step(frame*1000/hz);
+  close(timed.value,3000,"Normal display cadences retain the intended duration",1e-8);
+}
 
 const reverse = new CarrierFlight();
 reverse.move(1, 0, 2200); reverse.step(1150);
@@ -52,11 +73,11 @@ for (const hz of [30,60,144]) cadence(hz).forEach((v,i) => close(v, reference[i]
 // This sequence previously crossed below zero by .155, causing the clamped
 // camera to halt before restarting. Exercise early/late reversals as well.
 let reversalCases = 0;
-for (let closing=100;closing<2200;closing+=100) for (let reopening=50;reopening<1200;reopening+=100) {
-  const run = new CarrierFlight(); run.move(1,0,2200); run.step(closing);
-  run.move(0,closing,Math.max(650,run.value*1500)); run.step(closing+reopening);
-  run.move(1,closing+reopening,Math.max(450,(1-run.value)*2200));
-  for (let time=closing+reopening;time<closing+reopening+2400;time+=10) {
+for (let closing=100;closing<CARRIER_ENTRANCE_MS;closing+=250) for (let reopening=50;reopening<CARRIER_RETURN_MS;reopening+=200) {
+  const run = new CarrierFlight(); run.move(1,0,CARRIER_ENTRANCE_MS); run.step(closing);
+  run.move(0,closing,Math.max(850,run.value*CARRIER_RETURN_MS)); run.step(closing+reopening);
+  run.move(1,closing+reopening,Math.max(900,(1-run.value)*CARRIER_ENTRANCE_MS));
+  for (let time=closing+reopening;time<closing+reopening+CARRIER_ENTRANCE_MS+300;time+=10) {
     run.step(time);
     assert(run.value >= -1e-12 && run.value <= 1+1e-12, "The physical path must not depend on endpoint clamping");
   }
@@ -95,7 +116,7 @@ for (const size of dimensions) {
   });
   for (let step=0;step<=200;step++) {
     const p=step/200, f=carrierFrame(p,size,b,{perspective,progress:p});
-    for (const k of ["camera","environment","image","header","light","emitter","frame"]) assert(f[k]>=0&&f[k]<=1);
+    for (const k of ["camera","environment","image","reveal","beamReach","beamSpread","header","light","emitter","frame","interface"]) assert(f[k]>=0&&f[k]<=1);
     assert(f.corners.every(c=>Number.isFinite(c.x)&&Number.isFinite(c.y)));
     const camera = new THREE.PerspectiveCamera(THREE.MathUtils.radToDeg(2*Math.atan(1/(2*perspective))),size.width/size.height,.001,1000);
     camera.position.set(f.rig.position.x,f.rig.position.y,f.rig.position.z);
@@ -123,7 +144,46 @@ for (const size of dimensions) {
 }
 const delayed = carrierFrame(.7,viewport,box,{perspective:11,progress:.4});
 assert.equal(delayed.camera,.4);
-assert.equal(delayed.requestedCamera,.7);
+assert.equal(delayed.requestedCamera,carrierCameraProgress(.7));
 assert.deepEqual(delayed.rig,carrierCamera(.4,viewport,11),"DOM geometry follows the drawn camera phase, not the next requested one");
 for (const lens of [.3,.8,1.49]) assert.deepEqual(carrierCamera(0,viewport,lens).position,{x:0,y:0,z:lens},"Wide lenses retain an exact entry pose");
-console.log(JSON.stringify({checks:"Ordered formation, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization",reversalCases,maxProjectionErrorPx:maxProjectionError,maxExposedOverlap},null,2));
+
+// Exercise the production painter's coordinate boundary, not a second version
+// of it. Pure camera tests alone missed mixing a scaled stage's screen rect
+// with its unscaled offsetWidth and CSS transform coordinates.
+const viewerSource = readFileSync(new URL("../src/projection-viewer.ts",import.meta.url),"utf8").replace(/^import .+;\r?\n/gm,"");
+const painterContext = {exports:{},carrierFrame,carrierCameraProgress,carrierLocalPoint};
+vm.runInNewContext(ts.transpileModule(viewerSource,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,painterContext);
+let scaledPainterCases = 0;
+for (const [width,height] of [[1280,720],[1366,768],[1536,864],[2560,1440],[390,844]]) {
+  const layout=viewportLayout(width,height,false), surface={width:layout.width,height:layout.height};
+  const rect={left:23,top:17,width:surface.width*layout.scale,height:surface.height*layout.scale};
+  const b={left:32,top:96,width:surface.width-64,height:surface.height-128};
+  const properties=new Map();
+  const style=()=>({setProperty:(key,value)=>properties.set(key,value)});
+  const ignition={style:style(),querySelector:()=>null};
+  const nodes={".projection-environment":{style:style()},".projection-header":{style:style()},".projection-ignition":ignition};
+  for (const progress of [.08,.2,.4,.7,1]) {
+    const drawn={progress:carrierCameraProgress(progress),perspective:11.8};
+    const expectedFrame=carrierFrame(progress,surface,b,drawn);
+    const sourceLocal=projectOpticalPoint({x:-.27,y:.04,z:.01},expectedFrame.rig,surface);
+    const sourceScreen={x:rect.left+sourceLocal.x*layout.scale,y:rect.top+sourceLocal.y*layout.scale};
+    const viewer=Object.assign(Object.create(painterContext.exports.ProjectionViewer.prototype),{
+      parent:{clientWidth:surface.width,clientHeight:surface.height,getBoundingClientRect:()=>rect},
+      root:{style:style(),querySelector:selector=>nodes[selector]},
+      host:{offsetLeft:b.left,offsetTop:b.top,offsetWidth:b.width,offsetHeight:b.height,style:style()},
+      flight:{value:progress},closing:false,setBeat:()=>{},
+      options:{reducedMotion:false,onCameraProgress:()=>drawn,sampleCarrier:()=>({origin:sourceScreen})},
+    });
+    viewer.paintFlight();
+    close(parseFloat(properties.get("--projection-origin-x")),sourceLocal.x,"Scaled stage source X remains on the physical carrier");
+    close(parseFloat(properties.get("--projection-origin-y")),sourceLocal.y,"Scaled stage source Y remains on the physical carrier");
+    assert.deepEqual(viewer.frameState.matrix,expectedFrame.matrix,"Production image transform uses local dimensions at non-unit stage scales");
+    viewer.frameState.corners.forEach((point,i)=>{
+      close(rect.left+point.x*layout.scale,rect.left+expectedFrame.corners[i].x*layout.scale,"Displayed image X follows the scaled stage");
+      close(rect.top+point.y*layout.scale,rect.top+expectedFrame.corners[i].y*layout.scale,"Displayed image Y follows the scaled stage");
+    });
+    scaledPainterCases++;
+  }
+}
+console.log(JSON.stringify({checks:"Readable ignition, geometric beam growth, progressive image reveal and stationary hold, stall-safe presentation time, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization, scaled-stage production painting",reversalCases,scaledPainterCases,maxProjectionErrorPx:maxProjectionError,maxExposedOverlap},null,2));

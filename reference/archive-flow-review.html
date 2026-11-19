@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Archive flow · 5 × 10 review</title></head>
+<body><div id="viewport"><main id="stage" data-mode="archive"></main></div>
+<aside id="review-controls" aria-label="逐帧核查控制">
+  <div><strong>ACTUAL SCENE / FRAME REVIEW</strong><span id="review-status">加载原始档案模型…</span></div>
+  <div><select id="review-record" aria-label="选择测试档案"></select><button data-review-action="previous">上一份</button><button data-review-action="next">下一份</button><button data-review-action="open">启封</button><button data-review-action="close">收回</button><button data-review-action="projection">投影开启</button><button data-review-action="projection-close">收束投影</button></div>
+  <div><button data-review-action="arrival">自然入场</button><button data-step="0.1">+0.1s</button><button data-step="0.25">+0.25s</button><button data-step="0.5">+0.5s</button><button data-step="1">+1s</button><button data-step="3">+3s</button><button data-review-action="play">连续播放</button><button data-review-action="audit">50 份状态巡检</button><button data-review-action="download">导出检查数据</button><button data-review-action="hide">隐藏工具栏 H</button></div>
+  <details><summary>实际帧状态（固定60Hz推进；只在检查点渲染）</summary><pre id="review-stats"></pre></details>
+</aside><script type="module" src="./archive-flow-review.js"></script></body></html>

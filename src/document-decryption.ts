@@ -8,11 +8,13 @@ export class DocumentDecryption {
   private covers: Cover[] = [];
   private started: number | null = null;
   private progress = 0;
+  private last: number | null = null;
 
   reset(root: HTMLElement, clear: boolean) {
     this.remove();
     this.root = root;
     this.started = null;
+    this.last = null;
     this.progress = clear ? 1 : 0;
     this.refresh();
   }
@@ -69,15 +71,18 @@ export class DocumentDecryption {
     this.paint();
   }
 
-  update(now: number, frame: DecryptionFrame, reduced: boolean) {
+  update(now: number, frame: DecryptionFrame, reduced: boolean, paperVisibility = 1) {
     if (!this.root || this.progress === 1) return;
+    const dt = this.last === null ? 0 : Math.min(.05, Math.max(0, now - this.last));
+    this.last = now;
     if (reduced) this.progress = 1;
     else {
-      // Keep covered through joining / holding / retraction. The text starts
-      // opening with the glass, and its easing tail lasts a little longer.
-      if (this.started === null && frame.clarity > 0) this.started = now;
-      if (this.started !== null)
-        this.progress = Math.min(1, Math.max(0, (now - this.started) / 0.95));
+      // Start only on the visible paper. Otherwise the entire reveal can run
+      // behind a still-extracting carrier and arrive already finished.
+      if (this.started === null && frame.clarity > 0 && paperVisibility > .06)
+        this.started = now;
+      if (this.started !== null && paperVisibility > 0)
+        this.progress = Math.min(1, this.progress + dt / 1.1);
     }
     if (this.progress === 1) this.remove();
     else if (this.started !== null) this.paint();

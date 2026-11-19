@@ -14,6 +14,7 @@ const hasNovecento = ["Normal", "DemiBold", "Bold"].every(weight =>
 );
 export default defineConfig(({ mode }) => ({
   base: mode === "wallpaper" ? "./" : "/",
+  ...(mode === "review" ? { build: { rollupOptions: { input: { main: "index.html", flow: "reference/archive-flow-review.html", reading: "reference/archive-reading-review.html" } } } } : {}),
   define: {
     __RHINE_MODELS__: JSON.stringify(Object.fromEntries(models.map(model => [model.key,model.fileName]))),
     __RHINE_NOVECENTO__: JSON.stringify(hasNovecento),

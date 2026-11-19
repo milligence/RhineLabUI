@@ -19,6 +19,7 @@ __pycache__/
 !.env.example
 
 reference/local-files-connection.js
+reference/flow-review-markup.generated.js
 
 # Local integration checkout
 .main-integration/

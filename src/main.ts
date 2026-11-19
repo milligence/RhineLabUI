@@ -34,6 +34,7 @@ import { ModelViewer } from "./model-viewer";
 import { ContentTransition, SurfaceTransition } from "./ui-transitions";
 import { BootSequence } from "./boot";
 import { ARRAY_REVEAL_START, ARRAY_REVEAL_DURATION } from "./boot-motion";
+import { webArrayArrival, presentedOpeningTime } from "./archive-arrival";
 import { loadBootWebfonts } from "./boot-lettering";
 import { wrap, type ArchiveNavigation } from "./archive-loop";
 import {
@@ -150,11 +151,17 @@ let mode: Mode = "boot",
   bootStart = 0,
   lastStep = "",
   ready = false;
+let lastPresentedBootTime: number | null = null;
 let modal: "search" | "saved" | "settings" | null = null,
   searchQuery = "",
   filter = "全部档案";
 let activeTab = "overview";
 const reviewParams = new URLSearchParams(location.search);
+// An explicit film seek retains the calibrated reference. Natural web entry
+// and the opt-in web review share one continuous, interactive array arrival.
+const webArrival = !isWallpaper && (reviewParams.get("arrival") === "web" ||
+  (!reviewParams.has("time") && !reviewParams.has("review") && !reviewParams.has("freeze")));
+$("#stage").dataset.arrival = webArrival ? "web" : "reference";
 const initialRecordIndex = records.findIndex(record => record.id === reviewParams.get("record"));
 if (initialRecordIndex >= 0) selected = initialRecordIndex;
 let frozenTime =
@@ -428,7 +435,7 @@ function fit() {
   const viewport = $("#viewport");
   const coarse = matchMedia("(pointer: coarse)").matches;
   const reference =
-    reviewParams.has("time") || reviewParams.get("review") === "1";
+    !webArrival && (reviewParams.has("time") || reviewParams.get("review") === "1");
   const { width, height, scale, kind } =
     mode === "boot" && !reference
       ? openingLayout(viewport.clientWidth, viewport.clientHeight)
@@ -513,9 +520,11 @@ function setMode(next: Mode) {
     if ($("#stage").dataset.projectionPending === "true") detailTransition.hide(true);
     delete $("#stage").dataset.projectionPending;
     delete $("#stage").dataset.projectionPhase;
+    delete $("#stage").dataset.projectionRoute;
     scene?.setProjectionFocus(0);
   }
   const previousMode = mode;
+  if (next === "boot") lastPresentedBootTime = null;
   rollingTitles.forEach((title) =>
     title.update({
       animated: motionActive("rollingText") && next === "archive",
@@ -549,8 +558,14 @@ function setMode(next: Mode) {
   $(".system-nav").inert = next === "boot" || Boolean(modal);
   $(".system-footer").inert = next === "boot" || Boolean(modal);
   if (next === "detail") {
-    if (previousMode !== "detail")
+    if (previousMode !== "detail") {
+      // The back control may enter now; the paper waits for the physical
+      // carrier. Never reuse the previous record's opaque inline style.
+      $("#detail-content").style.opacity = "0";
+      $("#detail-content").style.translate = "0 18px";
+      $("#detail-content").inert = true;
       detailTransition.show(!motionActive("surfaceTransitions"));
+    }
   } else if (
     previousMode === "detail" ||
     (next === "boot" && !$("#detail-ui").hidden)
@@ -716,6 +731,7 @@ function openProjection(trigger?: HTMLElement) {
   projectionStarted = performance.now();
   projectionEntryTrace = [];
   markProjectionEntry(fromArchive ? "extracting" : "carrier-present");
+  $("#stage").dataset.projectionRoute = fromArchive ? "array" : "reading";
   $("#stage").dataset.projectionPending = "true";
   if (fromArchive) {
     setMode("detail");
@@ -1354,7 +1370,8 @@ function bootFrame(t: number) {
     return undefined;
   }
   audio.updateBoot(t, frozenTime !== null);
-  const motion = bootSequence.update(t);
+  const arrival = webArrival ? webArrayArrival(t, ARRAY_REVEAL_START, ARRAY_OPENING_END) : undefined;
+  const motion = bootSequence.update(t, arrival);
   if (workbench?.enabled && frozenTime === null) {
     const end = openingShowsDetail(
       wallpaperHost()?.properties.openingdetail?.value,
@@ -1385,17 +1402,17 @@ function bootFrame(t: number) {
       : "FILE NUMBER: ";
   $("#stage").style.setProperty(
     "--entry-opacity",
-    String(ease((t - ARRAY_REVEAL_START) / ARRAY_REVEAL_DURATION)),
+    String(arrival?.opacity ?? ease((t - ARRAY_REVEAL_START) / ARRAY_REVEAL_DURATION)),
   );
   $(".callout-rule").style.transform = `scaleX(${ease((t - 22.08) / 0.9)})`;
-  const reveal = ease((t - ARRAY_REVEAL_START) / 0.4),
+  const reveal = arrival?.opacity ?? ease((t - ARRAY_REVEAL_START) / 0.4),
     lift = ease((t - 26) / 1.8),
     zoom = 0.55 * ease((t - 27.3) / 1.65) + 0.45 * ease((t - 29.0) / 5.0);
   if (t >= 35) {
     setMode("detail");
     return undefined;
   }
-  return { reveal, lift, zoom, time: t };
+  return { reveal, lift, zoom, time: t, arrival };
 }
 
 function updateArchiveSourceTrace() {
@@ -1448,10 +1465,19 @@ function frame(ms: number) {
   paintTheme(theme);
   viewer?.setTheme(theme);
   playground?.tick(time);
-  const cinema =
-    mode === "boot" && ready
-      ? bootFrame(frozenTime ?? time - bootStart)
-      : undefined;
+  let presentedBootTime = frozenTime ?? time - bootStart;
+  if (mode === "boot" && ready) {
+    if (webArrival && frozenTime === null) {
+      const requested = presentedBootTime;
+      presentedBootTime = presentedOpeningTime(requested, lastPresentedBootTime,
+        ARRAY_REVEAL_START - .12, ARRAY_OPENING_END);
+      // Correct the existing clock, keeping audio, the veil and the 3D pose on
+      // the same timestamp after shader compilation or a long dropped frame.
+      bootStart += requested - presentedBootTime;
+    }
+    lastPresentedBootTime = presentedBootTime;
+  }
+  const cinema = mode === "boot" && ready ? bootFrame(presentedBootTime) : undefined;
   wallpaperEffects?.update(
     time,
     motionIsReduced(),
@@ -1469,6 +1495,7 @@ function frame(ms: number) {
       time,
       scene.decryptionFrame,
       !motionActive("documentReveal"),
+      scene.detailVisibility,
     );
     $("#detail-content").style.opacity = String(scene.detailVisibility);
     $("#detail-content").style.translate =
@@ -1937,7 +1964,7 @@ Object.assign(window, {
       bootTime:
         mode === "boot"
           ? started
-            ? (frozenTime ?? performance.now() / 1000 - bootStart) + 5
+            ? (frozenTime ?? (webArrival ? lastPresentedBootTime : null) ?? performance.now() / 1000 - bootStart) + 5
             : 6.76
           : null,
       selected: records[selected].id,

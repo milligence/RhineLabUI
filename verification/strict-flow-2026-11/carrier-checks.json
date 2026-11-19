@@ -1,0 +1,7 @@
+{
+  "checks": "Readable ignition, geometric beam growth, progressive image reveal and stationary hold, stall-safe presentation time, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization, scaled-stage production painting",
+  "reversalCases": 252,
+  "scaledPainterCases": 25,
+  "maxProjectionErrorPx": 8.854634927502048e-7,
+  "maxExposedOverlap": 0
+}

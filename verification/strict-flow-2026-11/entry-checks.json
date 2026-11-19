@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "scope": "Actual main.ts state-transition functions with inert DOM/scene fixtures; no visual rendering claim",
+  "checks": [
+    "Actual moving aperture is sampled continuously in viewport coordinates, camera progress reaches ArchiveScene, and array return cannot flash the reading article",
+    "Esc/back invalidates the pending RAF and hides the never-exposed article synchronously",
+    "A modal interrupts extraction, preserves its opener, and cannot be overtaken by a pending projection",
+    "Reading-origin projection returns to the same reading surface without rerender or scroll reset",
+    "An explicit reading request takes over a pending extraction without a stale projection opening",
+    "Without a 3D carrier the fallback comes from the actual triggering control and keeps the article inert",
+    "A modal during a still-extracting reading-origin request retains the reading route and cancels stale projection work",
+    "Natural first entry remains on the array with the first archive sealed; an explicit read starts unsealing only after physical clearance",
+    "Explicit wallpaper detail playback and frozen reference review retain their opt-in timeline",
+    "Entering a different reading session clears the previous opaque paper before revealing its UI container",
+    "Reduced motion still requires intentional activation and does not wait for suppressed extraction motion",
+    "Ordinary reading arrows retain native scrolling while array and gamepad navigation remain available",
+    "Esc during extraction preserves the originating reading or array route and cancels the queued projection"
+  ]
+}

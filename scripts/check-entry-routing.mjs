@@ -6,10 +6,19 @@ import vm from 'node:vm';
 import ts from 'typescript';
 import { DecryptionController } from '../src/decryption.ts';
 import { openingShowsDetail, ARRAY_OPENING_END } from '../src/wallpaper-opening.ts';
+import { webArrayArrival } from '../src/archive-arrival.ts';
 
 const path = new URL('../src/main.ts', import.meta.url);
 const source = await readFile(path, 'utf8');
 const parsed = ts.createSourceFile('main.ts', source, ts.ScriptTarget.Latest, true);
+const arrivalChoice = parsed.statements.find(node => ts.isVariableStatement(node) && node.declarationList.declarations.some(d => d.name.getText(parsed) === 'webArrival'));
+assert(arrivalChoice);
+const arrivalCode = ts.transpileModule(`${arrivalChoice.getText(parsed)}\nwebArrival;`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
+for (const [query, wallpaper, expected] of [
+  ['', false, true], ['?time=24&freeze=1', false, false], ['?review=1', false, false],
+  ['?arrival=web&time=24&freeze=1&review=1', false, true], ['', true, false],
+]) assert.equal(vm.runInNewContext(arrivalCode, { isWallpaper: wallpaper, reviewParams: new URLSearchParams(query) }), expected,
+  `Natural web entry and explicit reference review must not share a timeline: ${query}`);
 const names = ['setMode', 'openFile', 'openProjection', 'openModal', 'bootFrame', 'cancelProjectionEntry'];
 const functions = parsed.statements.filter(node => ts.isFunctionDeclaration(node) && names.includes(node.name?.text));
 assert.equal(functions.length, names.length);
@@ -66,7 +75,7 @@ function create(mode = 'archive', withScene = true) {
     projectionRequest: 0, pendingDetailFocus: false, modal: null, modalClosing: false,
     workbench: undefined, rollingTitles: [], hoverCode: { finish() {} },
     motionActive: () => true, recordAccess() { events.push(['record-access']); }, syncWallpaperBackground() {},
-    isWallpaper: false, frozenTime: null, lastStep: '',
+    isWallpaper: false, frozenTime: null, lastStep: '', webArrival: true, webArrayArrival, lastPresentedBootTime: null,
     wallpaperHost: () => ({properties:{}}), openingShowsDetail, ARRAY_OPENING_END, ARRAY_REVEAL_START: 21.92, ARRAY_REVEAL_DURATION: .38,
     audio: { setScene() {}, play() {}, updateBoot() {} }, audioPreview: false,
     audioPreviewRequest: 0, configureAudio() {}, fit() {},
@@ -92,6 +101,7 @@ const checks = [];
   const h = create(); h.context.openProjection(h.trigger);
   assert.equal(h.context.mode, 'detail');
   assert.equal(h.$('#stage').dataset.projectionPending, 'true');
+  assert.equal(h.$('#stage').dataset.projectionRoute, 'array');
   assert.equal(h.$('#detail-content').inert, true);
   assert.equal(h.context.pendingDetailFocus, false);
   const request = h.context.projectionRequest;
@@ -111,6 +121,7 @@ const checks = [];
   assert.equal(h.scene.projectionFocus,0);
   assert.equal(h.context.mode, 'archive');
   assert.equal(h.$('#stage').dataset.projectionPending, undefined);
+  assert.equal(h.$('#stage').dataset.projectionRoute, undefined);
   assert.equal(h.$('#detail-ui').hidden, true);
   assert.ok(h.events.some(e => e[0] === 'hide-detail' && e[1] === true && e[2] === 'true'));
   assert.equal(h.context.document.activeElement, h.trigger);
@@ -133,9 +144,11 @@ const checks = [];
 {
   const h = create('detail'); const scroll = h.$('#tab-panel').scrollTop;
   h.context.openProjection(h.$('.record-projection-entry'));
+  assert.equal(h.$('#stage').dataset.projectionRoute, 'reading');
   assert.equal(h.opened.length, 1);
   h.context.projectionViewer.isOpen = false; h.opened[0].options.onClose();
   assert.equal(h.context.mode, 'detail'); assert.equal(h.$('#tab-panel').scrollTop, scroll);
+  assert.equal(h.$('#stage').dataset.projectionRoute, 'reading', 'The original reading surface retains its return fade');
   assert.equal(h.$('#stage').dataset.projectionPending,undefined);assert.equal(h.$('#detail-content').inert,false);assert.equal(h.context.document.activeElement,h.$('.record-projection-entry'));
   assert.equal(h.events.some(e => e[0] === 'show-detail'), false);
   checks.push('Reading-origin projection returns to the same reading surface without rerender or scroll reset');
@@ -166,7 +179,9 @@ const checks = [];
 
 {
   const h=create('boot');
-  h.context.bootFrame(ARRAY_OPENING_END-.01);
+  const beforeEnd=h.context.bootFrame(ARRAY_OPENING_END-.01);
+  assert.equal(beforeEnd.arrival.kind,'web');
+  assert.ok(beforeEnd.arrival.field>.999);
   assert.equal(h.context.mode,'boot');
   h.context.bootFrame(ARRAY_OPENING_END);
   assert.equal(h.context.mode,'archive','Natural web entry stops at the archive array');
@@ -187,13 +202,20 @@ const checks = [];
   checks.push('Natural first entry remains on the array with the first archive sealed; an explicit read starts unsealing only after physical clearance');
 }
 {
-  const h=create('boot'); h.context.isWallpaper=true;
+  const h=create('boot'); h.context.isWallpaper=true; h.context.webArrival=false;
   h.context.wallpaperHost=()=>({properties:{openingdetail:{value:'show'}}});
   h.context.bootFrame(ARRAY_OPENING_END);assert.equal(h.context.mode,'boot');
   h.context.bootFrame(35);assert.equal(h.context.mode,'detail');
-  const review=create('boot');review.context.frozenTime=30;
-  review.context.bootFrame(30);assert.equal(review.context.mode,'boot');
+  const review=create('boot');review.context.frozenTime=30;review.context.webArrival=false;
+  assert.equal(review.context.bootFrame(30).arrival,undefined);assert.equal(review.context.mode,'boot');
   checks.push('Explicit wallpaper detail playback and frozen reference review retain their opt-in timeline');
+}
+{
+  const h=create();h.$('#detail-content').style.opacity='1';h.$('#detail-content').inert=false;
+  h.context.openFile();
+  assert.equal(h.$('#detail-content').style.opacity,'0');
+  assert.equal(h.$('#detail-content').inert,true);
+  checks.push('Entering a different reading session clears the previous opaque paper before revealing its UI container');
 }
 {
   const h=create(); h.context.motionActive=()=>false;
@@ -227,6 +249,10 @@ const checks = [];
   assert.equal(array.context.mode,'archive');assert.equal(array.opened.length,0);
   checks.push('Esc during extraction preserves the originating reading or array route and cancels the queued projection');
 }
-assert.match(await readFile(new URL('../src/archive-entry.css', import.meta.url), 'utf8'), /\[data-projection-pending="true"\] #detail-content \{ visibility: hidden; pointer-events: none; \}/);
+const entryCss = await readFile(new URL('../src/archive-entry.css', import.meta.url), 'utf8');
+const pendingPaper = entryCss.match(/\[data-projection-pending="true"\]\s+#detail-content\s*\{([^}]+)\}/)?.[1];
+assert(pendingPaper, 'Pending projections have an explicit paper rule');
+assert.match(pendingPaper, /visibility:\s*hidden/);
+assert.match(pendingPaper, /pointer-events:\s*none/);
 const report = { passed: true, scope: 'Actual main.ts state-transition functions with inert DOM/scene fixtures; no visual rendering claim', checks };
 console.log(JSON.stringify(report, null, 2));

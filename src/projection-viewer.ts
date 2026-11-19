@@ -3,12 +3,15 @@ import { escapeHtml } from "./html";
 import { ResearchProjection, sourceMarkup, type ResearchViewState } from "./research-projection";
 import { CubeProjection } from "./cube-projection";
 import type { CubeProjectionData } from "./projection-types";
-import { CarrierFlight, carrierFrame, carrierCameraProgress, type CarrierCameraSample, type CarrierSample, type FlightBox } from "./carrier-flight";
+import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierFrame, carrierCameraProgress, carrierLocalPoint, type CarrierCameraSample, type CarrierSample, type FlightBox } from "./carrier-flight";
 import "./projection-atmosphere.css";
 import "./cube-optics.css";
 
 type ProjectionOptions = {
   reducedMotion: boolean;
+  /** Explicit frame-review pages may drive the real flight at fixed steps.
+   * Production entry never sets this; it does not change scene callbacks. */
+  manualClock?: boolean;
   onClose: () => void;
   origin?: { x: number; y: number };
   /** Sample the physical carrier after the main scene has drawn its current camera. */
@@ -32,6 +35,7 @@ export class ProjectionViewer {
   private siblings: { node: HTMLElement; inert: boolean }[] = [];
   private closing = false;
   private flight = new CarrierFlight();
+  private clock = new CarrierPresentationClock();
   private flightRaf = 0;
   private imageBox: FlightBox = { left: 0, top: 0, width: 1, height: 1 };
   private currentBeat = "";
@@ -86,6 +90,14 @@ export class ProjectionViewer {
     this.root.dataset.kind = record.projection.kind;
     this.root.dataset.reduced = String(options.reducedMotion);
     this.root.dataset.state = options.reducedMotion ? "open" : "opening";
+    if (!resume) {
+      // Content can create a WebGL context. Even if that preparation stalls,
+      // no full-sized work surface may appear before its light has formed.
+      this.host.style.opacity = "0";
+      this.host.style.clipPath = "inset(100% 0 0 0)";
+      this.root.querySelector<HTMLElement>(".projection-header")!.style.opacity = "0";
+      this.root.querySelector<HTMLElement>(".projection-environment")!.style.opacity = "0";
+    }
     this.root.querySelector(".projection-eyebrow")!.textContent = `${record.id} / ${record.projection.kind === "research" ? "RESEARCH RECORD" : "EXPERIMENT RECORD"}`;
     this.root.querySelector("h1")!.textContent = record.en;
     this.root.querySelector(".projection-mode-label")!.textContent = record.projection.label;
@@ -105,38 +117,49 @@ export class ProjectionViewer {
     const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
     this.imageBox = { left: this.host.offsetLeft, top: this.host.offsetTop, width: this.host.offsetWidth, height: this.host.offsetHeight };
     if (!resume || !ignition.firstChild) {
-      ignition.innerHTML = '<svg preserveAspectRatio="none"><defs><linearGradient id="carrier-light" x1="0" y1="1" x2=".6" y2="0"><stop stop-color="var(--optical-accent)" stop-opacity=".34"/><stop offset=".45" stop-color="var(--optical-accent)" stop-opacity=".07"/><stop offset="1" stop-color="white" stop-opacity=".08"/></linearGradient><radialGradient id="carrier-aperture"><stop stop-color="white" stop-opacity="1"/><stop offset=".12" stop-color="var(--optical-accent)" stop-opacity=".8"/><stop offset="1" stop-color="var(--optical-accent)" stop-opacity="0"/></radialGradient></defs><path class="carrier-volume" fill="url(#carrier-light)"/><path class="carrier-inner-volume" fill="url(#carrier-light)"/><path class="carrier-rays" pathLength="1"/><path class="carrier-image-outline"/><g class="carrier-source"><ellipse class="carrier-emitter" rx="55" ry="25" fill="url(#carrier-aperture)"/><path class="carrier-aperture-edge"/><circle r="3.2" fill="var(--optical-accent)"/><circle r="8" fill="none" stroke="var(--optical-accent)" stroke-width=".65"/></g></svg><div class="carrier-channel"><span class="carrier-channel-id"></span><span>OPTICAL CHANNEL</span><i></i></div>';
+      ignition.innerHTML = `<svg preserveAspectRatio="none"><defs>
+        <linearGradient id="carrier-light" x1="0" y1="1" x2=".6" y2="0"><stop stop-color="var(--optical-accent)" stop-opacity=".32"/><stop offset=".42" stop-color="var(--optical-accent)" stop-opacity=".075"/><stop offset="1" stop-color="white" stop-opacity=".16"/></linearGradient>
+        <radialGradient id="carrier-aperture"><stop stop-color="white" stop-opacity="1"/><stop offset=".12" stop-color="var(--optical-accent)" stop-opacity=".8"/><stop offset="1" stop-color="var(--optical-accent)" stop-opacity="0"/></radialGradient>
+        </defs><path class="carrier-volume" fill="url(#carrier-light)"/><path class="carrier-inner-volume" fill="url(#carrier-light)"/>
+        <path class="carrier-rays"/><path class="carrier-cross-sections"/><path class="carrier-image-outline" pathLength="1"/><path class="carrier-image-scan"/>
+        <g class="carrier-source"><ellipse class="carrier-emitter" rx="12" ry="6" fill="url(#carrier-aperture)"/><path class="carrier-aperture-edge"/><ellipse class="carrier-aperture-ring" rx="8" ry="4"/><circle r="3.2" fill="var(--optical-accent)"/></g>
+        </svg><div class="carrier-channel"><span class="carrier-channel-id"></span><span class="carrier-channel-state">投影开启</span><i><b></b></i></div>`;
       ignition.querySelector(".carrier-channel-id")!.textContent = this.record!.id;
     }
     this.host.inert = true;
     if (options.reducedMotion) {
       this.flight.jump(1); this.paintFlight(); this.finishEntrance(); return;
     }
-    this.flight.move(1, performance.now(), resume ? Math.max(450, (1 - this.flight.value) * 2200) : 2200);
+    const now = options.manualClock ? 0 : performance.now();
+    if (!resume) { this.clock.reset(now); this.flightStarted = now; }
+    else if (!options.manualClock) this.clock.step(now, !document.hidden);
+    this.flight.move(1, this.clock.value, resume ? Math.max(900, (1 - this.flight.value) * CARRIER_ENTRANCE_MS) : CARRIER_ENTRANCE_MS);
     this.paintFlight();
-    this.flightRaf = requestAnimationFrame(this.advanceFlight);
+    if (!options.manualClock) this.flightRaf = requestAnimationFrame(this.advanceFlight);
   }
 
   private setBeat(beat: string) {
     if (beat === this.currentBeat) return;
     this.currentBeat = beat; this.root.dataset.beat = beat;
-    this.beatTrace.push({ beat, elapsed: Math.round(performance.now() - this.flightStarted), progress: this.flight.value });
+    this.beatTrace.push({ beat, elapsed: Math.round(this.options.manualClock ? this.clock.value : performance.now() - this.flightStarted), progress: this.flight.value });
     this.options.onBeat?.(beat);
   }
 
   private paintFlight() {
     const rect = this.parent.getBoundingClientRect();
+    const surface = { width: Math.max(1, this.parent.clientWidth), height: Math.max(1, this.parent.clientHeight) };
     this.imageBox = { left: this.host.offsetLeft, top: this.host.offsetTop, width: this.host.offsetWidth, height: this.host.offsetHeight };
     // Queue the desired phase, then use the scene's returned *drawn* phase for
     // both plane projection and carrier sampling. The scene and DOM have
     // separate RAF callbacks; neither is allowed to run one visible frame ahead.
     const rendered = this.options.onCameraProgress?.(carrierCameraProgress(this.flight.value));
     const sample = this.options.sampleCarrier?.();
-    const origin = sample?.origin ?? this.options.origin ?? { x: rect.left + rect.width * .25, y: rect.top + rect.height * .65 };
-    const x = origin.x - rect.left, y = origin.y - rect.top;
+    const screenOrigin = sample?.origin ?? this.options.origin ?? { x: rect.left + rect.width * .25, y: rect.top + rect.height * .65 };
+    const origin = carrierLocalPoint(screenOrigin, rect, surface);
+    const { x, y } = origin;
     this.root.style.setProperty("--projection-origin-x", x + "px");
     this.root.style.setProperty("--projection-origin-y", y + "px");
-    const f = this.frameState = carrierFrame(this.flight.value, rect, this.imageBox, this.options.reducedMotion ? undefined : rendered || undefined);
+    const f = this.frameState = carrierFrame(this.flight.value, surface, this.imageBox, this.options.reducedMotion ? undefined : rendered || undefined);
     const environment = this.root.querySelector<HTMLElement>(".projection-environment")!;
     const header = this.root.querySelector<HTMLElement>(".projection-header")!;
     const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
@@ -145,45 +168,82 @@ export class ProjectionViewer {
     header.style.transform = "translateY(" + ((1-f.header)*8).toFixed(2) + "px)";
     this.host.style.opacity = String(f.image);
     this.host.style.transform = f.transform;
+    this.host.style.clipPath = `inset(${((1 - f.reveal) * 100).toFixed(3)}% 0 0 0)`;
     this.host.style.setProperty("--carrier-plane-frame", String(f.frame));
+    this.root.style.setProperty("--carrier-interface", String(f.interface));
     this.root.style.setProperty("--carrier-light", String(f.light));
     ignition.style.opacity = String(f.light);
     const svg = ignition.querySelector("svg");
     if (svg) {
-      svg.setAttribute("viewBox", "0 0 " + rect.width + " " + rect.height);
+      svg.setAttribute("viewBox", "0 0 " + surface.width + " " + surface.height);
       const [a,b,c,d] = f.corners;
       const point = (v: { x: number; y: number }) => v.x.toFixed(2) + "," + v.y.toFixed(2);
       const originText = x.toFixed(2) + "," + y.toFixed(2);
-      ignition.querySelector(".carrier-volume")!.setAttribute("d", "M" + originText + " L" + point(a) + " L" + point(b) + " Z");
-      ignition.querySelector(".carrier-inner-volume")!.setAttribute("d", "M" + originText + " L" + point(d) + " L" + point(c) + " Z");
-      ignition.querySelector(".carrier-rays")!.setAttribute("d", "M" + point(a) + " L" + originText + " L" + point(b) + " M" + point(d) + " L" + originText + " L" + point(c));
-      (ignition.querySelector(".carrier-rays") as SVGElement).style.strokeDashoffset = String(1-f.rayLength);
-      ignition.querySelector(".carrier-image-outline")!.setAttribute("d", "M" + point(a) + " L" + point(b) + " L" + point(c) + " L" + point(d) + " Z");
+      const lerp = (from: { x: number; y: number }, to: { x: number; y: number }, t: number) => ({ x: from.x + (to.x - from.x) * t, y: from.y + (to.y - from.y) * t });
+      const centre = { x: (a.x + b.x + c.x + d.x) / 4, y: (a.y + b.y + c.y + d.y) / 4 };
+      const sourcePoint = { x, y }, tip = lerp(sourcePoint, centre, f.beamReach);
+      const ends = f.corners.map(corner => ({ x: tip.x + (corner.x - centre.x) * f.beamReach * f.beamSpread, y: tip.y + (corner.y - centre.y) * f.beamReach * f.beamSpread }));
+      const [la,lb,lc,ld] = ends;
+      // Extend the actual light volume from the source before widening its
+      // aperture. Opacity alone would make a complete triangle simply pop in.
+      ignition.querySelector(".carrier-volume")!.setAttribute("d", "M" + originText + " L" + point(la) + " L" + point(lb) + " Z");
+      ignition.querySelector(".carrier-inner-volume")!.setAttribute("d", "M" + originText + " L" + point(ld) + " L" + point(lc) + " Z");
+      ignition.querySelector(".carrier-rays")!.setAttribute("d", "M" + point(la) + " L" + originText + " L" + point(lb) + " M" + point(ld) + " L" + originText + " L" + point(lc));
+      const sections = [.34,.61,.83].map(distance => "M" + point(lerp(sourcePoint,la,distance)) + " L" + point(lerp(sourcePoint,lb,distance)) + " M" + point(lerp(sourcePoint,ld,distance)) + " L" + point(lerp(sourcePoint,lc,distance))).join(" ");
+      ignition.querySelector(".carrier-cross-sections")!.setAttribute("d", sections);
+      const rim = ignition.querySelector(".carrier-image-outline") as SVGElement;
+      rim.setAttribute("d", "M" + point(la) + " L" + point(lb) + " L" + point(lc) + " L" + point(ld) + " Z");
+      rim.style.opacity = String(f.frame * .7);
+      rim.style.strokeDashoffset = String(1 - f.frame);
+      const scan = ignition.querySelector(".carrier-image-scan") as SVGElement;
+      scan.setAttribute("d", "M" + point(f.scanLine[0]) + " L" + point(f.scanLine[1]));
+      scan.style.opacity = String(Math.sin(Math.PI * f.reveal) * .8);
       const source = ignition.querySelector(".carrier-source") as SVGGElement;
       source.setAttribute("transform", "translate(" + x + "," + y + ")");
       source.style.opacity = String(f.emitter);
-      const edge = sample?.edge;
-      ignition.querySelector(".carrier-aperture-edge")!.setAttribute("d", edge ? "M" + (edge[0].x - origin.x) + "," + (edge[0].y - origin.y) + " L" + (edge[1].x - origin.x) + "," + (edge[1].y - origin.y) : "M-30,0 L30,0");
+      const halo = ignition.querySelector(".carrier-emitter")!;
+      halo.setAttribute("rx", String(12 + 43 * f.charge)); halo.setAttribute("ry", String(6 + 19 * f.charge));
+      const ring = ignition.querySelector(".carrier-aperture-ring")!;
+      ring.setAttribute("rx", String(8 + 16 * f.charge)); ring.setAttribute("ry", String(4 + 6 * f.charge));
+      const edge = sample?.edge?.map(p => carrierLocalPoint(p, rect, surface));
+      const edgePoints = edge ? edge.map(p => ({ x: (p.x - origin.x) * f.charge, y: (p.y - origin.y) * f.charge })) : [{ x: -30*f.charge, y: 0 }, { x: 30*f.charge, y: 0 }];
+      ignition.querySelector(".carrier-aperture-edge")!.setAttribute("d", "M" + point(edgePoints[0]) + " L" + point(edgePoints[1]));
       const channel = ignition.querySelector<HTMLElement>(".carrier-channel")!;
       channel.style.left = (x + 26) + "px";
       channel.style.top = (y + 28) + "px";
       channel.style.opacity = String(f.emitter);
+      channel.querySelector(".carrier-channel-state")!.textContent = this.closing ? "投影收束" : f.beat === "ignition" ? "投影开启" : f.beat === "beam-forming" ? "光场展开" : f.beat === "image-forming" ? "影像形成" : "投影已建立";
+      channel.querySelector<HTMLElement>("b")!.style.transform = `scaleX(${Math.min(1, this.flight.value / .38)})`;
     }
     this.setBeat(this.closing ? "returning" : f.beat);
   }
 
   private advanceFlight = (now: number) => {
-    this.flight.step(now);
+    this.flight.step(this.clock.step(now, this.options.manualClock || !document.hidden));
     this.paintFlight();
-    if (this.flight.active || Math.abs((this.frameState?.camera ?? this.flight.target) - this.flight.target) > 1e-9) this.flightRaf = requestAnimationFrame(this.advanceFlight);
+    if (this.flight.active || Math.abs((this.frameState?.camera ?? this.flight.target) - this.flight.target) > 1e-9) {
+      if (!this.options.manualClock) this.flightRaf = requestAnimationFrame(this.advanceFlight);
+    }
     else if (this.closing) this.finishClose();
     else this.finishEntrance();
   };
+
+  /** Milliseconds since the first manual open; keep increasing across return
+   * and reopen. A capture can repaint at the same time after drawing the scene
+   * so its image uses exactly that drawn camera and real carrier source. */
+  advancePresentation(elapsedMs: number) {
+    if (!this.options.manualClock) throw new Error("Manual projection stepping requires an explicit frame-review clock");
+    if (!Number.isFinite(elapsedMs) || elapsedMs < 0) throw new Error("Projection review time must be a finite nonnegative value");
+    if (this.isOpen) this.advanceFlight(elapsedMs);
+    return this.getStats();
+  }
 
   private finishEntrance() {
     this.flight.jump(1);
     this.host.style.transform = "none";
     this.host.style.opacity = "1";
+    this.host.style.clipPath = "none";
+    this.root.style.setProperty("--carrier-interface", "1");
     this.host.inert = false;
     this.root.dataset.state = "open";
     this.root.querySelector<HTMLElement>(".projection-ignition")!.style.opacity = "0";
@@ -238,9 +298,10 @@ export class ProjectionViewer {
     else {
       // Leave the current painted frame untouched until the next RAF. Its
       // derivatives are retained by CarrierFlight when the intent reverses.
-      this.flight.move(0, performance.now(), Math.max(650, this.flight.value * 1500));
+      if (!this.options.manualClock) this.clock.step(performance.now(), !document.hidden);
+      this.flight.move(0, this.clock.value, Math.max(850, this.flight.value * CARRIER_RETURN_MS));
       this.setBeat("returning");
-      this.flightRaf = requestAnimationFrame(this.advanceFlight);
+      if (!this.options.manualClock) this.flightRaf = requestAnimationFrame(this.advanceFlight);
     }
   }
   private finishClose() {
@@ -263,6 +324,6 @@ export class ProjectionViewer {
   }
   refreshTheme() { this.cube?.refreshTheme(); }
   get needsCarrierScene() { return this.isOpen && this.root.dataset.state !== "open"; }
-  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, velocity: this.flight.velocity, camera: this.frameState?.camera, requestedCamera: this.frameState?.requestedCamera, perspective: this.frameState?.rig.perspective, position: this.frameState?.rig.position, aim: this.frameState?.rig.aim, image: this.frameState?.image, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
+  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, velocity: this.flight.velocity, presentedMs: this.clock.value, camera: this.frameState?.camera, requestedCamera: this.frameState?.requestedCamera, perspective: this.frameState?.rig.perspective, position: this.frameState?.rig.position, aim: this.frameState?.rig.aim, image: this.frameState?.image, reveal: this.frameState?.reveal, beamReach: this.frameState?.beamReach, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
   dispose() { this.close(true); cancelAnimationFrame(this.flightRaf); this.root.remove(); }
 }

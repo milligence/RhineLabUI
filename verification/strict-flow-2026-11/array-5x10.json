@@ -1,0 +1,2801 @@
+{
+  "created": "2026-11-19T11:53:08.400Z",
+  "fixture": {
+    "records": 50,
+    "groups": [
+      "样本 A",
+      "样本 B",
+      "样本 C",
+      "样本 D",
+      "样本 E"
+    ]
+  },
+  "renderer": "{\"ratio\":0.6,\"width\":540,\"height\":367,\"limited\":false,\"antialias\":\"off\",\"transmission\":0.25,\"anisotropy\":2,\"superPerformance\":true,\"aoSamples\":0,\"aoWidth\":270,\"aoHeight\":183,\"shadows\":0,\"depthOfField\":0}",
+  "checks": [
+    {
+      "name": "five groups of ten",
+      "pass": true,
+      "counts": [
+        10,
+        10,
+        10,
+        10,
+        10
+      ]
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-001",
+      "cell": {
+        "lane": 0,
+        "row": 22
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-001",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044265905476870886,
+        "clarity": 0.06639705882245944
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-001",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-001",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-002",
+      "cell": {
+        "lane": 0,
+        "row": 23
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-002",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843641067986,
+        "clarity": 0.06639705882245944
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-002",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-002",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-003",
+      "cell": {
+        "lane": 0,
+        "row": 24
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-003",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843523634124,
+        "clarity": 0.06639705882245944
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-003",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-003",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-004",
+      "cell": {
+        "lane": 0,
+        "row": 25
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-004",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843598617546,
+        "clarity": 0.06639705882245944
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-004",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-004",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-005",
+      "cell": {
+        "lane": 0,
+        "row": 26
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-005",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484356954044,
+        "clarity": 0.06639705882245944
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-005",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-005",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-006",
+      "cell": {
+        "lane": 0,
+        "row": 27
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-006",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843508499735,
+        "clarity": 0.06639705882245944
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-006",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-006",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-007",
+      "cell": {
+        "lane": 0,
+        "row": 28
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-007",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484360616488,
+        "clarity": 0.06639705882245944
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-007",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-007",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-008",
+      "cell": {
+        "lane": 0,
+        "row": 29
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-008",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484350123046,
+        "clarity": 0.06639705882245944
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-008",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-008",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-009",
+      "cell": {
+        "lane": 0,
+        "row": 30
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-009",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843561127055,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-009",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-009",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-010",
+      "cell": {
+        "lane": 0,
+        "row": 31
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-010",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484358302756,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-010",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-010",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-011",
+      "cell": {
+        "lane": 1,
+        "row": 32
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-011",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044262001187759923,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-011",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-011",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-012",
+      "cell": {
+        "lane": 1,
+        "row": 33
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-012",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484362561041,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-012",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-012",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-013",
+      "cell": {
+        "lane": 1,
+        "row": 34
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-013",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484352472772,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-013",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-013",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-014",
+      "cell": {
+        "lane": 1,
+        "row": 35
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-014",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484360421306,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-014",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-014",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-015",
+      "cell": {
+        "lane": 1,
+        "row": 36
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-015",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484361138965,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-015",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-015",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-016",
+      "cell": {
+        "lane": 1,
+        "row": 37
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-016",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484354094787,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-016",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-016",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-017",
+      "cell": {
+        "lane": 1,
+        "row": 38
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-017",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484365035772,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-017",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-017",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-018",
+      "cell": {
+        "lane": 1,
+        "row": 39
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-018",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484354735648,
+        "clarity": 0.06639705883819823
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-018",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-018",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-019",
+      "cell": {
+        "lane": 1,
+        "row": 40
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-019",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484357960487,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-019",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-019",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-020",
+      "cell": {
+        "lane": 1,
+        "row": 41
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-020",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843605980813,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-020",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-020",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-021",
+      "cell": {
+        "lane": 2,
+        "row": 42
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-021",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044262001190715534,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-021",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-021",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-022",
+      "cell": {
+        "lane": 2,
+        "row": 43
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-022",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484361624056,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-022",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-022",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-023",
+      "cell": {
+        "lane": 2,
+        "row": 44
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-023",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484350800915,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-023",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-023",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-024",
+      "cell": {
+        "lane": 2,
+        "row": 45
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-024",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484355574272,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-024",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-024",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-025",
+      "cell": {
+        "lane": 2,
+        "row": 46
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-025",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484357810666,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-025",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-025",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-026",
+      "cell": {
+        "lane": 2,
+        "row": 47
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-026",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484349621147,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-026",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-026",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-027",
+      "cell": {
+        "lane": 2,
+        "row": 48
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-027",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484361275819,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-027",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-027",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-028",
+      "cell": {
+        "lane": 2,
+        "row": 49
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-028",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843538635427,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-028",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-028",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-029",
+      "cell": {
+        "lane": 2,
+        "row": 50
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-029",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484356611037,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-029",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-029",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-030",
+      "cell": {
+        "lane": 2,
+        "row": 51
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-030",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843629481486,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-030",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-030",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-031",
+      "cell": {
+        "lane": 3,
+        "row": 52
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-031",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044262001204645895,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-031",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-031",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-032",
+      "cell": {
+        "lane": 3,
+        "row": 53
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-032",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843648192923,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-032",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-032",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-033",
+      "cell": {
+        "lane": 3,
+        "row": 54
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-033",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843558008905,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-033",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-033",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-034",
+      "cell": {
+        "lane": 3,
+        "row": 55
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-034",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484358728462,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-034",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-034",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-035",
+      "cell": {
+        "lane": 3,
+        "row": 56
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-035",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843623935526,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-035",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-035",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-036",
+      "cell": {
+        "lane": 3,
+        "row": 57
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-036",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484351829934,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-036",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-036",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-037",
+      "cell": {
+        "lane": 3,
+        "row": 58
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-037",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484361613661,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-037",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-037",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-038",
+      "cell": {
+        "lane": 3,
+        "row": 59
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-038",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843539643724,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-038",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-038",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-039",
+      "cell": {
+        "lane": 3,
+        "row": 60
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-039",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484352980571,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-039",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-039",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-040",
+      "cell": {
+        "lane": 3,
+        "row": 61
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-040",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843598512926,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-040",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-040",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-041",
+      "cell": {
+        "lane": 4,
+        "row": 62
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-041",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.000442620011611089,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-041",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-041",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-042",
+      "cell": {
+        "lane": 4,
+        "row": 63
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-042",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484360121408,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-042",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-042",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-043",
+      "cell": {
+        "lane": 4,
+        "row": 64
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-043",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484352785929,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-043",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-043",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-044",
+      "cell": {
+        "lane": 4,
+        "row": 65
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-044",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843546436327,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-044",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-044",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-045",
+      "cell": {
+        "lane": 4,
+        "row": 66
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-045",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484361683839,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-045",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-045",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-046",
+      "cell": {
+        "lane": 4,
+        "row": 67
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-046",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484352081511,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-046",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-046",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-047",
+      "cell": {
+        "lane": 4,
+        "row": 68
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-047",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484362921866,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-047",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-047",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-048",
+      "cell": {
+        "lane": 4,
+        "row": 69
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-048",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.00044264843584318643,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-048",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-048",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-049",
+      "cell": {
+        "lane": 4,
+        "row": 70
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-049",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484356150451,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-049",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-049",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "selection identity",
+      "pass": true,
+      "id": "X-050",
+      "cell": {
+        "lane": 4,
+        "row": 71
+      }
+    },
+    {
+      "name": "paper follows carrier clearance",
+      "pass": true,
+      "id": "X-050",
+      "firstPaper": {
+        "after": 4.083333333333333,
+        "extraction": 4.05,
+        "residual": 0.0004426484364579631,
+        "clarity": 0.06639705880672067
+      }
+    },
+    {
+      "name": "open reaches readable state",
+      "pass": true,
+      "id": "X-050",
+      "visibility": 1,
+      "ready": true
+    },
+    {
+      "name": "return clears paper and outgoing copies",
+      "pass": true,
+      "id": "X-050",
+      "paper": 0,
+      "outgoing": 0,
+      "cameraDetail": 0.001
+    },
+    {
+      "name": "forward seam continues physical row",
+      "pass": true,
+      "lane": 0,
+      "from": {
+        "lane": 5,
+        "row": 71
+      },
+      "to": {
+        "lane": 5,
+        "row": 72
+      }
+    },
+    {
+      "name": "reverse seam restores row",
+      "pass": true,
+      "lane": 0
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 0,
+      "cutoff": 0.15
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 0,
+      "cutoff": 0.45
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 0,
+      "cutoff": 0.9
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 0,
+      "cutoff": 1.6
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 0,
+      "cutoff": 2.4
+    },
+    {
+      "name": "forward seam continues physical row",
+      "pass": true,
+      "lane": 1,
+      "from": {
+        "lane": 6,
+        "row": 71
+      },
+      "to": {
+        "lane": 6,
+        "row": 72
+      }
+    },
+    {
+      "name": "reverse seam restores row",
+      "pass": true,
+      "lane": 1
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 1,
+      "cutoff": 0.15
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 1,
+      "cutoff": 0.45
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 1,
+      "cutoff": 0.9
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 1,
+      "cutoff": 1.6
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 1,
+      "cutoff": 2.4
+    },
+    {
+      "name": "forward seam continues physical row",
+      "pass": true,
+      "lane": 2,
+      "from": {
+        "lane": 7,
+        "row": 71
+      },
+      "to": {
+        "lane": 7,
+        "row": 72
+      }
+    },
+    {
+      "name": "reverse seam restores row",
+      "pass": true,
+      "lane": 2
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 2,
+      "cutoff": 0.15
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 2,
+      "cutoff": 0.45
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 2,
+      "cutoff": 0.9
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 2,
+      "cutoff": 1.6
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 2,
+      "cutoff": 2.4
+    },
+    {
+      "name": "forward seam continues physical row",
+      "pass": true,
+      "lane": 3,
+      "from": {
+        "lane": 8,
+        "row": 71
+      },
+      "to": {
+        "lane": 8,
+        "row": 72
+      }
+    },
+    {
+      "name": "reverse seam restores row",
+      "pass": true,
+      "lane": 3
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 3,
+      "cutoff": 0.15
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 3,
+      "cutoff": 0.45
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 3,
+      "cutoff": 0.9
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 3,
+      "cutoff": 1.6
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 3,
+      "cutoff": 2.4
+    },
+    {
+      "name": "forward seam continues physical row",
+      "pass": true,
+      "lane": 4,
+      "from": {
+        "lane": 9,
+        "row": 71
+      },
+      "to": {
+        "lane": 9,
+        "row": 72
+      }
+    },
+    {
+      "name": "reverse seam restores row",
+      "pass": true,
+      "lane": 4
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 4,
+      "cutoff": 0.15
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 4,
+      "cutoff": 0.45
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 4,
+      "cutoff": 0.9
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 4,
+      "cutoff": 1.6
+    },
+    {
+      "name": "interrupted opening resumes",
+      "pass": true,
+      "lane": 4,
+      "cutoff": 2.4
+    }
+  ],
+  "failures": [],
+  "frames": [
+    {
+      "label": "draw",
+      "time": 2.9999999999999942,
+      "flightElapsed": 0,
+      "selected": "X-001",
+      "mode": "archive",
+      "scene": {
+        "arrival": {
+          "kind": "interactive",
+          "phase": "ready"
+        },
+        "documentArrival": {
+          "ready": false,
+          "clear": false,
+          "progress": 0,
+          "visibility": 0,
+          "phase": "hidden",
+          "cameraResidual": 2.0370951393858847e-06
+        },
+        "paperReady": false,
+        "paperVisibility": 0,
+        "decryption": {
+          "time": -1,
+          "intervals": [],
+          "markers": 0,
+          "point": 0,
+          "label": 0,
+          "labelValue": 0,
+          "clarity": 0,
+          "phase": "waiting",
+          "modelClarity": 0
+        },
+        "topLeft": [
+          242,
+          189
+        ],
+        "topRight": [
+          421,
+          99
+        ],
+        "labelTopLeft": [
+          281,
+          208
+        ],
+        "labelBottomLeft": [
+          281,
+          238
+        ],
+        "modelPosition": [
+          -0.0019,
+          -2.0092,
+          -2.1763
+        ],
+        "cameraPosition": [
+          -114.5564,
+          45.5345,
+          68.6579
+        ],
+        "fieldOfView": 3.6311877504605596,
+        "projectionFocus": 0,
+        "projectionRendered": 0,
+        "projectionReady": false,
+        "openingHandoff": null,
+        "loaded": true,
+        "drawCalls": 45,
+        "renderedFrames": 1,
+        "reusedFrames": 0,
+        "superPerformance": true,
+        "presentation": 1,
+        "triangles": 2550298,
+        "archiveCount": 284,
+        "archiveCandidates": 478,
+        "archiveCulled": 194,
+        "archiveCapacity": 576,
+        "archiveCoverage": "standard",
+        "returningFiles": 0,
+        "selectionPhase": "wave",
+        "pendingPulse": null,
+        "pulses": [
+          {
+            "lane": 0,
+            "row": 12,
+            "time": 0
+          }
+        ],
+        "referenceTime": 37.1,
+        "selectedSlot": 12,
+        "selectedLane": 0,
+        "selectedCell": {
+          "lane": 0,
+          "row": 12
+        },
+        "hoverCell": null,
+        "hoverLifts": {},
+        "dragTrack": null,
+        "archiveMomentum": null,
+        "holdingArchive": false,
+        "dragProjection": {
+          "lane": {
+            "x": -185.59142136793065,
+            "y": 97.39260087931825
+          },
+          "row": {
+            "x": -35.88524304020969,
+            "y": -6.975786679167778
+          }
+        },
+        "dragMapping": null,
+        "coordinateOrigin": {
+          "lane": 0,
+          "row": 0
+        },
+        "poolBounds": {
+          "minLane": -6,
+          "maxLane": 7,
+          "minRow": -28,
+          "maxRow": 54
+        },
+        "laneFocus": 0.00016014323177970308,
+        "columnCamera": -10.398093957073279,
+        "rotation": 0,
+        "clearance": -3.2926033378503083,
+        "canInspect": false,
+        "returnPhase": "lowering",
+        "extraction": 0.4,
+        "appearance": 1,
+        "cameraDetail": 0,
+        "idleGain": 0.32967995396435906,
+        "flatten": 0,
+        "spectrumActivity": 0,
+        "selectedIndexDim": 0,
+        "returningIndexDims": [],
+        "cameraDistance": 139.99998228802158,
+        "cameraNear": 5,
+        "cameraFar": 300,
+        "fogNear": 144.99998228802158,
+        "fogFar": 164.99998228802158,
+        "returningAppearance": [],
+        "rail": 0
+      },
+      "projection": {
+        "open": false,
+        "beat": "",
+        "flight": {
+          "progress": 0,
+          "velocity": 0,
+          "presentedMs": 0,
+          "trace": []
+        }
+      }
+    },
+    {
+      "label": "50-record audit complete",
+      "time": 986.2499999994317,
+      "flightElapsed": 8200.00000000006,
+      "selected": "X-001",
+      "mode": "archive",
+      "scene": {
+        "arrival": {
+          "kind": "web",
+          "progress": 0.9966499162478504,
+          "camera": 0.9999996259048767,
+          "opacity": 1,
+          "field": 1,
+          "selection": 1,
+          "brand": 1,
+          "entryZ": -1.27192341929927e-06,
+          "phase": "ready"
+        },
+        "documentArrival": {
+          "ready": false,
+          "clear": false,
+          "progress": 0,
+          "visibility": 0,
+          "phase": "hidden",
+          "cameraResidual": 4.837995460859911e-05
+        },
+        "paperReady": false,
+        "paperVisibility": 0,
+        "decryption": {
+          "time": -1,
+          "intervals": [],
+          "markers": 0,
+          "point": 0,
+          "label": 0,
+          "labelValue": 0,
+          "clarity": 0,
+          "phase": "waiting",
+          "modelClarity": 0
+        },
+        "topLeft": [
+          243,
+          188
+        ],
+        "topRight": [
+          423,
+          97
+        ],
+        "labelTopLeft": [
+          282,
+          207
+        ],
+        "labelBottomLeft": [
+          282,
+          237
+        ],
+        "modelPosition": [
+          0.0267,
+          -1.9972,
+          -2.1668
+        ],
+        "cameraPosition": [
+          -114.5558,
+          45.5344,
+          68.6582
+        ],
+        "fieldOfView": 3.6311940184128644,
+        "projectionFocus": 0,
+        "projectionRendered": 0,
+        "projectionReady": false,
+        "openingHandoff": null,
+        "loaded": true,
+        "drawCalls": 78,
+        "renderedFrames": 22,
+        "reusedFrames": 1,
+        "superPerformance": true,
+        "presentation": 1,
+        "triangles": 2706592,
+        "archiveCount": 283,
+        "archiveCandidates": 478,
+        "archiveCulled": 195,
+        "archiveCapacity": 576,
+        "archiveCoverage": "standard",
+        "returningFiles": 1,
+        "selectionPhase": "wave",
+        "pendingPulse": null,
+        "pulses": [
+          {
+            "lane": 10,
+            "row": 72,
+            "time": 984.2499999994335
+          }
+        ],
+        "referenceTime": 1013.37,
+        "selectedSlot": 12,
+        "selectedLane": 0,
+        "selectedCell": {
+          "lane": 10,
+          "row": 72
+        },
+        "hoverCell": null,
+        "hoverLifts": {},
+        "dragTrack": null,
+        "archiveMomentum": null,
+        "holdingArchive": false,
+        "dragProjection": {
+          "lane": {
+            "x": -185.5275328555803,
+            "y": 97.34672426705943
+          },
+          "row": {
+            "x": -35.88482256779689,
+            "y": -6.9725739549012165
+          }
+        },
+        "dragMapping": null,
+        "coordinateOrigin": {
+          "lane": 0,
+          "row": 0
+        },
+        "poolBounds": {
+          "minLane": 4,
+          "maxLane": 17,
+          "minRow": 32,
+          "maxRow": 114
+        },
+        "laneFocus": 9.99698083634886,
+        "columnCamera": 41.57330047939371,
+        "rotation": 0,
+        "clearance": -3.2873943159697614,
+        "canInspect": false,
+        "returnPhase": "lowering",
+        "extraction": 0.399,
+        "appearance": 1,
+        "cameraDetail": 0,
+        "idleGain": 0.00011059530372438724,
+        "flatten": 0,
+        "spectrumActivity": 0,
+        "selectedIndexDim": 0,
+        "returningIndexDims": [
+          {
+            "cell": {
+              "lane": 9,
+              "row": 71
+            },
+            "dim": 0
+          }
+        ],
+        "cameraDistance": 139.99954601534048,
+        "cameraNear": 5,
+        "cameraFar": 300,
+        "fogNear": 144.99952797877336,
+        "fogFar": 164.9995069361117,
+        "returningAppearance": [
+          {
+            "slot": 149,
+            "clarity": 0,
+            "cell": {
+              "lane": 9,
+              "row": 71
+            },
+            "lift": 0.0004936850266774273,
+            "quality": 1.8765732752626068e-08,
+            "rotation": 0,
+            "worldY": -3.757920060449356,
+            "phase": "lowering"
+          }
+        ],
+        "rail": -37.197
+      },
+      "projection": {
+        "open": false,
+        "kind": "cube",
+        "phase": "closing",
+        "beat": "returning",
+        "flight": {
+          "progress": 0,
+          "velocity": 0,
+          "presentedMs": 8200.00000000006,
+          "camera": 0,
+          "requestedCamera": 0,
+          "perspective": 10.078248126748216,
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 10.078248126748216
+          },
+          "aim": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "image": 0,
+          "reveal": 0,
+          "beamReach": 0,
+          "environment": 0,
+          "corners": [
+            {
+              "x": 514.3347808977477,
+              "y": 125.35111670271542
+            },
+            {
+              "x": 785.7735511991418,
+              "y": 127.58617171989832
+            },
+            {
+              "x": 791.8067964464548,
+              "y": 276.7512403230694
+            },
+            {
+              "x": 519.6408628176408,
+              "y": 276.3785091947655
+            }
+          ],
+          "trace": [
+            {
+              "beat": "ignition",
+              "elapsed": 0,
+              "progress": 0
+            },
+            {
+              "beat": "beam-forming",
+              "elapsed": 767,
+              "progress": 0.025378957710218874
+            },
+            {
+              "beat": "image-forming",
+              "elapsed": 1467,
+              "progress": 0.14016008055665882
+            },
+            {
+              "beat": "image-held",
+              "elapsed": 2233,
+              "progress": 0.36953097161795734
+            },
+            {
+              "beat": "camera-transfer",
+              "elapsed": 2550,
+              "progress": 0.4819755983347906
+            },
+            {
+              "beat": "settling",
+              "elapsed": 4500,
+              "progress": 0.9802664323138993
+            },
+            {
+              "beat": "open",
+              "elapsed": 5217,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5233,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5233,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5250,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5250,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5267,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5267,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5283,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5283,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5300,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5300,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5317,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5317,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5333,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5333,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5350,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5350,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5367,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5367,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5383,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5383,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5400,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5400,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5417,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5417,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5433,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5433,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5450,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5450,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5467,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5467,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5483,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5483,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5500,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5500,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5517,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5517,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5533,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5533,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5550,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5550,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5567,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5567,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5583,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5583,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5600,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5600,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5617,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5617,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5633,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5633,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5650,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5650,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5667,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5667,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5683,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5683,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5700,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5700,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5717,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5717,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5733,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5733,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5750,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5750,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5767,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5767,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5783,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5783,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5800,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5800,
+              "progress": 1
+            },
+            {
+              "beat": "settling",
+              "elapsed": 5800,
+              "progress": 1
+            },
+            {
+              "beat": "open",
+              "elapsed": 5800,
+              "progress": 1
+            },
+            {
+              "beat": "returning",
+              "elapsed": 5800,
+              "progress": 1
+            }
+          ]
+        },
+        "record": "X-005"
+      }
+    }
+  ],
+  "scope": "Actual ArchiveScene state integration at fixed 60 Hz; original GLBs rendered at checkpoints. This is not a continuous rendering or 60 FPS certification. All 236 assertions retained; endpoint frames retained from full local export.",
+  "sourceSha256": {
+    "src/scene.ts": "2161230d8be70a494ecf3d4547890d1b63c74052f7698d6170a3ff6d011ff525",
+    "src/archive-arrival.ts": "decb904c96cf699c884396680df50fdf1796e3baa1949a984c5224b0bf8e5ac2",
+    "src/carrier-flight.ts": "58dc45928e91887d2c0baec0a0aadf4db4e5f60d508bf0b0b21043496f753678",
+    "src/projection-viewer.ts": "10c8f70102065db2d9b41edf5d18ad78eee982a4f83e8587a3d930c997fe9276",
+    "content/fixtures/array-5x10.json": "0f692641a6df58baddf5844caaa6d560a237fe67fb1a6dbd17ee5376f0bd4506"
+  },
+  "auditedBuildVersion": "9630ae718c672bda",
+  "finalPublicBuildVersion": "d0ce53429496298e",
+  "subsequentChangeScope": "Responsive opening-mask CSS and review opening-size variables; no changes to the five audited state/fixture sources. This is the original 236-assertion run, not a rerun after the CSS correction."
+}

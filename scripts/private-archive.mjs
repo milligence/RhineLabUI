@@ -16,6 +16,7 @@ const base = path.join(root, ".private-build");
 await fs.mkdir(base, { recursive: true });
 const checkout = await fs.mkdtemp(path.join(base, "archive-"));
 const items = ["src", "public", "scripts", "content", "wallpaper", "verification/boot-lettering/webfont-sources.json", "index.html", "package.json", "package-lock.json", "tsconfig.json", "vite.config.ts"];
+if (args.includes("--review")) items.push("reference/archive-flow-review.html", "reference/archive-flow-review.js", "reference/archive-flow-review.css", "reference/archive-reading-review.html", "reference/archive-reading-review.js");
 for (const item of items) {
   try { await fs.cp(path.join(root, item), path.join(checkout, item), { recursive: true }); }
   catch (error) { if (error.code !== "ENOENT") throw error; }
@@ -27,7 +28,7 @@ await fs.symlink(path.join(root, "node_modules"), path.join(checkout, "node_modu
 await fs.writeFile(path.join(checkout, "PRIVATE-CONTENT.json"), JSON.stringify({ source, created: new Date().toISOString(), records: content.records.length }, null, 2));
 console.log(`Private archive workspace: ${checkout}`);
 const dev = args.includes("--dev");
-const child = spawn(process.platform === "win32" ? "npm.cmd" : "npm", ["run", dev ? "dev" : "build", ...(dev ? ["--", "--port", "5178"] : [])], { cwd: checkout, env: process.env, stdio: "inherit" });
+const child = spawn(process.platform === "win32" ? "npm.cmd" : "npm", ["run", dev ? "dev" : args.includes("--review") ? "build:review" : "build", ...(dev ? ["--", "--port", "5178"] : [])], { cwd: checkout, env: process.env, stdio: "inherit" });
 process.on("SIGINT", () => child.kill("SIGINT"));
 process.on("SIGTERM", () => child.kill("SIGTERM"));
 child.on("exit", code => { if (!dev && code === 0) console.log(`Private archive ready: ${path.join(checkout, "dist")}`); process.exitCode = code ?? 1; });

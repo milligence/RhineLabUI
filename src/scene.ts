@@ -20,6 +20,7 @@ import { applyTextureQuality, resizeQuality } from "./quality-renderer";
 import { CardAppearance } from "./appearance";
 import { configureInternalOptics } from "./internal-optics";
 import { DecryptionController } from "./decryption";
+import { ArchiveDocumentArrival, type WebArrayArrival } from "./archive-arrival";
 import { fileAtSlot, fileLocation, columnFiles, archiveLanePeriod, archiveRowPeriod } from "./data";
 import {
   cellKey,
@@ -68,6 +69,8 @@ const ease = (t: number) => {
 // Keep the original third-column reference pose where available. A smaller
 // collection starts from an actual record before mode/selection binding runs.
 const initialArchiveLocation = fileLocation(columnFiles(Math.min(2, archiveLanePeriod - 1))[0]);
+type ArchiveCinematic = { reveal: number; lift: number; zoom: number; time: number; arrival?: WebArrayArrival };
+type OpeningPose = { shot: number; shoulder: number; lane: number; entryZ: number; arrival?: WebArrayArrival };
 export class ArchiveScene {
   private inputEvents = new AbortController();
   private presence = 1;
@@ -194,6 +197,9 @@ export class ArchiveScene {
   private model = new THREE.Group();
   private appearance = new CardAppearance();
   private decryption = new DecryptionController();
+  private documentArrival = new ArchiveDocumentArrival();
+  private carrierReady = false;
+  private cameraResidual = 1;
   private cursor = new THREE.Vector2();
   private raycaster = new THREE.Raycaster();
   private dummy = new THREE.Object3D();
@@ -206,8 +212,9 @@ export class ArchiveScene {
   private shoulder = { value: 12, velocity: 0 };
   private laneFocus = { value: initialArchiveLocation.lane, velocity: 0 };
   private columnCamera = { value: 0, velocity: 0 };
-  private lastCinematic: { shot: number; shoulder: number; lane: number; entryZ: number } | null = null;
-  private openingHandoff: { shot: number; shoulder: number; lane: number; entryZ: number; start: number } | null = null;
+  private lastCinematic: OpeningPose | null = null;
+  private openingHandoff: (OpeningPose & { start: number }) | null = null;
+  private arrival: WebArrayArrival | null = null;
   private returnY: number | null = null;
   private canInspect = false;
   private clearance = 0;
@@ -260,7 +267,7 @@ export class ArchiveScene {
   private targetDetail = 0;
   private reveal = 0;
   private targetReveal = 0;
-  private last = 0;
+  private last: number | null = null;
   private pointer = new THREE.Vector2();
   private dragging = false;
   private hoverCell: ArchiveCell | null = null;
@@ -616,13 +623,26 @@ export class ArchiveScene {
   setMode(mode: "hidden" | "archive" | "detail") {
     this.cancelPointer();
     this.setHover(null);
-    if (mode === "detail") this.decryption.enter(this.scanBlend > .9 && this.decryption.clarity > .999);
+    if (mode === "detail") {
+      if (!this.targetDetail) {
+        this.documentArrival.reset();
+        // Explicit full-film playback has already completed its calibrated
+        // unsealing. Preserve that reading handoff instead of opening it twice.
+        if (this.lastCinematic && !this.lastCinematic.arrival &&
+          this.scanBlend > .9 && this.decryption.clarity > .999)
+          this.documentArrival.update(0, true, true, true, true);
+      }
+      this.decryption.enter(this.scanBlend > .9 && this.decryption.clarity > .999);
+    }
     else this.decryption.leave();
     if (mode === "hidden") {
       this.decryption.select();
       this.lastCinematic = null;
       this.openingHandoff = null;
+      this.arrival = null;
+      this.documentArrival.reset();
     }
+    this.carrierReady = false;
     if (mode !== "archive") this.pendingPulse = null;
     this.looping = mode !== "hidden";
     if (!this.looping) {
@@ -799,6 +819,8 @@ export class ArchiveScene {
     this.selectedCell = cell;
     if (changed) {
       this.decryption.select();
+      this.documentArrival.reset();
+      this.carrierReady = false;
       this.rotation = 0;
       this.returnY = null;
     }
@@ -1253,8 +1275,12 @@ export class ArchiveScene {
   }
   update(
     time: number,
-    cinematic?: { reveal: number; lift: number; zoom: number; time: number },
+    cinematic?: ArchiveCinematic,
+    draw = true,
   ) {
+    const arrival = cinematic?.arrival;
+    const film = Boolean(cinematic) && !arrival;
+    if (cinematic) this.arrival = arrival ?? null;
     const handingOff = !cinematic && this.lastCinematic !== null;
     if (handingOff) {
       this.openingHandoff = { ...this.lastCinematic!, start: time };
@@ -1263,7 +1289,7 @@ export class ArchiveScene {
     if (cinematic) this.openingHandoff = null;
     const handoffMix = this.openingHandoff ? ease((time - this.openingHandoff.start) / 0.95) : 1;
     if (handoffMix === 1) this.openingHandoff = null;
-    const elapsed = Math.max(0, time - this.last || 0.016);
+    const elapsed = this.last === null ? .016 : Math.max(0, time - this.last);
     // The first interactive frame inherits the last rendered pose exactly.
     // Subsequent frames start the responsive reframing and track motion.
     const dt = handingOff ? 0 : Math.min(elapsed, 0.05);
@@ -1285,9 +1311,12 @@ export class ArchiveScene {
       ? THREE.MathUtils.lerp(this.rotation, this.targetRotation, detailBlend)
       : returnStep(this.rotation, dt, !this.motion.detailTransition);
     const shot = cinematic?.time ?? 29.1;
-    if (cinematic) {
+    if (film) {
       this.scanTime = shot;
       this.scanBlend = 1;
+    } else if (arrival) {
+      this.scanTime = 29.1;
+      this.scanBlend = 0;
     } else {
       this.scanTime += dt;
       this.scanBlend *= Math.exp(-dt * 3);
@@ -1336,22 +1365,24 @@ export class ArchiveScene {
       this.columnCamera.velocity = this.rail.velocity = 0;
     }
     if (cinematic) {
-      this.rail.value = 0;
+      // Web entry already uses the selected record's interactive tracks. A
+      // two-column collection must not inherit the film's third-column pose.
+      this.rail.value = arrival ? -2.17 - chosen.z : 0;
       this.rail.velocity = 0;
-      this.lift.value = extraction(shot);
+      this.lift.value = arrival ? .4 * arrival.selection : extraction(shot);
       this.lift.velocity = 0;
       this.shoulder.value = selectedRow;
       this.shoulder.velocity = 0;
       this.laneFocus.value = selectedLane;
       this.laneFocus.velocity = 0;
-      // The cinematic array is rendered with trackX = 0. Carry that actual
-      // state into interaction, including private collections in lanes 0/1.
-      this.columnCamera.value = 0;
+      // The film keeps its zero track; the web entrance keeps the selected
+      // record centered from the first visible frame through interaction.
+      this.columnCamera.value = arrival ? chosen.x : 0;
       this.columnCamera.velocity = 0;
     }
     // Keep the illuminated set near the origin. Lateral navigation is a track
     // movement of the whole array, just like the existing front/back rail.
-    const trackX = cinematic ? 0 : this.columnCamera.value;
+    const trackX = film ? 0 : this.columnCamera.value;
     this.pulses = this.pulses.filter((p) => time - p.time < SELECTION_WAVE_LIFETIME);
     const flowingPulses = !cinematic && this.motion.selectionWave &&
       this.selectionPulse === flowingSelectionWave && !this.deferSelectionPulse
@@ -1400,7 +1431,10 @@ export class ArchiveScene {
     };
     const fieldCache = new Map<number, Map<number, number>>();
     const calculateField = (row: number, lane: number) => {
-      if (cinematic)
+      if (arrival)
+        return settlingWave(row - this.shoulder.value, 26.56) *
+          columnStrength(lane, this.laneFocus.value) * arrival.field;
+      if (film)
         return cinematicField(
           row,
           lane,
@@ -1447,7 +1481,9 @@ export class ArchiveScene {
       );
       const handoff = this.openingHandoff;
       return handoff ? THREE.MathUtils.lerp(
-        cinematicField(row, lane, handoff.shot, handoff.shoulder, handoff.lane),
+        handoff.arrival
+          ? settlingWave(row - handoff.shoulder, 26.56) * columnStrength(lane, handoff.lane) * handoff.arrival.field
+          : cinematicField(row, lane, handoff.shot, handoff.shoulder, handoff.lane),
         interactiveHeight,
         handoffMix,
       ) : interactiveHeight;
@@ -1497,25 +1533,25 @@ export class ArchiveScene {
         ? this.detail
         : ease((this.lift.value - 0.4) / (INSPECTION_LIFT - 0.4));
     this.detail = cinematic
-      ? cinematic.zoom
+      ? arrival ? 0 : cinematic.zoom
       : THREE.MathUtils.lerp(this.detail, cameraTarget, detailBlend);
     const detail = this.detail;
     // Keep the physical decryption timeline alive even when its model visuals
     // are disabled; the document mask uses the same timeline independently.
     this.decryption.update(dt, detail > .78 && this.lift.value > 3.3, false,
-      cinematic ? shot + 5 : undefined);
+      film ? shot + 5 : undefined);
     this.appearance.apply(this.model, ease(this.lift.value / 0.4));
     this.appearance.setClarity(this.model, this.modelClarity());
     // Reference 26.92–27.76: the array travels horizontally into a white field.
     const entry = cinematic ? ease((shot - ARRAY_REVEAL_START) / 0.86) : this.reveal;
     const entranceTime = THREE.MathUtils.clamp((shot - ARRAY_REVEAL_START) / 0.75, 0, 1);
-    const entryZ = cinematic
+    const entryZ = arrival ? arrival.entryZ : cinematic
       ? -23 * (1 - entranceTime) ** 2
       : this.openingHandoff
         ? THREE.MathUtils.lerp(this.openingHandoff.entryZ, -28 * (1 - entry), handoffMix)
         : -28 * (1 - entry);
     if (cinematic) this.lastCinematic = {
-      shot, shoulder: this.shoulder.value, lane: this.laneFocus.value, entryZ,
+      shot, shoulder: this.shoulder.value, lane: this.laneFocus.value, entryZ, arrival,
     };
     for (let i = this.outgoing.length - 1; i >= 0; i--) {
       const o = this.outgoing[i];
@@ -1588,18 +1624,21 @@ export class ArchiveScene {
     // Measured from frame 787: X edge (382,-204), adjacent row (78,38).
     // The label vertical edge constrains height; the file base is occluded.
     // Do not calibrate field of view from the visible fragment of a file.
-    const orbit = ease((shot - 22.6) / 1.6);
-    const settle = ease((shot - 24.25) / 2.25);
-    const yaw = THREE.MathUtils.degToRad(89 - 22 * orbit - 8 * settle);
+    const orbit = arrival ? 1 : ease((shot - 22.6) / 1.6);
+    const settle = arrival ? 1 : ease((shot - 24.25) / 2.25);
+    const yaw = THREE.MathUtils.degToRad(arrival
+      ? THREE.MathUtils.lerp(67, 59, arrival.camera)
+      : 89 - 22 * orbit - 8 * settle);
     const elevation = THREE.MathUtils.degToRad(
-      3 + 40 * ease((shot - 21.96) / 0.22) - 8 * orbit - 16 * settle,
+      arrival ? THREE.MathUtils.lerp(28, 19, arrival.camera)
+        : 3 + 40 * ease((shot - 21.96) / 0.22) - 8 * orbit - 16 * settle,
     );
-    const span = THREE.MathUtils.lerp(
+    const span = arrival ? THREE.MathUtils.lerp(9.1, 7.33, arrival.camera) : THREE.MathUtils.lerp(
       THREE.MathUtils.lerp(10.8, 10.3, orbit),
       7.33,
       settle,
     );
-    const responsiveOpening = Boolean(cinematic) && this.container.closest<HTMLElement>("[data-layout]")?.dataset.layout === "opening";
+    const responsiveOpening = film && this.container.closest<HTMLElement>("[data-layout]")?.dataset.layout === "opening";
     const openingAspect = responsiveOpening ? this.container.clientWidth / this.container.clientHeight / (16 / 9) : 1;
     const openingSpan = (value: number) => value / Math.min(1, openingAspect);
     const distance = THREE.MathUtils.lerp(
@@ -1609,8 +1648,8 @@ export class ArchiveScene {
     );
     const arrayAim = new THREE.Vector3(
       -1.091,
-      THREE.MathUtils.lerp(-2.55 + 0.4 * orbit, -0.045, settle),
-      THREE.MathUtils.lerp(2.48, 0.481, settle),
+      arrival ? THREE.MathUtils.lerp(-.85, -.045, arrival.camera) : THREE.MathUtils.lerp(-2.55 + 0.4 * orbit, -0.045, settle),
+      arrival ? THREE.MathUtils.lerp(1.25, .481, arrival.camera) : THREE.MathUtils.lerp(2.48, 0.481, settle),
     );
     const cameraAim = arrayAim.clone();
     const viewDirection = new THREE.Vector3(
@@ -1618,7 +1657,7 @@ export class ArchiveScene {
       Math.sin(elevation),
       Math.cos(yaw) * Math.cos(elevation),
     );
-    if (cinematic) {
+    if (film) {
       const earlyTurn = ease((shot - 27.3) / 1.3);
       const finalTurn = ease((shot - 28.6) / 5.4);
       const shotYaw =
@@ -1635,7 +1674,7 @@ export class ArchiveScene {
         .lerp(new THREE.Vector3(-0.277, 0.238, 0.931), detail)
         .normalize();
     }
-    if (cinematic) {
+    if (film) {
       const pan = ease((shot - 25.4) / 0.95);
       const right = new THREE.Vector3()
         .crossVectors(new THREE.Vector3(0, 1, 0), viewDirection)
@@ -1645,7 +1684,7 @@ export class ArchiveScene {
         -2.05 * (1 - pan) * ease((shot - 24.2) / 0.8),
       );
     }
-    if (cinematic && shot >= 25.05 && shot <= 27.3) {
+    if (film && shot >= 25.05 && shot <= 27.3) {
       // Frames 760–785: the camera carries the same physical column from the
       // right into the selected position while the neighboring crests subside.
       const pan = ease((shot - 25.4) / 1.05);
@@ -1669,7 +1708,7 @@ export class ArchiveScene {
       );
       cameraAim.lerp(anchorAim, ease((shot - 25.05) / 0.35));
     }
-    if (cinematic && shot > 27.3) {
+    if (film && shot > 27.3) {
       const close = ease((shot - 27.3) / 6.7);
       const extractionCamera = ease((shot - 27.3) / 1.25);
       const screenX = THREE.MathUtils.lerp(
@@ -1698,7 +1737,7 @@ export class ArchiveScene {
     }
     const framing = archiveFraming(this.container.clientWidth, this.container.clientHeight, span, detail,
       this.container.closest<HTMLElement>("[data-layout]")?.dataset.layout === "compact");
-    if (!cinematic) {
+    if (!film) {
       const right = new THREE.Vector3()
         .crossVectors(new THREE.Vector3(0, 1, 0), viewDirection)
         .normalize();
@@ -1733,7 +1772,7 @@ export class ArchiveScene {
       : this.motion.selectionTransition;
     const cameraBlend = handingOff ? 0 : cinematic ? 1 : cameraTransition ? 1 - Math.exp(-dt * 5) : 1;
     const ordinaryFov = THREE.MathUtils.radToDeg(
-      2 * Math.atan((cinematic ? openingSpan(THREE.MathUtils.lerp(span, 5.9, detail)) : framing.span) / (2 * distance)),
+      2 * Math.atan((film ? openingSpan(THREE.MathUtils.lerp(span, 5.9, detail)) : framing.span) / (2 * distance)),
     );
     const opticalBase = this.projectionCamera;
     if (opticalBase && !cinematic) {
@@ -1781,6 +1820,12 @@ export class ArchiveScene {
       );
     }
     this.camera.lookAt(this.cameraAim);
+    const ordinaryPosition = this.projectionCamera?.position ?? this.camera.position;
+    const ordinaryAim = this.projectionCamera?.aim ?? this.cameraAim;
+    this.cameraResidual = Math.max(
+      ordinaryPosition.distanceTo(cameraPosition),
+      ordinaryAim.distanceTo(cameraAim),
+    ) / framing.span;
     const fog = this.scene.fog as THREE.Fog;
     // The camera position is damped after its target distance changes. Anchor
     // fog to the rendered camera, or entry puts the array behind the far plane
@@ -1796,7 +1841,7 @@ export class ArchiveScene {
     if (activePlay && !this.reduced) fieldCache.clear();
     // Build and compact the instance set only after the actual damped camera
     // is final for this frame. Picking uses the same packed index-to-cell map.
-    const fixed = (Boolean(cinematic) || !this.looping) && !responsiveOpening;
+    const fixed = (film || (!this.looping && !arrival)) && !responsiveOpening;
     this.cells = fixed ? Array.from({ length: 160 }, (_, i) => poolCell(i))
       : this.visibility.update(this.camera, fog.far, trackX, entryZ + this.rail.value, this.extraCoverage);
     const hidden = new Set(this.outgoing.map(o => cellKey(o.cell)));
@@ -1859,6 +1904,14 @@ export class ArchiveScene {
       detail > 0.9 &&
       this.pulseGain < 0.01 &&
       this.clearance > 0.3;
+    this.carrierReady = !cinematic && Boolean(this.targetDetail) &&
+      this.lift.value >= INSPECTION_LIFT - .07 && detail > .97 &&
+      this.returnY === null && this.clearance > .3 && this.cameraResidual < .025;
+    const documentClear = ((this.decryption.frame.phase === "revealing" || this.decryption.frame.phase === "clear") &&
+      this.decryption.frame.clarity > .025) ||
+      (!this.motion.modelDecryption && !this.motion.documentReveal);
+    this.documentArrival.update(dt, !cinematic && Boolean(this.targetDetail),
+      this.carrierReady, documentClear, !this.motion.surfaceTransitions);
     this.container.dataset.inspection =
       this.returnY !== null
         ? "aligning"
@@ -1880,11 +1933,14 @@ export class ArchiveScene {
       (THREE.MathUtils.lerp(0.0003, 0.0008, detail) *
         this.quality.depthOfField) /
       100;
-    this.renderer.info.reset();
     // Keep all simulation and picking current. Reuse the composited canvas only
     // when its actual inputs are identical, including late textures and materials.
-    const state = this.renderState;
     this.scene.updateMatrixWorld();
+    // Review pages integrate the actual scene at fixed steps, then draw selected
+    // frames. Never record an undrawn state in the rendering caches.
+    if (!draw) return;
+    this.renderer.info.reset();
+    const state = this.renderState;
     // A changed instance buffer already proves the image changed. Avoid a
     // material/matrix snapshot on those busy frames; capture when it settles.
     if (matricesChanged || cinematic) {
@@ -1942,10 +1998,10 @@ export class ArchiveScene {
   get decryptionFrame() { return this.decryption.frame; }
   finishDecryption() { this.decryption.finish(); }
   get detailVisibility() {
-    return ease((this.detail - 0.25) / 0.55);
+    return this.documentArrival.frame.visibility;
   }
   get projectionReady() {
-    return this.loaded && this.lift.value > 3.78 && this.detail > .78;
+    return this.loaded && this.carrierReady;
   }
   getStats() {
     this.model.updateMatrixWorld(true);
@@ -1956,6 +2012,10 @@ export class ArchiveScene {
       return [Math.round((p.x + 1) * this.container.clientWidth / 2), Math.round((1 - p.y) * this.container.clientHeight / 2)];
     };
     return {
+      arrival: this.arrival ? { ...this.arrival, phase: this.lastCinematic ? this.arrival.phase : this.openingHandoff ? "settling" : "ready" } : { kind: this.lastCinematic || this.openingHandoff ? "reference" : "interactive", phase: this.lastCinematic ? "playing" : this.openingHandoff ? "handoff" : "ready" },
+      documentArrival: { ...this.documentArrival.frame, cameraResidual: this.cameraResidual },
+      paperReady: this.documentArrival.frame.ready,
+      paperVisibility: this.detailVisibility,
       decryption: { ...this.decryption.frame, clarity: this.decryption.clarity, modelClarity: this.modelClarity() },
       topLeft: project(-2.5, 3.7, 0),
       topRight: project(2.5, 3.7, 0),
