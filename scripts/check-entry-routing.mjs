@@ -59,6 +59,12 @@ function create(mode = 'archive', withScene = true) {
   const scene = withScene ? {
     detailVisibility: 0, projectionReady: mode === 'detail', projectionFocus:0, anchor: [400, 600],
     setProjectionFocus(value) { this.projectionFocus = value; },
+    beginProjection() { events.push(['projection-basis']); },
+    endProjection() { events.push(['projection-release']); this.projectionFocus=0; this.projectionPhase=0; },
+    setProjectionPresentation(value) { this.projectionPhase = value; return {phase:value,progress:value,perspective:12}; },
+    projectProjector() { events.push(['aperture']); const [x,y]=this.anchor;
+      const corners=[{x:x-12,y:y-2},{x:x+12,y:y-2},{x:x+12,y:y+2},{x:x-12,y:y+2}];
+      return {origin:{x,y},corners,edge:[corners[0],corners[1]],outline:corners}; },
     setMode(value) { events.push(['scene-mode', value]); if (value === 'detail') decryption.enter(); else decryption.leave(); },
     projectCard(x, y) { events.push(['anchor', x, y]); return this.anchor; },
   } : undefined;
@@ -111,14 +117,18 @@ const checks = [];
   assert.equal(h.opened.length, 1);
   assert.equal(h.opened[0].options.origin.x, 410);
   assert.equal(h.opened[0].options.origin.y, 410);
-  assert.deepEqual(h.events.find(e => e[0] === 'anchor'), ['anchor', .72, 2.18]);
+  assert.ok(h.events.some(e => e[0] === 'aperture'), 'Entry samples the actual rectangular projector');
+  assert.ok(h.events.some(e => e[0] === 'projection-basis'), 'The displayed entry basis is frozen before opening');
   const originNow=h.opened[0].options.sampleCarrier().origin;
   h.scene.anchor=[700,800];
   const originMoved=h.opened[0].options.sampleCarrier().origin;
   assert.equal(originMoved.x-originNow.x,40);assert.equal(originMoved.y-originNow.y,40);
   h.opened[0].options.onCameraProgress(.6);assert.equal(h.scene.projectionFocus,.6);
+  h.opened[0].options.onPresentation(.3);assert.equal(h.scene.projectionPhase,.3);
+  assert.equal(h.opened[0].options.sampleCarrier().corners.length,4);
   h.context.projectionViewer.isOpen = false; h.opened[0].options.onClose();
   assert.equal(h.scene.projectionFocus,0);
+  assert.ok(h.events.some(e => e[0] === 'projection-release'), 'Close releases even an unadvanced entry basis');
   assert.equal(h.context.mode, 'archive');
   assert.equal(h.$('#stage').dataset.projectionPending, undefined);
   assert.equal(h.$('#stage').dataset.projectionRoute, undefined);

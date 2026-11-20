@@ -9,6 +9,12 @@
   position: absolute; z-index: -1; inset: 0; overflow: hidden; pointer-events: none;
   background: radial-gradient(ellipse at 24% 8%, color-mix(in srgb, var(--theme-panel, #edebe4) 86%, white), transparent 72%), var(--theme-paper, #eae5e1);
 }
+.projection-plane {
+  position: absolute; z-index: 1; inset: 0;
+  display: grid; grid-template-rows: auto minmax(0, 1fr);
+  gap: inherit; padding: inherit; box-sizing: border-box;
+  min-width: 0; min-height: 0;
+}
 .projection-environment::before {
   content: ""; position: absolute; inset: 12% 0 0;
   background: radial-gradient(ellipse at 52% 60%, color-mix(in srgb, var(--optical-ink) 3%, transparent), transparent 68%);
@@ -41,23 +47,19 @@
 /* Interface chrome arrives once the projected image is ready for reading. */
 .projection-ignition { position: absolute; z-index: 4; inset: 0; pointer-events: none; overflow: hidden; }
 .projection-ignition > canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
-.projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-content {
+.projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-plane {
   transform-origin: 50% 50%; will-change: transform, opacity;
   mask-size: 100% 100%; mask-repeat: no-repeat; mask-mode: alpha;
   -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat;
   background: transparent; box-shadow: none;
 }
-.projection-shell:is([data-state="opening"], [data-state="closing"]) :is(.research-focus-name, .research-focus-identity, .research-reading-plane > header, .research-plane-scroll, .research-evidence-scroll) {
-  opacity: var(--carrier-detail, 0);
-  filter: blur(calc((1 - var(--carrier-detail, 0)) * 1.4px));
-}
-.projection-shell:is([data-state="opening"], [data-state="closing"]) .research-node-title {
-  filter: opacity(var(--carrier-detail, 0)) blur(calc((1 - var(--carrier-detail, 0)) * 1.4px));
-}
-.projection-shell:is([data-state="opening"], [data-state="closing"]) :is(.projection-timeline, .research-stage-label, .research-current-record, .research-map-tools, .research-acts, .research-navigator, .research-status-key, .cube-preset-rail, .cube-toolbar, .cube-inspector, .cube-readout, .cube-stage-note, .cube-experiment-recap) { opacity: var(--carrier-interface, 0); }
+.projection-shell:is([data-state="opening"], [data-state="closing"]) :is(.projection-back, .projection-mode-label, .projection-timeline, .research-map-tools, .research-navigator, .research-status-key, .cube-preset-rail, .cube-toolbar, .cube-inspector, .cube-readout, .cube-stage-note, .cube-experiment-recap) { opacity: var(--carrier-interface, 0); }
 .projection-shell[data-state="open"] .projection-ignition { visibility: hidden; }
 .projection-shell[data-state="closing"] .projection-ignition { visibility: visible; }
-.projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-header { pointer-events: auto; will-change: opacity; }
+.projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-header { pointer-events: auto; }
+.projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-identity h1 {
+  transform: scale(var(--carrier-title-size, 1)); transform-origin: left bottom;
+}
 
 /* Notes open beside the construction without changing its canvas geometry. */
 .projection-shell[data-kind="cube"] .projection-content { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px; overflow: visible; }

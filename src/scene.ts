@@ -41,7 +41,8 @@ import { ArchiveDrag, ArchivePlaneMomentum, type DragAxis, type DragProjection, 
 import { assetUrl as publicAsset } from "./asset-url";
 import { fullMotion, reducedMotion, type MotionPreferences } from "./motion-preferences";
 import { ARRAY_REVEAL_START } from "./boot-motion";
-import { carrierCamera, type CarrierCameraSample } from "./carrier-flight";
+import { carrierCamera, carrierCameraProgress, carrierChannels, carrierInertiaOffset, type CarrierCameraSample, type CarrierSample, type OpticalVector } from "./carrier-flight";
+import { installProjectorAperture, setProjectorAperturePower, PROJECTOR_APERTURE } from "./projector-aperture";
 import {
   archiveWave,
   extraction,
@@ -199,6 +200,7 @@ export class ArchiveScene {
   private decryption = new DecryptionController();
   private documentArrival = new ArchiveDocumentArrival();
   private carrierReady = false;
+  private projectionCarrierReady = false;
   private cameraResidual = 1;
   private cursor = new THREE.Vector2();
   private raycaster = new THREE.Raycaster();
@@ -226,32 +228,107 @@ export class ArchiveScene {
   private cameraAim = new THREE.Vector3();
   private projectionFocus = 0;
   private projectionRendered = 0;
+  private projectionPhase?: number;
+  private projectionTravelled = false;
+  private projectionEnding = false;
+  private projectionPresented?: CarrierCameraSample;
+  private projectorPresented?: CarrierSample;
+  private presentedCamera?: {
+    time: number; position: THREE.Vector3; aim: THREE.Vector3; up: THREE.Vector3; fov: number;
+    velocity: THREE.Vector3; acceleration: THREE.Vector3;
+    aimVelocity: THREE.Vector3; aimAcceleration: THREE.Vector3;
+    fovVelocity: number; fovAcceleration: number;
+  };
   private projectionCamera?: {
     position: THREE.Vector3; aim: THREE.Vector3; up: THREE.Vector3;
     right: THREE.Vector3; vertical: THREE.Vector3; backward: THREE.Vector3;
-    span: number; perspective: number; fov: number;
+    span: number; perspective: number; fov: number; age: number;
+    velocity: OpticalVector; acceleration: OpticalVector;
+    aimVelocity: OpticalVector; aimAcceleration: OpticalVector;
+    fovVelocity: number; fovAcceleration: number;
+    ordinaryPosition: THREE.Vector3; ordinaryAim: THREE.Vector3; ordinaryFov: number;
   };
-  /** Seed from the displayed camera, not its still-damped ordinary target. The
-   * ordinary baseline continues to settle while the optical path is applied. */
-  setProjectionFocus(progress: number): CarrierCameraSample {
-    this.projectionFocus = THREE.MathUtils.clamp(progress, 0, 1);
-    if (this.projectionFocus > 0 && !this.projectionCamera) {
-      const backward = this.camera.position.clone().sub(this.cameraAim).normalize();
-      const right = new THREE.Vector3().crossVectors(this.camera.up, backward).normalize();
-      const perspective = 1 / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2));
-      this.projectionCamera = {
-        position: this.camera.position.clone(), aim: this.cameraAim.clone(), up: this.camera.up.clone(),
-        right, vertical: new THREE.Vector3().crossVectors(backward, right), backward,
-        span: this.camera.position.distanceTo(this.cameraAim) / perspective,
-        perspective, fov: this.camera.fov,
-      };
-      this.projectionRendered = 0;
-    }
-    return {
-      perspective: this.projectionCamera?.perspective ?? 1 / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2)),
-      progress: this.projectionRendered,
+  private projectionRelease?: {
+    position: THREE.Vector3; aim: THREE.Vector3; up: THREE.Vector3; fov: number; age: number;
+    ordinaryPosition: THREE.Vector3; ordinaryAim: THREE.Vector3; ordinaryFov: number;
+  };
+
+  /** Freeze the plane's world basis at the actual displayed entry pose. Residual
+   * ordinary-camera motion has a separate cache; it can never drag this plane. */
+  beginProjection() {
+    if (this.projectionCamera && !this.projectionEnding) return;
+    this.projectionCamera = undefined;
+    const displayed = this.presentedCamera;
+    const position = displayed?.position ?? this.camera.position;
+    const aim = displayed?.aim ?? this.cameraAim;
+    const up = displayed?.up ?? this.camera.up;
+    const fov = displayed?.fov ?? this.camera.fov;
+    const backward = position.clone().sub(aim).normalize();
+    const right = new THREE.Vector3().crossVectors(up, backward).normalize();
+    const vertical = new THREE.Vector3().crossVectors(backward, right);
+    const perspective = 1 / (2 * Math.tan(THREE.MathUtils.degToRad(fov) / 2));
+    const span = position.distanceTo(aim) / perspective;
+    const derivative = (value?: THREE.Vector3): OpticalVector => ({
+      x: (value?.dot(right) ?? 0) / span,
+      y: (value?.dot(vertical) ?? 0) / span,
+      z: (value?.dot(backward) ?? 0) / span,
+    });
+    const last = this.motion.surfaceTransitions ? this.presentedCamera : undefined;
+    this.projectionCamera = {
+      position: position.clone(), aim: aim.clone(), up: up.clone(),
+      right, vertical, backward, span, perspective, fov, age: 0,
+      velocity: derivative(last?.velocity), acceleration: derivative(last?.acceleration),
+      aimVelocity: derivative(last?.aimVelocity), aimAcceleration: derivative(last?.aimAcceleration),
+      fovVelocity: last?.fovVelocity ?? 0, fovAcceleration: last?.fovAcceleration ?? 0,
+      ordinaryPosition: position.clone(), ordinaryAim: aim.clone(), ordinaryFov: fov,
+    };
+    this.projectionRelease = undefined;
+    this.projectionFocus = this.projectionRendered = 0;
+    this.projectionPhase = 0;
+    this.projectionTravelled = false;
+    this.projectionEnding = false;
+    this.projectionPresented = { perspective, progress: 0, phase: 0,
+      frameId: this.renderedFrames + this.reusedFrames,
+      position: { x: 0, y: 0, z: perspective }, aim: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 1, z: 0 } };
+  }
+
+  /** Queue a complete optical phase; the return value describes only the last
+   * frame actually drawn. DOM, hardware emission and light share that phase. */
+  setProjectionPresentation(phase: number): CarrierCameraSample {
+    const value = THREE.MathUtils.clamp(phase, 0, 1);
+    if (value > 0 && !this.projectionCamera) this.beginProjection();
+    this.projectionPhase = value;
+    this.projectionFocus = carrierCameraProgress(value);
+    this.projectionTravelled ||= value > 0;
+    if (value > 0) this.projectionEnding = false;
+    return this.projectionPresented ?? {
+      perspective: 1 / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2)),
+      progress: this.projectionRendered, phase: 0,
     };
   }
+
+  /** Compatibility for camera-only review clients. Production uses a complete
+   * presentation phase, and camera-only requests deliberately omit that phase. */
+  setProjectionFocus(progress: number): CarrierCameraSample {
+    const value = THREE.MathUtils.clamp(progress, 0, 1);
+    if (value > 0 && !this.projectionCamera) this.beginProjection();
+    this.projectionFocus = value;
+    this.projectionPhase = undefined;
+    this.projectionTravelled ||= value > 0;
+    this.projectionEnding = Boolean(this.projectionCamera) && value === 0;
+    const sample = this.projectionPresented;
+    return { ...(sample ?? {}),
+      perspective: sample?.perspective ?? 1 / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2)),
+      progress: this.projectionRendered, phase: undefined };
+  }
+  /** Distinguish cancelling the first zero phase from opening at zero. The
+   * current painted camera remains intact until the next scene drawing. */
+  endProjection() {
+    this.projectionFocus = 0;
+    this.projectionPhase = 0;
+    this.projectionEnding = Boolean(this.projectionCamera);
+  }
+
   private outgoing: {
     group: THREE.Group;
     slot: number;
@@ -543,6 +620,10 @@ export class ArchiveScene {
       }),
     );
     label.position.set(-1.36, 3.04, 0.255);
+    const cover = this.model.children.find(child => child.userData.surface === "Optical_Diffuser") as THREE.Mesh | undefined;
+    if (!cover) throw new Error("The archive projector requires the original closed substrate geometry");
+    const projectorMeshes = installProjectorAperture(this.model, this.appearance, cover.geometry);
+    this.addProjectorInstances(projectorMeshes, count);
     this.model.add(label);
     this.appearance.prepare(this.model);
     this.appearance.apply(this.model, 0);
@@ -550,6 +631,29 @@ export class ArchiveScene {
     this.scene.add(this.model);
     this.model.position.copy(this.cellPosition(poolCell(this.selectedSlot)));
     this.loaded = true;
+  }
+
+  /** Resting hardware belongs to every cassette. Share the existing transform
+   * and theme buffers so selection/return never swaps a port for a bare cover.
+   * Four material groups add no per-card meshes or independent motion. */
+  private addProjectorInstances(meshes: THREE.Mesh[], count: number) {
+    for (const mesh of meshes) {
+      const material = (mesh.material as THREE.MeshPhysicalMaterial).clone();
+      material.emissiveIntensity = 0;
+      const surface = mesh.userData.surface as string;
+      themeMaterial(material, surface, true, this.subduedIndex);
+      mesh.geometry.setAttribute("archiveTheme", this.themeAttribute!);
+      const inst = new THREE.InstancedMesh(mesh.geometry, material, count);
+      inst.name = surface + "_Array";
+      inst.userData.surface = surface;
+      inst.userData.projectorAperture = true;
+      inst.instanceMatrix = this.instances[0].instanceMatrix;
+      inst.castShadow = false;
+      inst.receiveShadow = mesh.receiveShadow;
+      inst.frustumCulled = false;
+      this.instances.push(inst);
+      this.scene.add(inst);
+    }
   }
 
   private assemblyTemplate?: Promise<THREE.Group>;
@@ -642,7 +746,7 @@ export class ArchiveScene {
       this.arrival = null;
       this.documentArrival.reset();
     }
-    this.carrierReady = false;
+    this.carrierReady = this.projectionCarrierReady = false;
     if (mode !== "archive") this.pendingPulse = null;
     this.looping = mode !== "hidden";
     if (!this.looping) {
@@ -803,6 +907,7 @@ export class ArchiveScene {
       this.appearance.prepare(group);
       this.appearance.apply(group, ease(this.lift.value / 0.4));
       this.appearance.setClarity(group, this.modelClarity());
+      setProjectorAperturePower(group, 0);
       this.scene.add(group);
       this.outgoing.push({
         group,
@@ -820,7 +925,7 @@ export class ArchiveScene {
     if (changed) {
       this.decryption.select();
       this.documentArrival.reset();
-      this.carrierReady = false;
+      this.carrierReady = this.projectionCarrierReady = false;
       this.rotation = 0;
       this.returnY = null;
     }
@@ -1541,6 +1646,8 @@ export class ArchiveScene {
     this.decryption.update(dt, detail > .78 && this.lift.value > 3.3, false,
       film ? shot + 5 : undefined);
     this.appearance.apply(this.model, ease(this.lift.value / 0.4));
+    setProjectorAperturePower(this.model, this.projectionCamera && this.projectionPhase !== undefined
+      ? carrierChannels(this.projectionPhase, this.projectionFocus).sourcePower : 0);
     this.appearance.setClarity(this.model, this.modelClarity());
     // Reference 26.92–27.76: the array travels horizontally into a white field.
     const entry = cinematic ? ease((shot - ARRAY_REVEAL_START) / 0.86) : this.reveal;
@@ -1570,6 +1677,7 @@ export class ArchiveScene {
       );
       const quality = ease(o.lift.value / 0.4);
       this.appearance.apply(o.group, quality);
+      setProjectorAperturePower(o.group, 0);
       this.appearance.setTheme(o.group, this.theme.sample(o.cell, time), indexDim(o.lift.value));
       o.clarity = this.motion.modelDecryption ? o.clarity * Math.exp(-dt * 9) : 0;
       this.appearance.setClarity(o.group, o.clarity);
@@ -1775,53 +1883,75 @@ export class ArchiveScene {
       2 * Math.atan((film ? openingSpan(THREE.MathUtils.lerp(span, 5.9, detail)) : framing.span) / (2 * distance)),
     );
     const opticalBase = this.projectionCamera;
+    let opticalSample: CarrierCameraSample | undefined;
     if (opticalBase && !cinematic) {
-      // Keep the ordinary camera's residual motion alive underneath the optical
-      // path. Freezing it at entry would lose its velocity; releasing that old
-      // snapshot at exit would then restart the unfinished detail movement.
-      opticalBase.position.lerp(cameraPosition, cameraBlend);
-      opticalBase.aim.lerp(cameraAim, cameraBlend);
-      opticalBase.fov = THREE.MathUtils.lerp(opticalBase.fov, ordinaryFov, cameraBlend);
-      opticalBase.perspective = 1 / (2 * Math.tan(THREE.MathUtils.degToRad(opticalBase.fov) / 2));
-      opticalBase.backward.copy(opticalBase.position).sub(opticalBase.aim).normalize();
-      opticalBase.right.crossVectors(opticalBase.up, opticalBase.backward).normalize();
-      opticalBase.vertical.crossVectors(opticalBase.backward, opticalBase.right);
-      opticalBase.span = opticalBase.position.distanceTo(opticalBase.aim) / opticalBase.perspective;
+      // Continue an ordinary return target independently. These values do not
+      // change the frozen world basis or receiving plane.
+      opticalBase.ordinaryPosition.lerp(cameraPosition, cameraBlend);
+      opticalBase.ordinaryAim.lerp(cameraAim, cameraBlend);
+      opticalBase.ordinaryFov = THREE.MathUtils.lerp(opticalBase.ordinaryFov, ordinaryFov, cameraBlend);
+      opticalBase.age += dt;
       const optical = carrierCamera(this.projectionFocus, { width: this.container.clientWidth, height: this.container.clientHeight }, opticalBase.perspective);
-      const point = (v: { x: number; y: number; z: number }) => opticalBase.aim.clone()
+      const inertia = carrierInertiaOffset(opticalBase.age, opticalBase.velocity, opticalBase.acceleration);
+      const aimInertia = carrierInertiaOffset(opticalBase.age, opticalBase.aimVelocity, opticalBase.aimAcceleration);
+      const fovInertia = carrierInertiaOffset(opticalBase.age,
+        { x: opticalBase.fovVelocity, y: 0, z: 0 }, { x: opticalBase.fovAcceleration, y: 0, z: 0 }).x;
+      const position = { x: optical.position.x + inertia.x, y: optical.position.y + inertia.y, z: optical.position.z + inertia.z };
+      const aim = { x: optical.aim.x + aimInertia.x, y: optical.aim.y + aimInertia.y, z: optical.aim.z + aimInertia.z };
+      const point = (v: OpticalVector) => opticalBase.aim.clone()
         .addScaledVector(opticalBase.right, v.x * opticalBase.span)
         .addScaledVector(opticalBase.vertical, v.y * opticalBase.span)
         .addScaledVector(opticalBase.backward, v.z * opticalBase.span);
-      // This path already has continuous velocity and acceleration. Another
-      // ordinary camera low-pass would make the carrier lag behind its image.
-      this.camera.position.copy(point(optical.position));
-      this.cameraAim.copy(point(optical.aim));
+      this.camera.position.copy(point(position));
+      this.cameraAim.copy(point(aim));
       this.camera.up.copy(opticalBase.vertical);
-      this.camera.fov = opticalBase.fov;
-      this.projectionRendered = this.projectionFocus;
-      if (this.projectionFocus === 0) {
-        this.camera.position.copy(opticalBase.position);
-        this.cameraAim.copy(opticalBase.aim);
-        this.camera.up.copy(opticalBase.up);
+      this.camera.fov = opticalBase.fov + fovInertia;
+      opticalSample = {
+        perspective: 1 / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2)),
+        progress: this.projectionFocus, phase: this.projectionPhase,
+        position, aim, up: { x: 0, y: 1, z: 0 },
+      };
+      if (this.projectionFocus === 0 && (this.projectionTravelled || this.projectionEnding)) {
+        // Hand the stationary optical endpoint back with a C2 envelope. The
+        // ordinary target may have continued settling since the early entry.
+        this.projectionRelease = this.motion.surfaceTransitions ? {
+          position: this.camera.position.clone(), aim: this.cameraAim.clone(), up: this.camera.up.clone(),
+          fov: this.camera.fov, age: 0,
+          ordinaryPosition: opticalBase.ordinaryPosition, ordinaryAim: opticalBase.ordinaryAim,
+          ordinaryFov: opticalBase.ordinaryFov,
+        } : undefined;
         this.projectionCamera = undefined;
+        this.projectionTravelled = false;
+        this.projectionEnding = false;
       }
     } else {
       if (opticalBase) {
         this.camera.up.copy(opticalBase.up);
         this.projectionCamera = undefined;
         this.projectionFocus = this.projectionRendered = 0;
+        this.projectionPhase = undefined;
       }
-      this.camera.position.lerp(cameraPosition, cameraBlend);
-      this.cameraAim.lerp(cameraAim, cameraBlend);
-      this.camera.fov = THREE.MathUtils.lerp(
-        this.camera.fov,
-        ordinaryFov,
-        cameraBlend,
-      );
+      const release = this.projectionRelease;
+      if (release && !cinematic) {
+        release.ordinaryPosition.lerp(cameraPosition, cameraBlend);
+        release.ordinaryAim.lerp(cameraAim, cameraBlend);
+        release.ordinaryFov = THREE.MathUtils.lerp(release.ordinaryFov, ordinaryFov, cameraBlend);
+        release.age += dt;
+        const mix = ease(release.age / .55);
+        this.camera.position.copy(release.position).lerp(release.ordinaryPosition, mix);
+        this.cameraAim.copy(release.aim).lerp(release.ordinaryAim, mix);
+        this.camera.up.copy(release.up);
+        this.camera.fov = THREE.MathUtils.lerp(release.fov, release.ordinaryFov, mix);
+        if (mix === 1) this.projectionRelease = undefined;
+      } else {
+        this.camera.position.lerp(cameraPosition, cameraBlend);
+        this.cameraAim.lerp(cameraAim, cameraBlend);
+        this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, ordinaryFov, cameraBlend);
+      }
     }
     this.camera.lookAt(this.cameraAim);
-    const ordinaryPosition = this.projectionCamera?.position ?? this.camera.position;
-    const ordinaryAim = this.projectionCamera?.aim ?? this.cameraAim;
+    const ordinaryPosition = this.projectionCamera?.ordinaryPosition ?? this.camera.position;
+    const ordinaryAim = this.projectionCamera?.ordinaryAim ?? this.cameraAim;
     this.cameraResidual = Math.max(
       ordinaryPosition.distanceTo(cameraPosition),
       ordinaryAim.distanceTo(cameraAim),
@@ -1907,6 +2037,11 @@ export class ArchiveScene {
     this.carrierReady = !cinematic && Boolean(this.targetDetail) &&
       this.lift.value >= INSPECTION_LIFT - .07 && detail > .97 &&
       this.returnY === null && this.clearance > .3 && this.cameraResidual < .025;
+    // Projection needs a clear physical outlet, not the completed reading shot.
+    // The remaining vertical extraction continues through the first light beat.
+    const outlet = this.model.localToWorld(new THREE.Vector3(PROJECTOR_APERTURE.center.x, PROJECTOR_APERTURE.center.y, PROJECTOR_APERTURE.center.z));
+    this.projectionCarrierReady = !cinematic && Boolean(this.targetDetail) && this.returnY === null &&
+      this.lift.value > 3.25 && detail > .62 && outlet.y > neighborTop + .25;
     const documentClear = ((this.decryption.frame.phase === "revealing" || this.decryption.frame.phase === "clear") &&
       this.decryption.frame.clarity > .025) ||
       (!this.motion.modelDecryption && !this.motion.documentReveal);
@@ -1965,13 +2100,14 @@ export class ArchiveScene {
           mat.opacity, mat.roughness, mat.metalness, mat.transmission, mat.thickness,
           mat.attenuationDistance, mat.clearcoat, mat.clearcoatRoughness,
           mat.color.r, mat.color.g, mat.color.b,
+          mat.emissive?.r ?? 0, mat.emissive?.g ?? 0, mat.emissive?.b ?? 0, mat.emissiveIntensity ?? 0,
           mat.attenuationColor?.r ?? 0, mat.attenuationColor?.g ?? 0, mat.attenuationColor?.b ?? 0);
         for (const name of ['appearance', 'glassClarity', 'themeAmount', 'subduedIndex'])
           state.floats(object.userData[name]?.value ?? 0);
         if (object instanceof THREE.InstancedMesh)
           state.add(object.count, object.instanceMatrix.version, this.themeAttribute?.version ?? 0);
       });
-      if (!state.end()) { this.reusedFrames++; return; }
+      if (!state.end()) { this.reusedFrames++; this.rememberPresentedFrame(time, opticalSample); return; }
     }
     this.renderedFrames++;
     const shadow = this.shadowState;
@@ -1987,7 +2123,40 @@ export class ArchiveScene {
     this.renderer.shadowMap.needsUpdate = shadow.end() || this.light.shadow.needsUpdate;
     if (this.superPerformance) this.renderer.render(this.scene, this.camera);
     else this.composer.render();
+    this.rememberPresentedFrame(time, opticalSample);
   }
+
+  private rememberPresentedFrame(time: number, sample?: CarrierCameraSample) {
+    const last = this.presentedCamera;
+    const elapsed = last ? time - last.time : 0;
+    const velocity = elapsed > 1e-5 ? this.camera.position.clone().sub(last!.position).divideScalar(elapsed) : new THREE.Vector3();
+    const aimVelocity = elapsed > 1e-5 ? this.cameraAim.clone().sub(last!.aim).divideScalar(elapsed) : new THREE.Vector3();
+    const fovVelocity = elapsed > 1e-5 ? (this.camera.fov - last!.fov) / elapsed : 0;
+    // Long pauses do not provide a useful second derivative estimate.
+    const acceleration = elapsed > 1e-5 && elapsed < .1 ? velocity.clone().sub(last!.velocity).divideScalar(elapsed) : new THREE.Vector3();
+    const aimAcceleration = elapsed > 1e-5 && elapsed < .1 ? aimVelocity.clone().sub(last!.aimVelocity).divideScalar(elapsed) : new THREE.Vector3();
+    const fovAcceleration = elapsed > 1e-5 && elapsed < .1 ? (fovVelocity - last!.fovVelocity) / elapsed : 0;
+    this.presentedCamera = { time, position: this.camera.position.clone(), aim: this.cameraAim.clone(), up: this.camera.up.clone(), fov: this.camera.fov,
+      velocity, acceleration, aimVelocity, aimAcceleration, fovVelocity, fovAcceleration };
+    if (sample) {
+      this.projectionRendered = sample.progress;
+      this.projectionPresented = { ...sample, frameId: this.renderedFrames + this.reusedFrames };
+    }
+    this.model.updateMatrixWorld(true);
+    const point = (p: OpticalVector) => {
+      const world = this.model.localToWorld(new THREE.Vector3(p.x, p.y, p.z)).project(this.camera);
+      return { x: (world.x + 1) * this.container.clientWidth / 2, y: (1 - world.y) * this.container.clientHeight / 2 };
+    };
+    const corners = PROJECTOR_APERTURE.corners.map(point) as NonNullable<CarrierSample["corners"]>;
+    this.projectorPresented = { origin: point(PROJECTOR_APERTURE.center), corners,
+      edge: [corners[0], corners[1]],
+      outline: [{ x: -2.5, y: 3.7, z: .255 }, { x: 2.5, y: 3.7, z: .255 },
+        { x: 2.5, y: 0, z: .255 }, { x: -2.5, y: 0, z: .255 }].map(point) };
+  }
+
+  /** Pixel coordinates of the real aperture and carrier from the last drawing. */
+  projectProjector(): CarrierSample | undefined { return this.projectorPresented; }
+
   projectCard(x: number, y: number) {
     this.model.updateMatrixWorld(true);
     const p = this.model
@@ -2001,7 +2170,7 @@ export class ArchiveScene {
     return this.documentArrival.frame.visibility;
   }
   get projectionReady() {
-    return this.loaded && this.carrierReady;
+    return this.loaded && this.projectionCarrierReady;
   }
   getStats() {
     this.model.updateMatrixWorld(true);
@@ -2030,6 +2199,8 @@ export class ArchiveScene {
       fieldOfView: this.camera.fov,
       projectionFocus: this.projectionFocus,
       projectionRendered: this.projectionRendered,
+      projectionPresented: this.projectionPresented,
+      projector: this.projectorPresented,
       projectionReady: this.projectionReady,
       openingHandoff: this.openingHandoff ? { sourceTime: this.openingHandoff.shot, progress: ease((this.clock - this.openingHandoff.start) / 0.95) } : null,
       loaded: this.loaded,

@@ -17,6 +17,8 @@ type ProjectionOptions = {
   origin?: { x: number; y: number };
   /** Sample the physical carrier after the main scene has drawn its current camera. */
   sampleCarrier?: () => CarrierSample | undefined;
+  /** One presented phase owns the physical emitter, camera and optical image. */
+  onPresentation?: (phase: number) => CarrierCameraSample | void;
   onCameraProgress?: (progress: number) => CarrierCameraSample | void;
   onBeat?: (beat: string) => void;
 };
@@ -24,6 +26,7 @@ type ProjectionOptions = {
 /** A single optical work surface is shared by both kinds of archive. */
 export class ProjectionViewer {
   readonly root: HTMLElement;
+  private plane: HTMLElement;
   private host: HTMLElement;
   private research?: ResearchProjection;
   private cube?: CubeProjection;
@@ -57,7 +60,11 @@ export class ProjectionViewer {
     this.root.setAttribute("aria-modal", "true");
     this.root.setAttribute("aria-labelledby", "projection-title");
     this.root.innerHTML = `<div class="projection-environment" aria-hidden="true"><div class="projection-horizon"></div></div><div class="projection-ignition" aria-hidden="true"></div><header class="projection-header"><button type="button" class="projection-back" data-projection="close"><span aria-hidden="true">←</span><span>返回档案</span><kbd>ESC</kbd></button><div class="projection-identity"><span class="projection-eyebrow"></span><div class="projection-title-group"><h1 id="projection-title"></h1><span class="projection-subtitle"></span></div></div><span class="projection-mode-label"></span></header><div class="projection-content"></div><div class="projection-announcement" role="status" aria-live="polite"></div>`;
+    this.plane = document.createElement("div");
+    this.plane.className = "projection-plane";
     this.host = this.root.querySelector(".projection-content")!;
+    this.plane.append(this.root.querySelector(".projection-header")!, this.host);
+    this.root.querySelector(".projection-announcement")!.before(this.plane);
     parent.appendChild(this.root);
     this.root.addEventListener("click", event => {
       const target = event.target as Element;
@@ -110,13 +117,12 @@ export class ProjectionViewer {
     if (!resume) {
       // Content can create a WebGL context. Even if that preparation stalls,
       // no full-sized work surface may appear before its light has formed.
-      this.host.style.opacity = "0";
-      this.host.style.clipPath = "inset(100% 0 0 0)";
-      this.host.style.maskImage = "none";
-      this.host.style.setProperty("-webkit-mask-image", "none");
+      this.plane.style.opacity = "0";
+      this.plane.style.clipPath = "inset(100% 0 0 0)";
+      this.plane.style.maskImage = "none";
+      this.plane.style.setProperty("-webkit-mask-image", "none");
       this.opticalMask = "";
       this.root.style.setProperty("--carrier-detail", "0");
-      this.root.querySelector<HTMLElement>(".projection-header")!.style.opacity = "0";
       this.root.querySelector<HTMLElement>(".projection-environment")!.style.opacity = "0";
     }
     this.root.querySelector(".projection-eyebrow")!.textContent = `${record.id} / ${record.projection.kind === "research" ? "RESEARCH" : "EXPERIMENT"}`;
@@ -139,7 +145,7 @@ export class ProjectionViewer {
 
   private enterFromCarrier(options: ProjectionOptions, resume: boolean) {
     const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
-    this.imageBox = { left: this.host.offsetLeft, top: this.host.offsetTop, width: this.host.offsetWidth, height: this.host.offsetHeight };
+    this.imageBox = { left: this.plane.offsetLeft, top: this.plane.offsetTop, width: this.plane.offsetWidth, height: this.plane.offsetHeight };
     if (!resume || !this.optics) {
       this.optics?.dispose();
       ignition.replaceChildren();
@@ -160,18 +166,20 @@ export class ProjectionViewer {
   private setBeat(beat: string) {
     if (beat === this.currentBeat) return;
     this.currentBeat = beat; this.root.dataset.beat = beat;
-    this.beatTrace.push({ beat, elapsed: Math.round(this.options.manualClock ? this.clock.value : performance.now() - this.flightStarted), progress: this.flight.value });
+    this.beatTrace.push({ beat, elapsed: Math.round(this.options.manualClock ? this.clock.value : performance.now() - this.flightStarted), progress: this.frameState?.progress ?? this.flight.value });
     this.options.onBeat?.(beat);
   }
 
   private paintFlight() {
     const rect = this.parent.getBoundingClientRect();
     const surface = { width: Math.max(1, this.parent.clientWidth), height: Math.max(1, this.parent.clientHeight) };
-    this.imageBox = { left: this.host.offsetLeft, top: this.host.offsetTop, width: this.host.offsetWidth, height: this.host.offsetHeight };
+    this.imageBox = { left: this.plane.offsetLeft, top: this.plane.offsetTop, width: this.plane.offsetWidth, height: this.plane.offsetHeight };
     // Queue the desired phase, then use the scene's returned *drawn* phase for
     // both plane projection and carrier sampling. The scene and DOM have
     // separate RAF callbacks; neither is allowed to run one visible frame ahead.
-    const rendered = this.options.onCameraProgress?.(carrierCameraProgress(this.flight.value));
+    const rendered = this.options.onPresentation
+      ? this.options.onPresentation(this.flight.value)
+      : this.options.onCameraProgress?.(carrierCameraProgress(this.flight.value));
     const sample = this.options.sampleCarrier?.();
     const screenOrigin = sample?.origin ?? this.options.origin ?? { x: rect.left + rect.width * .25, y: rect.top + rect.height * .65 };
     const origin = carrierLocalPoint(screenOrigin, rect, surface);
@@ -180,23 +188,27 @@ export class ProjectionViewer {
     this.root.style.setProperty("--projection-origin-y", y + "px");
     const f = this.frameState = carrierFrame(this.flight.value, surface, this.imageBox, this.options.reducedMotion ? undefined : rendered || undefined);
     const environment = this.root.querySelector<HTMLElement>(".projection-environment")!;
-    const header = this.root.querySelector<HTMLElement>(".projection-header")!;
     const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
     environment.style.opacity = String(f.environment);
-    header.style.opacity = String(f.header);
-    header.style.transform = "translateY(" + ((1-f.header)*8).toFixed(2) + "px)";
-    this.host.style.opacity = String(f.image);
-    this.host.style.transform = f.transform;
-    this.host.style.clipPath = "none";
+    this.plane.style.opacity = String(f.image);
+    this.plane.style.transform = f.transform;
+    this.plane.style.clipPath = "none";
     this.root.style.setProperty("--carrier-interface", String(f.interface));
     this.root.style.setProperty("--carrier-light", String(f.light));
+    // Keep the archive identity legible while the plate is suspended. Its
+    // typographic scale settles continuously as the same image fills the view.
+    const titleArrival = Math.max(0, Math.min(1, (f.camera - .12) / .68));
+    this.root.style.setProperty("--carrier-title-size", String(1 + .5 * (1 - titleArrival * titleArrival * (3 - 2 * titleArrival))));
     ignition.style.opacity = "1";
     const localEdge = sample?.edge ? [
       carrierLocalPoint(sample.edge[0], rect, surface),
       carrierLocalPoint(sample.edge[1], rect, surface),
     ] as [{ x: number; y: number }, { x: number; y: number }] : undefined;
+    const aperture = sample?.corners?.map(point => carrierLocalPoint(point, rect, surface)) as
+      [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }, { x: number; y: number }] | undefined;
+    const outline = sample?.outline?.map(point => carrierLocalPoint(point, rect, surface));
     const optics = this.optics?.render({
-      frame: f, origin, edge: localEdge, width: surface.width, height: surface.height,
+      frame: f, origin, edge: localEdge, aperture, outline, width: surface.width, height: surface.height,
       planeWidth: this.imageBox.width, planeHeight: this.imageBox.height,
       elapsed: this.clock.value,
       dark: this.root.closest<HTMLElement>("[data-dark-surface]")?.dataset.darkSurface === "true",
@@ -204,14 +216,13 @@ export class ProjectionViewer {
     });
     const mask = optics?.maskImage ?? "none";
     if (mask !== this.opticalMask) {
-      this.host.style.maskImage = mask;
-      this.host.style.setProperty("-webkit-mask-image", mask);
+      this.plane.style.maskImage = mask;
+      this.plane.style.setProperty("-webkit-mask-image", mask);
       this.opticalMask = mask;
     }
-    // Structure resolves while suspended; fine labels become readable as the
-    // same lens approaches. The settled document never retains optical blur.
-    const near = Math.max(0, Math.min(1, (f.camera - .24) / .64));
-    this.opticalClarity = Math.min(optics?.clarity ?? 1, near * near * (3 - 2 * near));
+    // Deposited image regions are sharp immediately. The single exposure mask
+    // creates the image; camera distance never gates the identity or labels.
+    this.opticalClarity = optics?.clarity ?? f.contentResolve;
     this.root.style.setProperty("--carrier-detail", String(this.opticalClarity));
     this.setBeat(this.closing ? "returning" : f.beat);
   }
@@ -219,7 +230,7 @@ export class ProjectionViewer {
   private advanceFlight = (now: number) => {
     this.flight.step(this.clock.step(now, this.options.manualClock || !document.hidden));
     this.paintFlight();
-    if (this.flight.active || Math.abs((this.frameState?.camera ?? this.flight.target) - this.flight.target) > 1e-9) {
+    if (this.flight.active || Math.abs((this.frameState?.progress ?? this.flight.target) - this.flight.target) > 1e-9 || Math.abs((this.frameState?.camera ?? this.flight.target) - this.flight.target) > 1e-9) {
       if (!this.options.manualClock) this.flightRaf = requestAnimationFrame(this.advanceFlight);
     }
     else if (this.closing) this.finishClose();
@@ -238,15 +249,16 @@ export class ProjectionViewer {
 
   private finishEntrance() {
     this.flight.jump(1);
-    this.host.style.transform = "none";
-    this.host.style.opacity = "1";
-    this.host.style.clipPath = "none";
-    this.host.style.maskImage = "none";
-    this.host.style.setProperty("-webkit-mask-image", "none");
+    this.plane.style.transform = "none";
+    this.plane.style.opacity = "1";
+    this.plane.style.clipPath = "none";
+    this.plane.style.maskImage = "none";
+    this.plane.style.setProperty("-webkit-mask-image", "none");
     this.opticalMask = "none";
     this.opticalClarity = 1;
     this.root.style.setProperty("--carrier-detail", "1");
     this.root.style.setProperty("--carrier-interface", "1");
+    this.root.style.setProperty("--carrier-title-size", "1");
     this.host.inert = false;
     this.root.dataset.state = "open";
     this.root.querySelector<HTMLElement>(".projection-ignition")!.style.opacity = "0";
@@ -298,7 +310,7 @@ export class ProjectionViewer {
     cancelAnimationFrame(this.flightRaf);
     this.host.inert = true;
     if (immediate || this.options.reducedMotion) {
-      this.flight.jump(0); this.options.onCameraProgress?.(0); this.finishClose();
+      this.flight.jump(0); this.finishClose();
     }
     else {
       // Leave the current painted frame untouched until the next RAF. Its
@@ -312,7 +324,8 @@ export class ProjectionViewer {
   private finishClose() {
     cancelAnimationFrame(this.flightRaf);
     this.flight.jump(0);
-    this.options.onCameraProgress?.(0);
+    if (this.options.onPresentation) this.options.onPresentation(0);
+    else this.options.onCameraProgress?.(0);
     this.research?.dispose(); this.cube?.dispose(); this.research = undefined; this.cube = undefined;
     this.optics?.dispose(); this.optics = undefined; this.opticalMask = "";
     this.root.querySelector(".projection-ignition")!.replaceChildren();
@@ -330,6 +343,6 @@ export class ProjectionViewer {
   }
   refreshTheme() { this.cube?.refreshTheme(); if (this.needsCarrierScene) this.paintFlight(); }
   get needsCarrierScene() { return this.isOpen && this.root.dataset.state !== "open"; }
-  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, velocity: this.flight.velocity, presentedMs: this.clock.value, camera: this.frameState?.camera, requestedCamera: this.frameState?.requestedCamera, perspective: this.frameState?.rig.perspective, position: this.frameState?.rig.position, aim: this.frameState?.rig.aim, image: this.frameState?.image, clarity: this.opticalClarity, opticalMask: this.opticalMask === "none" ? "none" : "granular", reveal: this.frameState?.reveal, beamReach: this.frameState?.beamReach, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
+  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, presentedPhase: this.frameState?.progress, sourcePower: this.frameState?.sourcePower, beamPower: this.frameState?.beamPower, platePresence: this.frameState?.platePresence, edgePresence: this.frameState?.edgePresence, frameBuild: this.frameState?.frameBuild, contentResolve: this.frameState?.contentResolve, velocity: this.flight.velocity, presentedMs: this.clock.value, camera: this.frameState?.camera, requestedCamera: this.frameState?.requestedCamera, perspective: this.frameState?.rig.perspective, position: this.frameState?.rig.position, aim: this.frameState?.rig.aim, image: this.frameState?.image, clarity: this.opticalClarity, opticalMask: this.opticalMask === "none" ? "none" : "granular", reveal: this.frameState?.reveal, beamReach: this.frameState?.beamReach, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
   dispose() { this.close(true); cancelAnimationFrame(this.flightRaf); this.root.remove(); }
 }

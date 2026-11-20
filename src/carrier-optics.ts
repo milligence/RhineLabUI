@@ -3,11 +3,24 @@ import type { carrierFrame, OpticalPoint } from "./carrier-flight";
 type Point = OpticalPoint;
 type Quad = readonly [Point, Point, Point, Point];
 type OpticalFrame = ReturnType<typeof carrierFrame>;
+type OpticalChannels = {
+  sourcePower?: number;
+  beamPower?: number;
+  platePresence?: number;
+  edgePresence?: number;
+  frameBuild?: number;
+  contentResolve?: number;
+};
 
 export type CarrierOpticsInput = {
   frame: OpticalFrame;
   origin: Point;
-  /** The two ends of the aperture on the actual, already-drawn carrier. */
+  /** Model-local TL, TR, BR, BL projected by the already-drawn camera.
+   * Preserve their order; a screen-space x/y sort destroys the aperture. */
+  aperture?: Quad;
+  /** Physical carrier silhouette. Only the light volume is occluded by it. */
+  outline?: readonly Point[];
+  /** Legacy slit sampling, used only when a physical aperture is unavailable. */
   edge?: readonly [Point, Point];
   width: number;
   height: number;
@@ -33,6 +46,14 @@ const mix = (a: Point, b: Point, t: number): Point => ({ x: a.x + (b.x - a.x) * 
 const distance = (a: Point, b: Point) => Math.hypot(b.x - a.x, b.y - a.y);
 const rgba = (rgb: readonly number[], alpha: number) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${clamp(alpha)})`;
 const CLEAR_MASK = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'1\' height=\'1\'%3E%3C/svg%3E")';
+// The frustum has a finite optical skin: a narrow reflective inner lip beside
+// a wider absorbing shoulder. These are pixel-distance profiles, not rays.
+const BEAM_SKIN = new Float32Array(256 * 2);
+for (let i = 0; i < 256; i++) {
+  const d = i / 255 * 24;
+  BEAM_SKIN[i * 2] = Math.exp(-Math.pow((d - 5.8) / 4.1, 2));
+  BEAM_SKIN[i * 2 + 1] = Math.exp(-Math.pow((d - 1.6) / 1.65, 2));
+}
 
 /** Integer noise is spatial, never time-seeded. A return retraces the same
  * deposit instead of making a new cloud of unrelated particles. */
@@ -42,13 +63,42 @@ function noise(x: number, y: number, salt = 0) {
   return ((n ^ (n >>> 16)) >>> 0) / 4294967295;
 }
 
-/** The advancing field runs from the near lower-left region into the depth of
- * the plate. Broad variations are coherent; the last term is subpixel deposit,
+/** The advancing field establishes the identity, then the body of the plate.
+ * Broad variations are coherent; the last term is subpixel deposit,
  * not a coarse grid of independently appearing rectangles. */
 function depositField(u: number, v: number, grain: number) {
-  const travel = .57 * (1 - v) + .43 * u;
-  const wave = Math.sin(u * 8.7 + v * 3.1) * .022 + Math.sin(v * 15.3 - u * 4.8) * .012;
-  return clamp(.035 + travel * .91 + wave + (grain - .5) * .066, .012, .978);
+  // Identity resolves along the upper margin first, then the same coherent
+  // exposure advances through the body. Newly exposed text is already sharp.
+  const identity = 1 - range(v, .12, .28);
+  const travel = .58 * u + .42 * v - identity * (.50 * u + .32 * v);
+  const wave = Math.sin(u * 8.7 + v * 3.1) * .009 + Math.sin(v * 15.3 - u * 4.8) * .005;
+  return clamp(.025 + travel * .945 + wave + (grain - .5) * .026, .012, .985);
+}
+
+function centreOf(points: readonly Point[]): Point {
+  return points.reduce((centre, p) => ({ x: centre.x + p.x / points.length, y: centre.y + p.y / points.length }), { x: 0, y: 0 });
+}
+
+function convexHull(points: readonly Point[]) {
+  const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
+  const cross = (a: Point, b: Point, c: Point) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+  const lower: Point[] = [], upper: Point[] = [];
+  for (const p of sorted) { while (lower.length > 1 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop(); lower.push(p); }
+  for (let i = sorted.length - 1; i >= 0; i--) { const p = sorted[i]; while (upper.length > 1 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop(); upper.push(p); }
+  lower.pop(); upper.pop(); return lower.concat(upper);
+}
+
+/** Inward signed edge distances for a convex projected solid. Keeping the
+ * distances in viewport pixels gives the volume a finite, readable soft edge. */
+function boundaryEquations(points: readonly Point[]) {
+  const centre = centreOf(points);
+  return points.map((a, i) => {
+    const b = points[(i + 1) % points.length];
+    const length = Math.max(.001, distance(a, b));
+    let nx = -(b.y - a.y) / length, ny = (b.x - a.x) / length;
+    if ((centre.x - a.x) * nx + (centre.y - a.y) * ny < 0) { nx = -nx; ny = -ny; }
+    return [nx, ny, -a.x * nx - a.y * ny];
+  });
 }
 
 /** Projective interpolation, rather than bilinear corner blending, keeps the
@@ -86,6 +136,10 @@ export class CarrierOptics {
   private beamPixels?: ImageData;
   private beamIdentity = "";
   private readonly beamProfiles = new Map<boolean, Float32Array>();
+  private readonly beamBaseColors = new Map<boolean, Uint8Array>();
+  private beamX = new Float64Array(0);
+  private beamEdgeY = new Float64Array(0);
+  private beamSkinRanges = new Int32Array(0);
   private maskPixels?: ImageData;
   private maskThresholds = new Float32Array(0);
   private readonly masks = new Map<number, string>();
@@ -122,10 +176,16 @@ export class CarrierOptics {
 
   render(input: CarrierOpticsInput): CarrierOpticsSurface {
     const { frame } = input;
-    const reveal = clamp(frame.reveal);
-    const clarity = input.reduced ? 1 : range(frame.progress, .30, .68);
+    const channels = frame as OpticalFrame & OpticalChannels;
+    const reveal = clamp(channels.contentResolve ?? frame.reveal);
+    const clarity = input.reduced ? 1 : range(reveal, .015, .16);
     const maskImage = input.reduced ? "none" : this.mask(reveal, input.planeWidth ?? input.width, input.planeHeight ?? input.height);
-    const active = !input.reduced && frame.light > .0005 && frame.progress > 0 && input.width > 0 && input.height > 0;
+    const sourcePower = clamp(channels.sourcePower ?? frame.charge * frame.emitter * frame.light);
+    const beamPower = clamp(channels.beamPower ?? frame.light);
+    const platePresence = clamp(channels.platePresence ?? frame.frame * range(frame.image, 0, .18));
+    const edgePresence = clamp(channels.edgePresence ?? frame.frame);
+    const frameBuild = clamp(channels.frameBuild ?? frame.frame);
+    const active = !input.reduced && Math.max(sourcePower, beamPower, platePresence, edgePresence) > .0005 && frame.progress > 0 && frame.progress < 1 && input.width > 0 && input.height > 0;
     const result: CarrierOpticsSurface = { maskImage, maskSize: "100% 100%", maskRepeat: "no-repeat", clarity, active };
     if (!active || !this.context) { this.clear(); return result; }
     this.resize(input.width, input.height);
@@ -142,16 +202,21 @@ export class CarrierOptics {
 
     const quad = frame.corners as unknown as Quad;
     const project = quadProjector(quad);
-    const centre = project(.5, .5);
-    const edge = input.edge ?? [{ x: input.origin.x - 22, y: input.origin.y }, { x: input.origin.x + 22, y: input.origin.y }];
-    const aperture: [Point, Point] = [mix(input.origin, edge[0], frame.charge), mix(input.origin, edge[1], frame.charge)];
-    const light = frame.light;
+    const aperture = input.aperture ?? this.legacyAperture(input.origin, input.edge);
+    const source = centreOf(aperture);
     const dark = Boolean(input.dark);
+    // A glass lip sits four final-document pixels outside the receiving face.
+    // It follows the same homography and exits through the viewport naturally;
+    // neither the semantic DOM plane nor the beam endpoint is expanded.
+    const outU = 4 / Math.max(1, input.planeWidth ?? input.width);
+    const outV = 4 / Math.max(1, input.planeHeight ?? input.height);
+    const rim: Quad = [project(-outU, -outV), project(1 + outU, -outV),
+      project(1 + outU, 1 + outV), project(-outU, 1 + outV)];
 
-    this.volume(ctx, input.origin, aperture, quad, centre, frame, light, dark);
-    this.plate(ctx, project, quad, frame, light, dark);
-    this.deposition(ctx, input.origin, project, frame, light, dark);
-    this.aperture(ctx, input.origin, aperture, frame, light, dark);
+    this.volume(ctx, aperture, quad, frame.beamReach, beamPower, dark, input.outline);
+    this.plate(ctx, project, quad, rim, source, frameBuild, platePresence, edgePresence, dark);
+    this.deposition(ctx, project, reveal, platePresence, dark);
+    this.aperture(ctx, aperture, sourcePower, dark);
     return result;
   }
 
@@ -169,253 +234,344 @@ export class CarrierOptics {
     if (close) ctx.closePath();
   }
 
-  private volume(ctx: CanvasRenderingContext2D, origin: Point, edge: readonly [Point, Point], quad: Quad, centre: Point, f: OpticalFrame, light: number, dark: boolean) {
-    const reach = f.beamReach;
-    if (reach <= .001) return;
-    const tip = mix(origin, centre, reach);
-    const end = quad.map(p => ({ x: tip.x + (p.x - centre.x) * reach * f.beamSpread, y: tip.y + (p.y - centre.y) * reach * f.beamSpread }));
-    this.softVolume(ctx, origin, edge, end, tip, light * reach, dark);
-    // Fine forward scattering stays within the cone. Stable positions avoid
-    // sparkle and do not invent a second independent motion clock.
-    const formation = Math.sin(Math.PI * clamp(f.reveal)) * light;
-    if (formation < .01) return;
-    for (let i = 0; i < 42; i++) {
-      const a = noise(i, 3, 71211), b = noise(i, 9, 19411);
-      const travel = .25 + a * .67;
-      const target = mix(end[3], end[1], .1 + b * .8);
-      const p = mix(origin, target, travel);
-      const alpha = formation * (1 - travel) * .22 * (.3 + b * .7);
-      ctx.fillStyle = rgba(dark ? [235, 219, 191] : [176, 149, 111], alpha);
-      ctx.beginPath(); ctx.arc(p.x, p.y, .35 + b * .35, 0, Math.PI * 2); ctx.fill();
-    }
+  private legacyAperture(origin: Point, edge?: readonly [Point, Point]): Quad {
+    const [a, b] = edge ?? [{ x: origin.x - 22, y: origin.y }, { x: origin.x + 22, y: origin.y }];
+    const length = Math.max(1, distance(a, b)), depth = clamp(length * .16, 3, 8);
+    const nx = -(b.y - a.y) / length * depth, ny = (b.x - a.x) / length * depth;
+    return [{ x: a.x - nx, y: a.y - ny }, { x: b.x - nx, y: b.y - ny },
+      { x: b.x + nx, y: b.y + ny }, { x: a.x + nx, y: a.y + ny }];
   }
 
-  /** A continuous angular density field replaces nested polygon wedges. The
-   * small working texture is painted directly; it is never URL-encoded. Its
-   * light core, absorbing shoulders and outer falloff have distinct scales. */
-  private softVolume(ctx: CanvasRenderingContext2D, origin: Point, edge: readonly [Point, Point], end: readonly Point[], tip: Point, light: number, dark: boolean) {
+  private volume(ctx: CanvasRenderingContext2D, aperture: Quad, quad: Quad, reach: number, power: number, dark: boolean, outline?: readonly Point[]) {
+    if (power < .001 || reach < .001) return;
+    // Every aperture corner has a corresponding receiver corner. The expanding
+    // section is a real rectangle in projection, never a point-source triangle.
+    const end = aperture.map((p, i) => mix(p, quad[i], clamp(reach)));
+    this.finiteVolume(ctx, aperture, end, power, dark, outline);
+  }
+
+  /** Rasterize the projected frustum's finite silhouette, not an unbounded
+   * Gaussian. A 2–4px density shoulder softens its edges without losing the
+   * geometry. The working bitmap is reused and never encoded as a data URL. */
+  private finiteVolume(ctx: CanvasRenderingContext2D, aperture: Quad, end: readonly Point[], power: number, dark: boolean, outline?: readonly Point[]) {
     if (!this.beamContext) return;
-    const axisLength = Math.max(1, distance(origin, tip));
-    const ux = (tip.x - origin.x) / axisLength, uy = (tip.y - origin.y) / axisLength;
+    const hull = convexHull([...aperture, ...end]);
+    if (hull.length < 3) return;
+    const source = centreOf(aperture), target = centreOf(end);
+    const axisLength = Math.max(1, distance(source, target));
+    const ux = (target.x - source.x) / axisLength, uy = (target.y - source.y) / axisLength;
     const px = -uy, py = ux;
-    const along = (p: Point) => (p.x - origin.x) * ux + (p.y - origin.y) * uy;
-    const across = (p: Point) => (p.x - origin.x) * px + (p.y - origin.y) * py;
-    const reach = Math.max(8, ...end.map(along));
-    const aperture = Math.max(1.2, ...edge.map(p => Math.abs(across(p))));
-    const slope = Math.max(.015, ...end.map(p => Math.abs(across(p)) / Math.max(1, along(p))));
-    const points = [...edge, ...end];
-    const left = Math.min(...points.map(p => p.x)) - 12;
-    const top = Math.min(...points.map(p => p.y)) - 12;
-    const width = Math.max(...points.map(p => p.x)) - left + 12;
-    const height = Math.max(...points.map(p => p.y)) - top + 12;
-    const tw = Math.ceil(clamp(width * .55, 96, 480) / 16) * 16;
+    const across = (p: Point) => (p.x - source.x) * px + (p.y - source.y) * py;
+    const sourceWidth = Math.max(1.5, ...aperture.map(p => Math.abs(across(p))));
+    const endWidth = Math.max(sourceWidth, ...end.map(p => Math.abs(across(p))));
+    const left = Math.max(-4, Math.min(...hull.map(p => p.x)) - 4);
+    const top = Math.max(-4, Math.min(...hull.map(p => p.y)) - 4);
+    const right = Math.min(this.width + 4, Math.max(...hull.map(p => p.x)) + 4);
+    const bottom = Math.min(this.height + 4, Math.max(...hull.map(p => p.y)) + 4);
+    if (right <= left || bottom <= top) return;
+    const width = right - left, height = bottom - top;
+    const tw = Math.ceil(clamp(width * .72, 96, 480) / 16) * 16;
     const th = Math.ceil(clamp(tw * height / width, 48, 256) / 16) * 16;
-    const identity = [origin.x, origin.y, ...points.flatMap(p => [p.x, p.y]), Number(dark)].map(v => v.toFixed(2)).join("/");
+    const identity = [...aperture, ...end, ...(outline ?? [])].flatMap(p => [p.x, p.y])
+      .concat([left, top, width, height, Number(dark)]).map(v => v.toFixed(2)).join("/");
     if (identity !== this.beamIdentity) {
       this.beamIdentity = identity;
       if (this.beamCanvas.width !== tw || this.beamCanvas.height !== th || !this.beamPixels) {
         this.beamCanvas.width = tw; this.beamCanvas.height = th;
         this.beamPixels = this.beamContext.createImageData(tw, th);
       }
-      const pixels = this.beamPixels.data;
-      const profile = this.beamProfile(dark);
-      for (let y = 0; y < th; y++) for (let x = 0; x < tw; x++) {
-        const dx = left + (x + .5) / tw * width - origin.x;
-        const dy = top + (y + .5) / th * height - origin.y;
-        const travel = dx * ux + dy * uy;
-        const t = travel / reach;
+      const edges = boundaryEquations(hull);
+      const skins = hull.flatMap((a, i) => {
+        const b = hull[(i + 1) % hull.length];
+        // Only the two exterior longitudinal faces receive a grazing skin.
+        // The aperture and receiver edges belong to their own materials.
+        if (aperture.includes(a) === aperture.includes(b)) return [];
+        const from = aperture.includes(a) ? a : b, to = aperture.includes(a) ? b : a;
+        const length = Math.max(1, distance(from, to));
+        const edge = edges[i], facing = edge[0] * px + edge[1] * py;
+        return [{ edge, from, tx: (to.x - from.x) / length, ty: (to.y - from.y) / length,
+          length, weight: facing > 0 ? 1 : .56 }];
+      });
+      const occlusion = outline && outline.length > 2 ? boundaryEquations(convexHull(outline)) : [];
+      const profile = this.beamProfile(dark), pixels = this.beamPixels.data;
+      const baseColors = this.beamBaseColors.get(dark)!;
+      const skinWarm = dark ? [171, 157, 127] : [126, 112, 88];
+      const skinWhite = dark ? [248, 242, 220] : [255, 254, 243];
+      const occlusionLeft = outline ? Math.min(...outline.map(p => p.x)) - 2 : Infinity;
+      const occlusionRight = outline ? Math.max(...outline.map(p => p.x)) + 2 : -Infinity;
+      const occlusionTop = outline ? Math.min(...outline.map(p => p.y)) - 2 : Infinity;
+      const occlusionBottom = outline ? Math.max(...outline.map(p => p.y)) + 2 : -Infinity;
+      if (this.beamX.length !== tw) this.beamX = new Float64Array(tw);
+      for (let x = 0; x < tw; x++) this.beamX[x] = left + (x + .5) / tw * width;
+      if (this.beamEdgeY.length !== edges.length) this.beamEdgeY = new Float64Array(edges.length);
+      if (this.beamSkinRanges.length !== skins.length * 2) this.beamSkinRanges = new Int32Array(skins.length * 2);
+      const edgeY = this.beamEdgeY, skinRanges = this.beamSkinRanges;
+      const pixelX = (screenX: number) => (screenX - left) * tw / width - .5;
+      for (let y = 0; y < th; y++) {
+        const sy = top + (y + .5) / th * height;
+        let visibleLeft = -Infinity, visibleRight = Infinity, solidLeft = -Infinity, solidRight = Infinity;
+        for (let i = 0; i < edges.length; i++) {
+          const edge = edges[i]; edgeY[i] = edge[1] * sy;
+          const row = edgeY[i] + edge[2], nx = edge[0];
+          if (Math.abs(nx) < 1e-12) {
+            if (row < -1.5) visibleLeft = Infinity;
+            if (row < 2.6) solidLeft = Infinity;
+          } else if (nx > 0) {
+            visibleLeft = Math.max(visibleLeft, (-1.5 - row) / nx);
+            solidLeft = Math.max(solidLeft, (2.6 - row) / nx);
+          } else {
+            visibleRight = Math.min(visibleRight, (-1.5 - row) / nx);
+            solidRight = Math.min(solidRight, (2.6 - row) / nx);
+          }
+        }
+        // Conservative scanline intervals skip only provably empty pixels or
+        // fully interior distances. Border pixels retain the original math;
+        // extra one-pixel margins protect the identical raster at every angle.
+        const first = Math.min(tw, Math.max(0, Math.floor(pixelX(visibleLeft)) - 1));
+        const last = Math.max(0, Math.min(tw, Math.ceil(pixelX(visibleRight)) + 2));
+        const solidFirst = Math.ceil(pixelX(solidLeft)) + 1, solidLast = Math.floor(pixelX(solidRight)) - 1;
+        const rowStart = y * tw * 4;
+        for (let x = 0; x < first; x++) pixels[rowStart + x * 4 + 3] = 0;
+        for (let x = Math.max(first, last); x < tw; x++) pixels[rowStart + x * 4 + 3] = 0;
+        for (let i = 0; i < skins.length; i++) {
+          const skin = skins[i], nx = skin.edge[0], row = skin.edge[1] * sy + skin.edge[2];
+          let from = -Infinity, to = Infinity;
+          if (Math.abs(nx) < 1e-12) { if (row < 0 || row >= 24) from = Infinity; }
+          else { const a = -row / nx, b = (24 - row) / nx; from = Math.min(a, b); to = Math.max(a, b); }
+          const alongRow = (sy - skin.from.y) * skin.ty - skin.from.x * skin.tx;
+          if (Math.abs(skin.tx) < 1e-12) { if (alongRow <= 0 || alongRow >= skin.length) from = Infinity; }
+          else {
+            const a = -alongRow / skin.tx, b = (skin.length - alongRow) / skin.tx;
+            from = Math.max(from, Math.min(a, b)); to = Math.min(to, Math.max(a, b));
+          }
+          skinRanges[i * 2] = Math.min(tw, Math.max(0, Math.floor(pixelX(from)) - 1));
+          skinRanges[i * 2 + 1] = Math.max(0, Math.min(tw, Math.ceil(pixelX(to)) + 2));
+        }
+        for (let x = first; x < last; x++) {
+        const sx = this.beamX[x];
         const j = (y * tw + x) * 4;
-        if (t <= -.02 || t >= 1.06) { pixels[j + 3] = 0; continue; }
-        const halfWidth = aperture + Math.max(0, travel) * slope;
-        const q = (dx * px + dy * py) / halfWidth;
-        const k = Math.round(clamp((q + 1.6) / 3.2) * 2047) * 4;
-        const lengthFade = range(t, -.02, .018) * (1 - range(t, .82, 1.06)) * (1 - .56 * clamp(t));
-        pixels[j] = Math.round(profile[k]);
-        pixels[j + 1] = Math.round(profile[k + 1]);
-        pixels[j + 2] = Math.round(profile[k + 2]);
-        pixels[j + 3] = Math.round(255 * profile[k + 3] * lengthFade);
+        let boundary = Infinity;
+        const solid = x >= solidFirst && x <= solidLast;
+        if (!solid) for (let i = 0; i < edges.length; i++) {
+          const edge = edges[i], d = edge[0] * sx + edgeY[i] + edge[2];
+          if (d < boundary) boundary = d;
+          if (boundary < -1.5) break;
+        }
+        if (boundary < -1.5) { pixels[j + 3] = 0; continue; }
+        let covered = occlusion.length > 0 && sx >= occlusionLeft && sx <= occlusionRight && sy >= occlusionTop && sy <= occlusionBottom;
+        if (covered) for (let i = 0; i < occlusion.length; i++) {
+          const edge = occlusion[i];
+          if (edge[0] * sx + edge[1] * sy + edge[2] < -.4) { covered = false; break; }
+        }
+        if (covered) { pixels[j + 3] = 0; continue; }
+        const dx = sx - source.x, dy = sy - source.y;
+        const travel = clamp((dx * ux + dy * uy) / axisLength);
+        const halfWidth = sourceWidth + (endWidth - sourceWidth) * travel;
+        const q = (dx * px + dy * py) / Math.max(1, halfWidth);
+        const k = Math.round(clamp((q + 1.4) / 2.8) * 2047) * 4;
+        const finiteEdge = solid ? 1 : smooth((boundary + 1.1) / 3.7);
+        // Energy reaches the receiving face. Fading before the endpoint would
+        // detach the frame from the apparatus that is generating it.
+        const density = finiteEdge * (1 - .32 * travel);
+        let warmSkin = 0, whiteSkin = 0;
+        for (let i = 0; i < skins.length; i++) {
+          if (x < skinRanges[i * 2] || x >= skinRanges[i * 2 + 1]) continue;
+          const skin = skins[i];
+          const d = skin.edge[0] * sx + skin.edge[1] * sy + skin.edge[2];
+          if (d < 0 || d >= 24) continue;
+          const position = ((sx - skin.from.x) * skin.tx + (sy - skin.from.y) * skin.ty) / skin.length;
+          if (position <= 0 || position >= 1) continue;
+          const index = Math.round(d / 24 * 255) * 2;
+          const falloff = range(position, 0, .045) * (1 - range(position, .975, 1));
+          const weight = skin.weight * falloff * (.74 + .26 * Math.sin(Math.PI * position));
+          warmSkin += BEAM_SKIN[index] * weight;
+          whiteSkin += BEAM_SKIN[index + 1] * weight;
+        }
+        const warmAlpha = warmSkin * finiteEdge * (dark ? .13 : .21);
+        const whiteAlpha = whiteSkin * finiteEdge * (dark ? .23 : .36);
+        const baseAlpha = profile[k + 3] * density;
+        const alpha = 1 - (1 - baseAlpha) * (1 - warmAlpha) * (1 - whiteAlpha);
+        if (warmAlpha === 0 && whiteAlpha === 0 && alpha > 1e-8) {
+          // Most pixels contain only the volume. Their RGB is independent of
+          // density; avoid re-compositing and dividing the same color per frame.
+          pixels[j] = baseColors[k]; pixels[j + 1] = baseColors[k + 1]; pixels[j + 2] = baseColors[k + 2];
+        } else for (let channel = 0; channel < 3; channel++) {
+            pixels[j + channel] = Math.round((profile[k + channel] * baseAlpha * (1 - warmAlpha) * (1 - whiteAlpha)
+              + skinWarm[channel] * warmAlpha * (1 - whiteAlpha) + skinWhite[channel] * whiteAlpha) / Math.max(1e-8, alpha));
+        }
+        pixels[j + 3] = Math.round(255 * alpha);
+        }
       }
       this.beamContext.putImageData(this.beamPixels, 0, 0);
     }
-    ctx.save(); ctx.globalAlpha = light;
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(this.beamCanvas, left, top, width, height);
-    ctx.restore();
+    ctx.save(); ctx.globalAlpha = power; ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(this.beamCanvas, left, top, width, height); ctx.restore();
   }
 
   private beamProfile(dark: boolean) {
     const cached = this.beamProfiles.get(dark);
     if (cached) return cached;
     const result = new Float32Array(2048 * 4);
-    const white = dark ? [232, 223, 203] : [255, 253, 240];
-    const warm = dark ? [184, 154, 108] : [151, 128, 95];
-    // Evaluate the costly scattering lobes once per palette, rather than
-    // repeatedly for every working-texture pixel while the camera is moving.
+    const colors = new Uint8Array(2048 * 4);
+    const white = dark ? [239, 237, 222] : [255, 254, 243];
+    const warm = dark ? [168, 159, 133] : [128, 117, 95];
     for (let i = 0; i < 2048; i++) {
-      const q = i / 2047 * 3.2 - 1.6;
-      const core = Math.exp(-Math.pow((q + .045) / .205, 2)) * (dark ? .20 : .36);
-      const shoulder = Math.exp(-Math.pow((Math.abs(q + .045) - .34) / .245, 2)) * (dark ? .038 : .072);
-      const air = Math.exp(-Math.pow(q / .72, 4)) * (dark ? .012 : .015);
-      const density = core + shoulder + air;
-      const warmAmount = (shoulder + air) / Math.max(1e-8, density);
-      for (let c = 0; c < 3; c++) result[i * 4 + c] = white[c] * (1 - warmAmount) + warm[c] * warmAmount;
+      const q = i / 2047 * 2.8 - 1.4;
+      const core = (1 - smooth(Math.abs(q + .10) / .88)) * (dark ? .20 : .28);
+      const side = Math.exp(-Math.pow((q - .66) / .22, 2)) * (dark ? .065 : .105);
+      const body = (1 - smooth((Math.abs(q) - .78) / .40)) * (dark ? .047 : .033);
+      const density = core + side + body;
+      const absorption = (side + body * .70) / Math.max(1e-8, density);
+      for (let c = 0; c < 3; c++) {
+        result[i * 4 + c] = white[c] * (1 - absorption) + warm[c] * absorption;
+        colors[i * 4 + c] = Math.round(result[i * 4 + c]);
+      }
       result[i * 4 + 3] = density;
     }
-    this.beamProfiles.set(dark, result);
-    return result;
+    this.beamBaseColors.set(dark, colors);
+    this.beamProfiles.set(dark, result); return result;
   }
 
-  private plate(ctx: CanvasRenderingContext2D, project: (u: number, v: number) => Point, quad: Quad, f: OpticalFrame, light: number, dark: boolean) {
-    // The real scene must first clear the plate. Frame construction can lead
-    // image formation, so it is not by itself a safe material-visibility gate.
-    const body = f.frame * light * range(f.image, 0, .18);
-    if (body < .001) return;
-    const [a, b, c, d] = quad;
-    const cream = dark ? [212, 218, 208] : [255, 253, 247];
-    const tint = dark ? [42, 57, 60] : [164, 153, 133];
-    ctx.save(); this.path(ctx, quad); ctx.clip();
-    // The plate has a clear face and a denser grazing shoulder. It stays thin
-    // and open; no second rectangle or opaque panel sits on top of the UI.
-    const face = ctx.createLinearGradient(d.x, d.y, b.x, b.y);
-    face.addColorStop(0, rgba(tint, body * (dark ? .12 : .085)));
-    face.addColorStop(.28, rgba(cream, body * .018));
-    face.addColorStop(.72, rgba(cream, body * (dark ? .045 : .04)));
-    face.addColorStop(1, rgba(cream, body * .075));
-    ctx.fillStyle = face; this.path(ctx, quad); ctx.fill();
-
-    // A finite oblique reflection condenses in the coating. Both ends dissolve
-    // as well as its shoulders; a uniform edge-to-edge stripe reads as a decal.
-    const reflect = Math.sin(Math.PI * range(f.progress, .105, .40)) * body;
-    if (reflect > .002) {
-      const band = .84 - .50 * f.reveal;
-      const lo = project(.08 + band * .16, .12), hi = project(.79 + band * .10, .86);
-      const centre = mix(lo, hi, .49);
-      const length = distance(lo, hi);
-      const breadth = Math.max(4, distance(a, b) * .027);
-      ctx.save(); ctx.translate(centre.x, centre.y);
-      ctx.rotate(Math.atan2(hi.y - lo.y, hi.x - lo.x));
-      ctx.scale(Math.max(1, length * .40), breadth);
-      const sheen = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
-      sheen.addColorStop(0, rgba(cream, reflect * (dark ? .17 : .32)));
-      sheen.addColorStop(.20, rgba(cream, reflect * (dark ? .115 : .22)));
-      sheen.addColorStop(.58, rgba(cream, reflect * .025));
-      sheen.addColorStop(1, rgba(cream, 0));
-      ctx.fillStyle = sheen; ctx.fillRect(-1, -1, 2, 2); ctx.restore();
+  private plate(ctx: CanvasRenderingContext2D, project: (u: number, v: number) => Point, quad: Quad, rim: Quad, source: Point, build: number, presence: number, edgePresence: number, dark: boolean) {
+    if (Math.max(presence, edgePresence) < .001 || build < .001) return;
+    const [a, b, c, d] = quad, centre = project(.5, .5);
+    const white = dark ? [245, 243, 229] : [255, 255, 249];
+    const warm = dark ? [168, 158, 134] : [100, 90, 71];
+    const body = presence * range(build, .66, 1);
+    if (body > .001) {
+      ctx.save(); this.path(ctx, quad); ctx.clip();
+      // The receiver is defined by its cut edges. Its interior stays almost
+      // clear so neither a milky rectangle nor a sheet of fog covers the data.
+      const face = ctx.createLinearGradient(d.x, d.y, b.x, b.y);
+      face.addColorStop(0, rgba(warm, body * (dark ? .045 : .038)));
+      face.addColorStop(.10, rgba(warm, body * .012));
+      face.addColorStop(.46, rgba(white, body * .003));
+      face.addColorStop(1, rgba(white, body * .018));
+      ctx.fillStyle = face; this.path(ctx, quad); ctx.fill(); ctx.restore();
     }
+    let near = 0;
+    for (let i = 1; i < 4; i++) if (distance(source, rim[i]) < distance(source, rim[near])) near = i;
+    const cut = clamp(distance(a, b) * .0045, 1.5, 3);
+    // Two fronts leave the near corner and meet at the opposite corner. They
+    // build the actual four edges; no detached brackets or looping scanner.
+    for (const direction of [1, -1]) {
+      const indices = [near, (near + direction + 4) % 4, (near + direction * 2 + 4) % 4];
+      const lengths = [distance(rim[indices[0]], rim[indices[1]]), distance(rim[indices[1]], rim[indices[2]])];
+      let remaining = build * (lengths[0] + lengths[1]);
+      for (let segment = 0; segment < 2; segment++) {
+        if (remaining <= 0) break;
+        const fraction = clamp(remaining / Math.max(.001, lengths[segment]));
+        const from = rim[indices[segment]], to = mix(from, rim[indices[segment + 1]], fraction);
+        const edgeIndex = direction === 1 ? indices[segment] : indices[segment + 1];
+        const primary = segment === 0;
+        this.frameEdge(ctx, from, to, centre, cut * (primary ? 1 : .66), edgePresence, primary, edgeIndex, dark);
+        remaining -= lengths[segment];
+        if (fraction < 1 && build < .995) {
+          ctx.fillStyle = rgba(white, edgePresence * .85);
+          ctx.beginPath(); ctx.arc(to.x, to.y, .9, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = rgba(white, edgePresence * .10);
+          ctx.beginPath(); ctx.arc(to.x, to.y, 2.8, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+  }
 
-    // Embedded microstructure is spatially correlated with the deposit field.
-    // It resolves into the plate, then disappears before reading begins.
-    const texture = body * (1 - range(f.progress, .34, .52));
-    for (const grain of this.grains) {
-      if (grain.seed < .56 || f.reveal < grain.field) continue;
-      const p = project(grain.u, grain.v);
-      ctx.fillStyle = rgba(dark ? [224, 226, 214] : [119, 113, 98], texture * .075 * grain.seed);
-      ctx.fillRect(p.x, p.y, .48, .48);
+  private frameEdge(ctx: CanvasRenderingContext2D, from: Point, to: Point, centre: Point, cut: number, power: number, primary: boolean, edgeIndex: number, dark: boolean) {
+    const length = Math.max(.001, distance(from, to));
+    let nx = -(to.y - from.y) / length, ny = (to.x - from.x) / length;
+    const middle = mix(from, to, .5);
+    if ((centre.x - middle.x) * nx + (centre.y - middle.y) * ny < 0) { nx = -nx; ny = -ny; }
+    const innerA = { x: from.x + nx * cut, y: from.y + ny * cut };
+    const innerB = { x: to.x + nx * cut, y: to.y + ny * cut };
+    const white = dark ? [249, 246, 231] : [255, 255, 249];
+    const absorption = dark ? [173, 156, 125] : [109, 94, 69];
+    const cool = dark ? [145, 158, 154] : [120, 123, 113];
+    const edgeLight = edgeIndex === 0 ? 1 : edgeIndex === 3 ? .88 : .66;
+    ctx.save(); ctx.lineCap = "butt"; ctx.lineJoin = "bevel";
+    // Finite bevel: a warm absorbing inner cut beside a narrow white surface.
+    // The far edges remain continuous and legible on an ordinary white page.
+    const bevel = ctx.createLinearGradient(from.x, from.y, innerA.x, innerA.y);
+    bevel.addColorStop(0, rgba(white, power * (primary ? .22 : .14)));
+    bevel.addColorStop(.43, rgba(absorption, power * (dark ? .21 : .25)));
+    bevel.addColorStop(1, rgba(dark ? cool : absorption, power * (primary ? .38 : .26)));
+    ctx.fillStyle = bevel; this.path(ctx, [from, to, innerB, innerA]); ctx.fill();
+    ctx.lineWidth = .8; ctx.strokeStyle = rgba(absorption, power * (dark ? .35 : .48));
+    this.path(ctx, [innerA, innerB], false); ctx.stroke();
+    ctx.lineWidth = primary ? 1.1 : .8;
+    ctx.strokeStyle = rgba(white, power * edgeLight * (primary ? .92 : .67));
+    this.path(ctx, [from, to], false); ctx.stroke();
+    if (primary) {
+      ctx.lineWidth = 4.2; ctx.strokeStyle = rgba(white, power * .045);
+      this.path(ctx, [from, to], false); ctx.stroke();
     }
     ctx.restore();
-
-    // A polished upper edge and one warm cut edge establish finite thickness.
-    // The far and bottom edges dissolve; an enclosing wireframe never appears.
-    const shoulder = { x: (d.x - a.x) * .004, y: (d.y - a.y) * .004 };
-    const rim = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-    rim.addColorStop(0, rgba(cream, 0));
-    rim.addColorStop(.15, rgba(cream, body * .80));
-    rim.addColorStop(.68, rgba(cream, body * .60));
-    rim.addColorStop(1, rgba(cream, 0));
-    ctx.lineWidth = 1.05; ctx.strokeStyle = rim;
-    this.path(ctx, [a, b], false); ctx.stroke();
-    const absorption = ctx.createLinearGradient(a.x, a.y, d.x, d.y);
-    absorption.addColorStop(0, rgba(dark ? [199, 171, 124] : [155, 126, 87], body * .38));
-    absorption.addColorStop(.58, rgba(dark ? [199, 171, 124] : [155, 126, 87], body * .15));
-    absorption.addColorStop(1, rgba(tint, 0));
-    ctx.lineWidth = 1.65; ctx.strokeStyle = absorption;
-    this.path(ctx, [{ x: a.x + shoulder.x, y: a.y + shoulder.y }, d], false); ctx.stroke();
-    // Two tiny seam catches belong to the same cut edge, with no brackets.
-    for (const t of [.18, .76]) {
-      const p = project(.001, t), q = project(.001, t + .026);
-      ctx.strokeStyle = rgba(cream, body * .5); ctx.lineWidth = .7;
-      this.path(ctx, [p, q], false); ctx.stroke();
-    }
   }
 
-  private deposition(ctx: CanvasRenderingContext2D, origin: Point, project: (u: number, v: number) => Point, f: OpticalFrame, light: number, dark: boolean) {
-    if (f.reveal <= 0 || f.reveal >= 1) return;
-    const energy = Math.sin(Math.PI * f.reveal) * light;
-    // Broken microfacets follow the actual reconstruction contour. The light
-    // lives only at this frontier, never as a permanent scanning rule or box.
+  private deposition(ctx: CanvasRenderingContext2D, project: (u: number, v: number) => Point, reveal: number, presence: number, dark: boolean) {
+    if (reveal <= 0 || reveal >= 1 || presence < .001) return;
+    const energy = Math.sin(Math.PI * reveal) * presence;
     const frontier = (u: number) => {
-      if (f.reveal > depositField(u, 0, .5) || f.reveal < depositField(u, 1, .5)) return null;
+      if (reveal < depositField(u, 0, .5) || reveal > depositField(u, 1, .5)) return null;
       let low = 0, high = 1;
       for (let step = 0; step < 9; step++) {
         const v = (low + high) / 2;
-        if (depositField(u, v, .5) > f.reveal) low = v; else high = v;
+        if (depositField(u, v, .5) > reveal) high = v; else low = v;
       }
       return (low + high) / 2;
     };
-    for (let i = 1; i < 96; i++) {
+    // The real masked content carries the event. A few short, quiet facets are
+    // confined to that same exposure front and disappear as soon as it passes.
+    for (let i = 1; i < 72; i++) {
       const seed = noise(i, 14, 77261);
-      if (seed < .31) continue;
-      const u = i / 96, v = frontier(u);
+      if (seed < .68) continue;
+      const u = i / 72, v = frontier(u);
       if (v === null) continue;
-      const du = (.18 + seed * .46) / 96;
-      const v2 = frontier(Math.min(1, u + du));
+      const du = (.14 + seed * .20) / 72, v2 = frontier(Math.min(1, u + du));
       if (v2 === null) continue;
       const p = project(u, v), q = project(u + du, v2);
-      ctx.strokeStyle = rgba(dark ? [231, 218, 187] : [157, 126, 81], energy * (.28 + seed * .28));
-      ctx.lineWidth = .7 + seed * .35; this.path(ctx, [p, q], false); ctx.stroke();
-      ctx.strokeStyle = rgba(dark ? [255, 245, 218] : [255, 254, 241], energy * (.45 + seed * .4));
-      ctx.lineWidth = .65;
-      this.path(ctx, [{ x: p.x, y: p.y - .8 }, { x: q.x, y: q.y - .8 }], false); ctx.stroke();
+      ctx.strokeStyle = rgba(dark ? [235, 225, 199] : [143, 122, 87], energy * (.16 + seed * .17));
+      ctx.lineWidth = .65; this.path(ctx, [p, q], false); ctx.stroke();
     }
     for (const grain of this.grains) {
-      const relative = (f.reveal - grain.field) / .105;
-      if (relative < -1 || relative > .65) continue;
-      const envelope = Math.sin(Math.PI * clamp((relative + 1) / 1.65));
-      const target = project(grain.u, grain.v);
-      const length = Math.max(1, distance(origin, target));
-      const settle = 1 - range(relative, -.95, .05);
-      const lead = settle * (5 + grain.seed * 13);
-      const p = { x: target.x - (target.x - origin.x) / length * lead, y: target.y - (target.y - origin.y) / length * lead };
-      const tail = mix(p, origin, Math.min(.008, (1 + 3 * settle) / length));
-      ctx.strokeStyle = rgba(dark ? [237, 223, 192] : [155, 124, 78], energy * envelope * (.21 + grain.seed * .34));
-      ctx.lineWidth = grain.size * (.55 + .45 * envelope);
-      this.path(ctx, [tail, p], false); ctx.stroke();
-      if (grain.seed > .78) {
-        ctx.fillStyle = rgba(dark ? [255, 244, 218] : [255, 252, 239], energy * envelope * .73);
-        ctx.beginPath(); ctx.arc(p.x, p.y, grain.size * .65, 0, Math.PI * 2); ctx.fill();
-      }
+      if (grain.seed < .78) continue;
+      const relative = (reveal - grain.field) / .035;
+      if (relative < -1 || relative > 1) continue;
+      const envelope = 1 - Math.abs(relative), p = project(grain.u, grain.v);
+      ctx.fillStyle = rgba(dark ? [248, 237, 209] : [134, 116, 82], energy * envelope * .32);
+      ctx.beginPath(); ctx.arc(p.x, p.y, grain.size * .52, 0, Math.PI * 2); ctx.fill();
     }
   }
 
-  private aperture(ctx: CanvasRenderingContext2D, origin: Point, edge: readonly [Point, Point], f: OpticalFrame, light: number, dark: boolean) {
-    const power = f.charge * f.emitter * light;
+  private aperture(ctx: CanvasRenderingContext2D, aperture: Quad, power: number, dark: boolean) {
     if (power < .001) return;
-    const span = distance(edge[0], edge[1]);
-    const angle = Math.atan2(edge[1].y - edge[0].y, edge[1].x - edge[0].x);
-    const warm = dark ? [209, 177, 123] : [191, 146, 83];
-    const white = dark ? [255, 243, 211] : [255, 252, 232];
-    ctx.save(); ctx.translate(origin.x, origin.y); ctx.rotate(angle);
-    const radius = Math.max(18, span * .67);
-    ctx.scale(1, .24);
-    const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-    halo.addColorStop(0, rgba(white, power * .78));
-    halo.addColorStop(.14, rgba(warm, power * .31));
-    halo.addColorStop(.52, rgba(warm, power * .075));
-    halo.addColorStop(1, rgba(warm, 0));
-    ctx.fillStyle = halo; ctx.fillRect(-radius, -radius, radius * 2, radius * 2); ctx.restore();
-
-    const slit = ctx.createLinearGradient(edge[0].x, edge[0].y, edge[1].x, edge[1].y);
-    slit.addColorStop(0, rgba(warm, 0));
-    slit.addColorStop(.2, rgba(warm, power * .47));
-    slit.addColorStop(.48, rgba(white, power * .94));
-    slit.addColorStop(.78, rgba(warm, power * .31));
-    slit.addColorStop(1, rgba(warm, 0));
-    ctx.strokeStyle = slit;
-    for (const [width, alpha] of [[4.8, .10], [2.4, .20], [.85, 1]]) {
-      ctx.lineWidth = width; ctx.globalAlpha = alpha;
-      this.path(ctx, edge, false); ctx.stroke();
-    }
-    ctx.globalAlpha = 1;
+    const centre = centreOf(aperture), [a, b, c, d] = aperture;
+    const width = Math.max(2, (distance(a, b) + distance(d, c)) / 2);
+    const height = Math.max(2, (distance(a, d) + distance(b, c)) / 2);
+    const white = dark ? [255, 247, 222] : [255, 253, 239];
+    const warm = dark ? [205, 176, 127] : [172, 133, 81];
+    ctx.save(); ctx.translate(centre.x, centre.y);
+    ctx.rotate(Math.atan2(b.y - a.y, b.x - a.x));
+    ctx.scale(width * .72, Math.max(height * .88, 6));
+    const bloom = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+    bloom.addColorStop(0, rgba(white, power * .30));
+    bloom.addColorStop(.38, rgba(warm, power * .11));
+    bloom.addColorStop(1, rgba(warm, 0));
+    ctx.fillStyle = bloom; ctx.fillRect(-1, -1, 2, 2); ctx.restore();
+    // These are emitted light layers on the supplied physical glass aperture.
+    // Its dark recess, housing and thickness remain owned by the scene model.
+    ctx.save(); this.path(ctx, aperture); ctx.clip();
+    const face = ctx.createLinearGradient(a.x, a.y, c.x, c.y);
+    face.addColorStop(0, rgba(white, power * .25));
+    face.addColorStop(.42, rgba(white, power * .12));
+    face.addColorStop(1, rgba(warm, power * .075));
+    ctx.fillStyle = face; this.path(ctx, aperture); ctx.fill();
+    const lens = ctx.createRadialGradient(centre.x, centre.y, 0, centre.x, centre.y, width * .36);
+    lens.addColorStop(0, rgba(white, power * .24)); lens.addColorStop(1, rgba(white, 0));
+    ctx.fillStyle = lens; this.path(ctx, aperture); ctx.fill(); ctx.restore();
+    ctx.lineWidth = .8; ctx.strokeStyle = rgba(white, power * .76);
+    this.path(ctx, aperture); ctx.stroke();
+    ctx.lineWidth = 1.2; ctx.strokeStyle = rgba(warm, power * .38);
+    this.path(ctx, [d, c], false); ctx.stroke();
   }
 
   private mask(reveal: number, planeWidth: number, planeHeight: number) {
@@ -479,7 +635,9 @@ export class CarrierOptics {
     this.maskThresholds = new Float32Array(0); this.maskPixels = undefined;
     this.maskCanvas.width = this.maskCanvas.height = 0;
     this.beamCanvas.width = this.beamCanvas.height = 0;
-    this.beamPixels = undefined; this.beamIdentity = ""; this.beamProfiles.clear();
+    this.beamPixels = undefined; this.beamIdentity = ""; this.beamProfiles.clear(); this.beamBaseColors.clear();
+    this.beamX = new Float64Array(0);
+    this.beamEdgeY = new Float64Array(0); this.beamSkinRanges = new Int32Array(0);
     this.canvas.width = this.canvas.height = 0;
   }
 }

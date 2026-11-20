@@ -12,9 +12,9 @@
       <label>速度<select id="cinematic-speed" aria-label="播放速度"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
     </div>
     <div class="cinematic-controls">
-      <span>入场定位</span><button data-fraction="0.115">蓄光</button><button data-fraction="0.21">束场</button><button data-fraction="0.35">成像</button><button data-fraction="0.46">悬停</button><button data-fraction="0.67">接近</button><button data-fraction="1">阅读</button>
-      <input id="cinematic-timeline" type="range" min="0" max="5200" step="1" value="0" aria-label="入场时间轴">
-      <label>毫秒<input id="cinematic-time" type="number" min="0" max="5200" step="50" value="0" aria-label="入场时间（毫秒）"></label><button id="cinematic-seek">应用时间</button><button data-command="focus">聚焦长记录</button>
+      <span>入场定位</span><button data-fraction="0.045">蓄光</button><button data-fraction="0.15">束场</button><button data-fraction="0.385">成像</button><button data-fraction="0.533">悬停</button><button data-fraction="0.74">接近</button><button data-fraction="1">阅读</button>
+      <input id="cinematic-timeline" type="range" min="0" max="6100" step="1" value="0" aria-label="入场时间轴">
+      <label>毫秒<input id="cinematic-time" type="number" min="0" max="6100" step="50" value="0" aria-label="入场时间（毫秒）"></label><button id="cinematic-seek">应用时间</button><button data-command="focus">聚焦长记录</button>
     </div>
     <div class="cinematic-controls">
       <label>视口<select id="cinematic-size" aria-label="视口"><option value="auto">跟随窗口</option><option value="1280x800">1280 × 800</option><option value="1440x900">1440 × 900</option><option value="900x614">900 × 614</option><option value="390x780">390 × 780</option></select></label>
@@ -33,7 +33,7 @@
     const timeline = document.getElementById("cinematic-timeline"), time = document.getElementById("cinematic-time");
     let identity = /*__REVIEW_IDENTITY__*/;
     const framePayload = /*__FRAME_PAYLOAD__*/;
-    let duration = 5200;
+    let duration = 6100;
     function send(command, value) { frame.contentWindow.postMessage({ scope, command, value }, "*"); }
     function layout() {
       const hidden = document.body.classList.contains("cinematic-review-hidden"), style = getComputedStyle(stage);

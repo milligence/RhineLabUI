@@ -2,7 +2,13 @@
  * This timeline is shared by research and experiment archives. All coordinates
  * are surface-local CSS pixels; no archive geometry is moved to frame them. */
 export type OpticalPoint = { x: number; y: number };
-export type CarrierSample = { origin: OpticalPoint; edge?: [OpticalPoint, OpticalPoint] };
+export type CarrierSample = {
+  origin: OpticalPoint;
+  edge?: [OpticalPoint, OpticalPoint];
+  /** Model-local TL, TR, BR, BL, projected by the camera already on screen. */
+  corners?: [OpticalPoint, OpticalPoint, OpticalPoint, OpticalPoint];
+  outline?: OpticalPoint[];
+};
 export type FlightBox = { left: number; top: number; width: number; height: number };
 /** Carrier samples arrive in screen CSS pixels, while the stage itself may be
  * scaled. Convert once at the boundary; image boxes, SVG and camera projection
@@ -16,7 +22,18 @@ export function carrierLocalPoint(point: OpticalPoint, bounds: FlightBox, surfac
 export type OpticalVector = { x: number; y: number; z: number };
 /** Lens distance in units of the initial vertical field of view. The rendered
  * phase lets the DOM follow the frame actually drawn by the physical scene. */
-export type CarrierCameraSample = { perspective: number; progress: number };
+export type CarrierCameraPose = { position: OpticalVector; aim: OpticalVector; up: OpticalVector };
+export type CarrierCameraSample = {
+  perspective: number;
+  progress: number;
+  /** The optical phase that produced this presented camera/source frame. */
+  phase?: number;
+  frameId?: number;
+  /** Actual pose in the frozen entry basis, including finite entry inertia. */
+  position?: OpticalVector;
+  aim?: OpticalVector;
+  up?: OpticalVector;
+};
 const clamp = (v: number) => Math.max(0, Math.min(1, v));
 const smooth = (v: number) => { const t = clamp(v); return t * t * t * (t * (t * 6 - 15) + 10); };
 const between = (v: number, a: number, b: number) => smooth((v - a) / (b - a));
@@ -40,7 +57,7 @@ const mix = (a: OpticalVector, b: OpticalVector, t: number) => add(multiply(a, 1
 const zero: OpticalVector = { x: 0, y: 0, z: 0 };
 const vertical: OpticalVector = { x: 0, y: 1, z: 0 };
 
-export const CARRIER_ENTRANCE_MS = 5200;
+export const CARRIER_ENTRANCE_MS = 6100;
 export const CARRIER_RETURN_MS = 2400;
 
 /** A stalled render must not consume the light-up and image-formation beats.
@@ -137,37 +154,80 @@ export class CarrierFlight {
   }
 }
 
-/** Separate the projection ritual from the later camera approach. The small
- * first arc clears space for the image; its held position makes the physical
- * source, growing beam and suspended image readable as one optical system. */
-export const carrierCameraProgress = (progress: number) =>
-  .16 * between(progress, .07, .16) + .84 * depart((progress - .48) / .52);
+/** Cues are expressed in presentation milliseconds, then mapped into the same
+ * reversible quintic phase as the flight. A return revisits the same field. */
+export const carrierCue = (milliseconds: number) => smooth(milliseconds / CARRIER_ENTRANCE_MS);
 
-/** The image is a stationary plane. A camera travels around its focus on a
- * short spherical arc, then closes the distance with a fixed lens. Positions
- * use the entry camera's own right/up/back frame and its vertical view span. */
-export function carrierCamera(progress: number, viewport: { width: number; height: number }, perspective = 12) {
+/** One continuous camera path: a slow drift establishes the source and formed
+ * image, then the same path accelerates into it. There is no stationary camera
+ * plateau or second camera clock at the coexistence/approach boundary. */
+export const carrierCameraProgress = (progress: number) => {
+  const p = clamp(progress), approach = carrierCue(3650);
+  return .16 * p + .84 * depart((p - approach) / (1 - approach), .25);
+};
+
+/** Independent optical envelopes. Source/beam may fade while the finite plate
+ * and its closed rim remain visible; no single light gate owns all materials. */
+export function carrierChannels(progress: number, camera = carrierCameraProgress(progress)) {
+  const p = clamp(progress), cue = (a: number, b: number) => between(p, carrierCue(a), carrierCue(b));
+  const frameBuild = cue(1100, 1750);
+  const contentResolve = cue(1800, 3000);
+  const sourcePower = cue(0, 400) * (1 - between(camera, .38, .80));
+  const beamPower = cue(400, 1050) * (1 - between(camera, .30, .72));
+  const platePresence = cue(1100, 1450) * (1 - between(camera, .88, 1));
+  const edgePresence = cue(1100, 1350) * (1 - between(camera, .985, 1));
+  const image = cue(1700, 1800);
+  return {
+    sourcePower, beamPower, platePresence, edgePresence, frameBuild, contentResolve,
+    image, reveal: contentResolve,
+    charge: cue(0, 400), beamReach: cue(400, 1100), beamSpread: cue(650, 1100),
+    environment: between(camera, .70, .95),
+    interface: between(camera, .80, .98),
+    // Title and content inhabit one plane and resolve through the same mask.
+    header: image,
+    light: Math.max(sourcePower, beamPower, platePresence, edgePresence),
+    emitter: sourcePower,
+    frame: frameBuild * edgePresence,
+  };
+}
+
+/** The projection plane is fixed in the entry camera's basis. A single camera
+ * orbits toward its normal and closes distance with the original fixed lens.
+ * An already-drawn pose can override the ideal path without moving the plane. */
+export function carrierCamera(progress: number, viewport: { width: number; height: number }, perspective = 12, pose?: Partial<CarrierCameraPose>) {
   const p = clamp(progress), aspect = viewport.width / Math.max(1, viewport.height);
   const portrait = aspect < 1.05;
   const lens = Math.max(1e-4, perspective);
-  // On a tall screen the carrier occupies the upper third. The image forms
-  // below it; the same orbit transfers the carrier out through the upper edge.
-  const centre: OpticalVector = { x: aspect * (portrait ? .075 : .24), y: portrait ? -.22 : .22, z: -.65 };
-  const normal = normalize({ x: portrait ? .12 : .28, y: portrait ? -.16 : .13, z: 1 });
+  const centre: OpticalVector = { x: aspect * (portrait ? .025 : .255), y: portrait ? -.245 : .035, z: -.52 };
+  const normal = normalize({ x: portrait ? .09 : .18, y: portrait ? -.12 : .055, z: 1 });
   const planeRight = normalize(cross(vertical, normal));
   const planeUp = cross(normal, planeRight);
-  const planeScale = portrait ? .34 : .36;
+  const planeScale = portrait ? .49 : .46;
   const firstPosition = { x: 0, y: 0, z: lens };
   const firstOffset = subtract(firstPosition, centre);
-  const orbit = p, focus = 1 - Math.pow(1 - p, 3), approach = p;
+  const orbit = p, focus = p, approach = p;
   const radius = Math.exp(Math.log(length(firstOffset)) * (1 - approach) + Math.log(planeScale * lens) * approach);
   const direction = shortArc(normalize(firstOffset), normal, orbit);
-  const position = p === 0 ? firstPosition : add(centre, multiply(direction, radius));
-  const aim = mix(zero, centre, focus);
+  const position = pose?.position ?? (p === 0 ? firstPosition : add(centre, multiply(direction, radius)));
+  const aim = pose?.aim ?? mix(zero, centre, focus);
   const backward = normalize(subtract(position, aim));
-  const right = normalize(cross(vertical, backward));
+  const right = normalize(cross(pose?.up ?? vertical, backward));
   const up = cross(backward, right);
   return { progress: p, perspective: lens, position, aim, right, up, backward, centre, normal, planeRight, planeUp, planeScale, orbit, focus, approach };
+}
+
+/** A finite C2 continuation of the entry camera's measured derivatives. The
+ * perturbation starts at zero and rejoins the fixed path with zero derivatives.
+ * It affects the camera only: the source and receiving plane never inherit it. */
+export function carrierInertiaOffset(elapsed: number, velocity: OpticalVector, acceleration: OpticalVector, duration = .8): OpticalVector {
+  if (elapsed >= duration) return { ...zero };
+  const t = clamp(elapsed / duration);
+  const value = (v: number, a: number) => {
+    const first = v * duration, second = a * duration * duration;
+    return first * (t - 6 * t ** 3 + 8 * t ** 4 - 3 * t ** 5) +
+      second * (.5 * t ** 2 - 1.5 * t ** 3 + 1.5 * t ** 4 - .5 * t ** 5);
+  };
+  return { x: value(velocity.x, acceleration.x), y: value(velocity.y, acceleration.y), z: value(velocity.z, acceleration.z) };
 }
 
 export function projectOpticalPoint(point: OpticalVector, camera: ReturnType<typeof carrierCamera>, viewport: { width: number; height: number }): OpticalPoint {
@@ -180,9 +240,9 @@ export function projectOpticalPoint(point: OpticalVector, camera: ReturnType<typ
 }
 
 export function carrierFrame(progress: number, viewport: { width: number; height: number }, box: FlightBox, rendered?: CarrierCameraSample) {
-  const p = clamp(progress), requestedCamera = carrierCameraProgress(p);
-  const camera = clamp(rendered?.progress ?? requestedCamera);
-  const rig = carrierCamera(camera, viewport, rendered?.perspective);
+  const p = clamp(rendered?.phase ?? progress), requestedCamera = carrierCameraProgress(progress);
+  const camera = clamp(rendered?.progress ?? carrierCameraProgress(p));
+  const rig = carrierCamera(camera, viewport, rendered?.perspective, rendered);
   const centreX = box.left + box.width / 2, centreY = box.top + box.height / 2;
   const unitX = multiply(rig.planeRight, rig.planeScale / viewport.height);
   const unitY = multiply(rig.planeUp, -rig.planeScale / viewport.height);
@@ -200,25 +260,16 @@ export function carrierFrame(progress: number, viewport: { width: number; height
   const matrix = [a,b,0,g, c,d,0,h, 0,0,1,0, e,f,0,1];
   const project = (x: number, y: number) => projectOpticalPoint(add(planeCentre, add(multiply(unitX, x - box.width / 2), multiply(unitY, y - box.height / 2))), rig, viewport);
   const corners = [project(0,0), project(box.width,0), project(box.width,box.height), project(0,box.height)];
-  const separated = between(camera, .08, .155);
-  const reveal = between(p, .14, .38) * separated;
+  const channels = carrierChannels(p, camera);
   return {
     progress: p, camera, requestedCamera, rig,
-    beat: p < .025 ? "ignition" : p < .14 ? "beam-forming" : reveal < .999 ? "image-forming" : p < .48 ? "image-held" : camera < .96 ? "camera-transfer" : "settling",
-    environment: between(camera, .5, .84),
-    image: between(p, .14, .30) * separated,
-    reveal,
-    interface: between(camera, .67, .96),
-    header: between(camera, .76, .98),
-    light: between(p, 0, .012) * (1 - between(camera, .34, .62)),
-    emitter: 1 - between(camera, .26, .5),
-    charge: between(p, 0, .025),
-    beamReach: between(p, .025, .15),
-    beamSpread: between(p, .055, .15),
-    rayLength: between(p, .025, .15),
-    frame: between(p, .08, .15) * (1 - between(camera, .64, .92)),
+    beat: p < carrierCue(400) ? "ignition" : p < carrierCue(1100) ? "beam-forming" :
+      p < carrierCue(1800) ? "frame-forming" : channels.contentResolve < .999 ? "image-forming" :
+      p < carrierCue(3650) ? "image-held" : camera < .96 ? "camera-transfer" : "settling",
+    ...channels,
+    rayLength: channels.beamReach,
     transform: "matrix3d(" + matrix.map(v => Number(v.toFixed(12))).join(",") + ")",
     matrix, corners,
-    scanLine: [project(0, box.height * (1 - reveal)), project(box.width, box.height * (1 - reveal))],
+    scanLine: [project(0, box.height * (1 - channels.reveal)), project(box.width, box.height * (1 - channels.reveal))],
   };
 }

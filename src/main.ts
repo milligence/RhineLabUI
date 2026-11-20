@@ -750,24 +750,33 @@ function openProjection(trigger?: HTMLElement) {
     const sampleCarrier = () => {
       const host = $("#three-scene"), bounds = host.getBoundingClientRect();
       if (!scene || !bounds.width || !bounds.height || !host.clientWidth || !host.clientHeight) return undefined;
-      const point = (x: number, y: number) => {
-        const p = scene!.projectCard(x, y);
-        return { x: bounds.left + p[0] * bounds.width / host.clientWidth, y: bounds.top + p[1] * bounds.height / host.clientHeight };
-      };
-      const origin = point(.72, 2.18);
+      const projected = scene.projectProjector();
+      if (!projected) return undefined;
+      const point = (p: { x: number; y: number }) => ({
+        x: bounds.left + p.x * bounds.width / host.clientWidth,
+        y: bounds.top + p.y * bounds.height / host.clientHeight,
+      });
+      const origin = point(projected.origin);
       if (!Number.isFinite(origin.x) || !Number.isFinite(origin.y)) return undefined;
-      return { origin, edge: [point(.12, 2.18), point(1.32, 2.18)] as [{x: number; y: number}, {x: number; y: number}] };
+      return { origin,
+        edge: projected.edge?.map(point) as typeof projected.edge,
+        corners: projected.corners?.map(point) as typeof projected.corners,
+        outline: projected.outline?.map(point) };
+
     };
     const entryBounds = source?.getBoundingClientRect();
     const origin = sampleCarrier()?.origin ?? (entryBounds?.width ? { x: entryBounds.left + entryBounds.width / 2, y: entryBounds.top + entryBounds.height / 2 } : undefined);
     $("#detail-content .record-projection-entry")?.focus({ preventScroll: true });
+    scene?.beginProjection();
     projectionViewer.open(record, {
       reducedMotion: !motionActive("surfaceTransitions"),
       origin,
       sampleCarrier,
+      onPresentation: phase => scene?.setProjectionPresentation(phase),
       onCameraProgress: progress => scene?.setProjectionFocus(progress),
       onBeat: markProjectionEntry,
       onClose: () => {
+        scene?.endProjection();
         markProjectionEntry("returned");
         if (fromArchive) {
           setMode("archive");

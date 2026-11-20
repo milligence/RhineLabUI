@@ -8,7 +8,7 @@ import "../src/archive-template.css";
 import "../src/projection.css";
 import "../src/archive-entry.css";
 import "./projection-cinematic-review.css";
-import { carrierCamera, projectOpticalPoint, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, type CarrierSample } from "../src/carrier-flight";
+import { carrierCamera, carrierCameraProgress, projectOpticalPoint, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, type CarrierSample } from "../src/carrier-flight";
 import { ProjectionViewer } from "../src/projection-viewer";
 import { paintTheme } from "../src/theme-ui";
 import type { ArchiveRecord } from "../src/data";
@@ -121,12 +121,15 @@ function calibrationGeometry() {
   const centre = { x: aspect * (portrait ? -.055 : -.27), y: portrait ? .235 : -.13, z: 0 };
   const halfWidth = portrait ? Math.min(.18, aspect * .20) : Math.min(.22, aspect * .115), halfHeight = portrait ? .042 : .065;
   const project = (x: number, y: number) => projectOpticalPoint({ x: centre.x + x, y: centre.y + y, z: centre.z }, rig, viewport);
-  const edge = [project(-halfWidth * .68, halfHeight), project(halfWidth * .68, halfHeight)] as CarrierSample["edge"];
-  return { viewport, project, halfWidth, halfHeight, edge, origin: project(0, halfHeight) };
+  const aperture = [project(halfWidth * .28, halfHeight + .004), project(halfWidth * .82, halfHeight + .004),
+    project(halfWidth * .82, halfHeight - .008), project(halfWidth * .28, halfHeight - .008)] as NonNullable<CarrierSample["corners"]>;
+  const edge = [aperture[0], aperture[1]] as NonNullable<CarrierSample["edge"]>;
+  const outline = [project(-halfWidth, halfHeight), project(halfWidth, halfHeight), project(halfWidth, -halfHeight), project(-halfWidth, -halfHeight)];
+  return { viewport, project, halfWidth, halfHeight, edge, aperture, outline, origin: project(halfWidth * .55, halfHeight - .002) };
 }
 
 function drawCalibration() {
-  const { viewport, project, halfWidth: w, halfHeight: h, edge } = calibrationGeometry();
+  const { viewport, project, halfWidth: w, halfHeight: h, aperture } = calibrationGeometry();
   const svg = calibration.querySelector("svg")!;
   svg.setAttribute("viewBox", `0 0 ${viewport.width} ${viewport.height}`);
   const point = (p: { x: number; y: number }) => `${p.x.toFixed(3)},${p.y.toFixed(3)}`;
@@ -134,7 +137,7 @@ function drawCalibration() {
   calibration.querySelector("polygon")!.setAttribute("points", corners.map(point).join(" "));
   const path = (points: { x: number; y: number }[]) => "M" + points.map(point).join(" L");
   calibration.querySelector(".cinematic-calibration-inset")!.setAttribute("d", path([project(-w + .007, h - .007), project(w - .007, h - .007), project(w - .007, -h + .007), project(-w + .007, -h + .007)]) + " Z");
-  calibration.querySelector(".cinematic-calibration-aperture")!.setAttribute("d", path(edge!));
+  calibration.querySelector(".cinematic-calibration-aperture")!.setAttribute("d", path(aperture) + " Z");
   const ticks = Array.from({ length: 13 }, (_, i) => {
     const x = -w * .82 + w * 1.64 * i / 12;
     return path([project(x, -h + .01), project(x, -h + (i % 3 ? .015 : .021))]);
@@ -149,10 +152,11 @@ function drawCalibration() {
 }
 
 function sampleCalibration(): CarrierSample {
-  const { origin, edge } = calibrationGeometry();
+  const { origin, edge, aperture, outline } = calibrationGeometry();
   const bounds = stage.getBoundingClientRect();
   const screen = (p: { x: number; y: number }) => ({ x: bounds.left + p.x * bounds.width / stage.clientWidth, y: bounds.top + p.y * bounds.height / stage.clientHeight });
-  return { origin: screen(origin), edge: edge!.map(screen) as NonNullable<CarrierSample["edge"]> };
+  return { origin: screen(origin), edge: edge.map(screen) as NonNullable<CarrierSample["edge"]>,
+    corners: aperture.map(screen) as NonNullable<CarrierSample["corners"]>, outline: outline.map(screen) };
 }
 
 function report() {
@@ -166,7 +170,7 @@ function options() {
   return {
     reducedMotion: reduced, manualClock: true,
     onClose: () => { stop(); drawCalibration(); report(); },
-    onCameraProgress: (progress: number) => { cameraProgress = progress; return { progress, perspective: 12 }; },
+    onPresentation: (phase: number) => { cameraProgress = carrierCameraProgress(phase); return { phase, progress: cameraProgress, perspective: 12 }; },
     sampleCarrier: sampleCalibration,
   };
 }

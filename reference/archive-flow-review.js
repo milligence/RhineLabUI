@@ -15,7 +15,6 @@ import { BootSequence } from "../src/boot";
 import { webArrayArrival } from "../src/archive-arrival";
 import { ARRAY_REVEAL_START } from "../src/boot-motion";
 import { ARRAY_OPENING_END } from "../src/wallpaper-opening";
-import { superPerformanceQuality } from "../src/wallpaper-quality";
 import { fullMotion } from "../src/motion-preferences";
 import { paintTheme } from "../src/theme-ui";
 import { records, columnFiles, archiveColumns, fileLocation } from "../src/data";
@@ -125,19 +124,22 @@ function close() {
 }
 function source() {
   const b = host.getBoundingClientRect();
-  const point = (x,y) => { const p = scene.projectCard(x,y); return {x:b.left+p[0]*b.width/host.clientWidth,y:b.top+p[1]*b.height/host.clientHeight}; };
-  return {origin:point(.72,2.18),edge:[point(.12,2.18),point(1.32,2.18)]};
+  const aperture = scene.projectProjector();
+  if (!aperture) return undefined;
+  const point = p => ({x:b.left+p.x*b.width/host.clientWidth,y:b.top+p.y*b.height/host.clientHeight});
+  return {origin:point(aperture.origin),edge:aperture.edge?.map(point),corners:aperture.corners?.map(point),outline:aperture.outline?.map(point)};
 }
 function startProjection() {
   pendingProjection = false; flightElapsed = 0;
+  scene.beginProjection();
   viewer.open(records[selected], {reducedMotion:false, manualClock:true, sampleCarrier:source,
-    onCameraProgress:p=>scene.setProjectionFocus(p), onClose:()=>{delete stage.dataset.projectionPending; if(projectionFromArchive) close(); stamp("projection returned");}});
+    onPresentation:p=>scene.setProjectionPresentation(p), onClose:()=>{scene.endProjection();delete stage.dataset.projectionPending; if(projectionFromArchive) close(); stamp("projection returned");}});
   stamp("projection requested");
 }
 function project() {
   if (!records[selected].projection) { status.textContent = "此占位档案没有投影；请选择每组第1或第5份。"; return; }
   if (viewer.isOpen) {
-    viewer.open(records[selected], {reducedMotion:false, manualClock:true, sampleCarrier:source,onCameraProgress:p=>scene.setProjectionFocus(p),onClose:()=>{delete stage.dataset.projectionPending;if(projectionFromArchive)close();}});
+    viewer.open(records[selected], {reducedMotion:false, manualClock:true, sampleCarrier:source,onPresentation:p=>scene.setProjectionPresentation(p),onClose:()=>{scene.endProjection();delete stage.dataset.projectionPending;if(projectionFromArchive)close();}});
     return;
   }
   projectionFromArchive = mode !== "detail";
@@ -235,6 +237,6 @@ document.addEventListener("keydown",event=>{if(["INPUT","SELECT","TEXTAREA"].inc
 // above remain the only entry points used during browser acceptance.
 Object.defineProperty(window,"flowReview",{get:()=>({records:records.length,checks:[...checks],failures:[...failures],last:history.at(-1)})});
 try {
-  scene=new ArchiveScene(host); scene.setQuality(superPerformanceQuality); scene.setSuperPerformance(true);scene.setMotion(fullMotion());
+  scene=new ArchiveScene(host); scene.setMotion(fullMotion());
   await scene.load(); viewer=new ProjectionViewer($("#viewport"));choose(0);scene.setMode("archive");advance(3);status.textContent="原始 GLB 已载入。使用实际物理与光学模块；固定60Hz推进。";
 } catch(error) { status.textContent=`载入失败：${error.message}`; throw error; }
