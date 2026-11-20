@@ -1,0 +1,113 @@
+{
+  "sourceDigest": "d5e23fd50b00e91f392d47a238745d0d54e1449466e1dbc4a2d531bf3df0339f",
+  "capture": "Actual production Canvas2D and DOM in the cinematic review iframe; no generated or edited imagery.",
+  "screenshots": [
+    {
+      "file": "media/cinematic-final-dark-forming.jpg",
+      "bytes": 23460,
+      "sha256": "c9fc8150d419a13068356b0d3cf6df65101e47fb36322c9a0c64f6d43e33a675",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-light-held.jpg",
+      "bytes": 19933,
+      "sha256": "1924976a4905e400d51ad1572370d1d235d99c618b96d77b6581749c604bb440",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-continuous-04.jpg",
+      "bytes": 23432,
+      "sha256": "8c4159ba715eeff34cdc7ca4540335a9e10b3c8e7b3bd601d24512a2564ecb08",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-continuous-07.jpg",
+      "bytes": 58189,
+      "sha256": "aacbd67a108f4ded19c705d5f6d5751dd77049067f4a724a67b9cd98ba385e33",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-reversal.jpg",
+      "bytes": 20576,
+      "sha256": "b36c2709ce684894c702291eef7e8e2720c1882cb565c2c49afc84a0a63e8b4b",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-reentry.jpg",
+      "bytes": 19664,
+      "sha256": "cbfe25a35f873dd85efcd474a1d6925efc2325057641685f3588653c0df3d6c7",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-mobile-approach.jpg",
+      "bytes": 10766,
+      "sha256": "fdc92a521648042efb51aa00d5744622e72637dd424a492e93d7abac9de30d56",
+      "dimensions": [
+        390,
+        780
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-mobile-reading.jpg",
+      "bytes": 28053,
+      "sha256": "fc1271eaad1f40b731771c8e0e3816bc59d94bf1b0aa9e883d8fe718ca227767",
+      "dimensions": [
+        390,
+        780
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-short-held.jpg",
+      "bytes": 17611,
+      "sha256": "7e523be8185d4edf8ea25f13089ae7208e34861d8ad7dc29d2396279b3e10769",
+      "dimensions": [
+        900,
+        614
+      ],
+      "content": "public synthetic fixture and labelled calibration plane only"
+    },
+    {
+      "file": "media/cinematic-final-published-preview.jpg",
+      "bytes": 65729,
+      "sha256": "4c6172c8c63f347aabe7d8e7ccfe35e913f98377c43296bb6b2242a224c6900b",
+      "dimensions": [
+        1348,
+        1040
+      ],
+      "description": "Final published preview, 1280 × 800 dark image-forming at 1850 ms; outer and inner source identity verified."
+    }
+  ],
+  "browserEvidenceSha256": "8dd663a75de5617a957886af46df9b82dc50a503ec336e3cd7c58bedf398a10c",
+  "continuousFramesArchived": [
+    "04",
+    "07"
+  ],
+  "note": "Raw browser evidence retains eight continuous frame observations. Only selected screenshot files are archived.",
+  "publishedPreviewEvidenceSha256": "8f16b885647cf8ba7d7ef1d4f7e34ba9b096b2e9e477f5acfd4345d3a31a1d84"
+}

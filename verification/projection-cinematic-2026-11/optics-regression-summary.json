@@ -1,0 +1,107 @@
+{
+  "executed": "2026-11-20T07:01:49.504385+00:00",
+  "sourceFiles": {
+    "src/carrier-optics.ts": "97c7a144020626b8a6fd403f994b00512ecf72549934753efde32e57b16a6f99",
+    "src/projection-viewer.ts": "a3d09250db0d434f2f0d9116d2cbf2cf52e1176207bb62a0aa244596a9f00bef",
+    "scripts/check-carrier-optics.mjs": "782a90066554ee7e0c354516bf342cfe0ed37c79dd3a3f3eb9e6855fe5dde594",
+    "scripts/check-carrier-flight.mjs": "94e9ab0f5067f2dbc1f65903ce048ee129b415bf6c99bf8fe20af1a4e38399e7"
+  },
+  "checks": {
+    "carrier-optics": {
+      "passed": true,
+      "scope": "Actual production alpha/volume buffers, cache and lifecycle with inert Canvas boundaries; no Canvas rasterization, encoded PNG, browser layout, WebGL or full-scene acceptance.",
+      "monotoneSamples": 5,
+      "coverage": [
+        4e-06,
+        0.014619,
+        0.378468,
+        0.936074,
+        0.999808
+      ],
+      "deterministicMaskSha256": "615ad4adab07d69b94ae9a79209382eb12b543b91d9b2b30b3b0991bd3b2c24b",
+      "maskSize": [
+        416,
+        224
+      ],
+      "resizeCases": [
+        {
+          "viewport": [
+            390,
+            780
+          ],
+          "canvas": [
+            585,
+            1170
+          ],
+          "beam": [
+            144,
+            176
+          ],
+          "mask": [
+            256,
+            384
+          ]
+        },
+        {
+          "viewport": [
+            2560,
+            1440
+          ],
+          "canvas": [
+            2066,
+            1162
+          ],
+          "beam": [
+            480,
+            192
+          ],
+          "mask": [
+            432,
+            224
+          ]
+        },
+        {
+          "viewport": [
+            7680,
+            4320
+          ],
+          "canvas": [
+            2066,
+            1162
+          ],
+          "beam": [
+            480,
+            208
+          ],
+          "mask": [
+            416,
+            224
+          ]
+        }
+      ],
+      "checks": [
+        "transparent initial frame",
+        "monotone spatial deposition",
+        "same-phase determinism",
+        "cache eviction and reverse revisits",
+        "fresh-open determinism",
+        "bounded bitmap/cache",
+        "stable and reduced-motion bypass",
+        "missing-context fallback",
+        "volume hold cache",
+        "theme invalidation",
+        "high-DPR resize bounds",
+        "inactive-frame clearing",
+        "all-surface resource release"
+      ]
+    },
+    "carrier-flight": {
+      "checks": "Readable ignition, geometric beam growth, progressive image reveal and stationary hold, stall-safe presentation time, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization, scaled-stage production painting and optical source alignment, settled mask removal and resource/input cleanup",
+      "reversalCases": 252,
+      "scaledPainterCases": 25,
+      "opticalLifecycleCases": 2,
+      "maxProjectionErrorPx": 8.854634927502048e-07,
+      "maxExposedOverlap": 0
+    }
+  }
+}

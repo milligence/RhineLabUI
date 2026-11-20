@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-20",
+  "timezone": "Asia/Shanghai",
+  "implementationCommit": "a14b600698315b8ad5edb88c15d992f33ce54a81",
+  "previewCommit": "e65001b2230cec4ece5f741d64004913c349b7a2",
+  "publicBuild": {
+    "passed": true,
+    "release": "3188ed1f6b30d106"
+  },
+  "sourceDigest": "d5e23fd50b00e91f392d47a238745d0d54e1449466e1dbc4a2d531bf3df0339f",
+  "bundleSha256": "289f06287c63a3c110aff8d25d5c7f96071c025d6ad95d712f1197d9af26cd6b",
+  "browser": {
+    "environment": "Cloud Chromium; Canvas2D available; Cube WebGL Disabled",
+    "observedViewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        900,
+        614
+      ],
+      [
+        390,
+        780
+      ]
+    ],
+    "observed": [
+      "continuous production optical formation and camera approach",
+      "mid-formation return",
+      "reopen during return",
+      "light and dark surfaces",
+      "portrait approach and settled reading",
+      "Cube reduced-motion entry with phase=open, mask=none, clarity=1",
+      "closed DOM hidden with zero canvases"
+    ],
+    "excludedEvidence": [
+      "The reduced-motion-while-opening report is not used for a pass because message refresh timing was uncertain.",
+      "The close report retains stale phase/frame fields; close success uses the accompanying fresh DOM observation only."
+    ],
+    "closedDom": {
+      "canvases": 0,
+      "hidden": true
+    },
+    "cubeReducedEntry": {
+      "phase": "open",
+      "opticalMask": "none",
+      "clarity": 1,
+      "webglReady": false
+    },
+    "fpsAccepted": false,
+    "physicalArchiveSceneAccepted": false,
+    "cubeWebglPixelsAccepted": false
+  },
+  "tests": {
+    "carrierOptics": "carrier-optics-checks.json",
+    "carrierFlight": "carrier-flight-checks.json",
+    "sourceIdentity": "optics-regression-summary.json"
+  },
+  "previewUrl": "https://htmlpreview.github.io/?https://github.com/milligence/RhineLabUI/blob/e65001b2230cec4ece5f741d64004913c349b7a2/reference/projection-cinematic-review.bundle.html",
+  "publishedPreviewVerification": "published-preview-verification.json"
+}
