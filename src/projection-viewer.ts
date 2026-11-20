@@ -52,14 +52,26 @@ export class ProjectionViewer {
     this.root.setAttribute("role", "dialog");
     this.root.setAttribute("aria-modal", "true");
     this.root.setAttribute("aria-labelledby", "projection-title");
-    this.root.innerHTML = `<div class="projection-environment" aria-hidden="true"><div class="projection-depth-plane"></div><div class="projection-horizon"></div><div class="projection-collimator"></div></div><div class="projection-ignition" aria-hidden="true"></div><header class="projection-header"><button type="button" class="projection-back" data-projection="close">← <span>返回档案</span><kbd>ESC</kbd></button><div class="projection-identity"><span class="projection-eyebrow"></span><h1 id="projection-title"></h1></div><span class="projection-mode-label"></span></header><div class="projection-content"></div><div class="projection-announcement" role="status" aria-live="polite"></div>`;
+    this.root.innerHTML = `<div class="projection-environment" aria-hidden="true"><div class="projection-horizon"></div></div><div class="projection-ignition" aria-hidden="true"></div><header class="projection-header"><button type="button" class="projection-back" data-projection="close"><span aria-hidden="true">←</span><span>返回档案</span><kbd>ESC</kbd></button><div class="projection-identity"><span class="projection-eyebrow"></span><div class="projection-title-group"><h1 id="projection-title"></h1><span class="projection-subtitle"></span></div></div><span class="projection-mode-label"></span></header><div class="projection-content"></div><div class="projection-announcement" role="status" aria-live="polite"></div>`;
     this.host = this.root.querySelector(".projection-content")!;
     parent.appendChild(this.root);
     this.root.addEventListener("click", event => {
+      const target = event.target as Element;
+      const recap = this.root.querySelector<HTMLDetailsElement>(".cube-experiment-recap");
+      if (recap?.open && (!recap.contains(target) || target.closest("[data-recap-close]"))) {
+        recap.open = false;
+        if (target.closest("[data-recap-close]")) recap.querySelector("summary")?.focus();
+      }
       if ((event.target as Element).closest('[data-projection="close"]')) this.close();
     });
     this.root.addEventListener("keydown", event => {
-      if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); this.close(); return; }
+      if (event.key === "Escape") {
+        event.preventDefault(); event.stopPropagation();
+        const recap = this.root.querySelector<HTMLDetailsElement>(".cube-experiment-recap[open]");
+        if (recap) { recap.open = false; recap.querySelector("summary")?.focus(); }
+        else this.close();
+        return;
+      }
       if (event.key !== "Tab") return;
       const focusable = [...this.root.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), summary, [tabindex="0"]')].filter(n => n.tabIndex >= 0 && n.getClientRects().length && !n.closest("[inert]"));
       const first = focusable[0], last = focusable[focusable.length - 1];
@@ -87,6 +99,7 @@ export class ProjectionViewer {
     this.isOpen = true;
     this.root.hidden = false;
     this.root.inert = false;
+    this.root.querySelector(".projection-announcement")!.textContent = "";
     this.root.dataset.kind = record.projection.kind;
     this.root.dataset.reduced = String(options.reducedMotion);
     this.root.dataset.state = options.reducedMotion ? "open" : "opening";
@@ -98,8 +111,11 @@ export class ProjectionViewer {
       this.root.querySelector<HTMLElement>(".projection-header")!.style.opacity = "0";
       this.root.querySelector<HTMLElement>(".projection-environment")!.style.opacity = "0";
     }
-    this.root.querySelector(".projection-eyebrow")!.textContent = `${record.id} / ${record.projection.kind === "research" ? "RESEARCH RECORD" : "EXPERIMENT RECORD"}`;
-    this.root.querySelector("h1")!.textContent = record.en;
+    this.root.querySelector(".projection-eyebrow")!.textContent = `${record.id} / ${record.projection.kind === "research" ? "RESEARCH" : "EXPERIMENT"}`;
+    this.root.querySelector("h1")!.textContent = record.title;
+    const subtitle = this.root.querySelector<HTMLElement>(".projection-subtitle")!;
+    subtitle.textContent = record.en;
+    subtitle.hidden = record.title.toLocaleUpperCase() === record.en.toLocaleUpperCase();
     this.root.querySelector(".projection-mode-label")!.textContent = record.projection.label;
     if (!sameOpen) {
       this.saveState(); this.research?.dispose(); this.cube?.dispose();
@@ -253,26 +269,28 @@ export class ProjectionViewer {
   private openCube(data: CubeProjectionData) {
     const record = this.record!;
     let selected = Math.min(data.experiments.length - 1, this.presetMemory.get(record.id) ?? 0);
-    this.host.innerHTML = `<div class="cube-preset-rail"><label><span>EXPERIMENT / 构造</span><select aria-label="载入实验构造">${data.experiments.map((experiment, i) => `<option value="${i}">${escapeHtml(experiment.title)}</option>`).join("")}</select></label><p></p></div><div class="cube-host"></div><details class="cube-experiment-recap"><summary>${data.retrospectiveLabel ? "EXPERIMENT NOTES" : "RETROSPECTIVE"} / ${escapeHtml(data.retrospectiveLabel ?? "构造复盘")}<span>展开记录 ＋</span></summary><div class="cube-recap-content"></div></details>`;
+    this.host.innerHTML = `<div class="cube-preset-rail"><label><span>构造</span><select aria-label="载入实验构造">${data.experiments.map((experiment, i) => `<option value="${i}">${escapeHtml(experiment.title)}</option>`).join("")}</select></label><span class="cube-preset-count" aria-hidden="true"></span><details class="cube-experiment-recap"><summary><span>${escapeHtml(data.retrospectiveLabel ?? "构造记录")}</span><span class="cube-recap-toggle" aria-hidden="true">＋</span></summary><div class="cube-recap-content"><header class="cube-recap-heading"><div><small>EXPERIMENT RECORD</small><h2></h2></div><button type="button" data-recap-close aria-label="关闭构造记录">×</button></header><div class="cube-recap-reading"></div></div></details></div><div class="cube-host"></div>`;
     const select = this.host.querySelector<HTMLSelectElement>(".cube-preset-rail select")!;
     const recap = this.host.querySelector<HTMLDetailsElement>(".cube-experiment-recap")!;
     recap.addEventListener("toggle", () => {
-      recap.querySelector("summary span")!.textContent = recap.open ? "收起记录 −" : "展开记录 ＋";
+      recap.querySelector(".cube-recap-toggle")!.textContent = recap.open ? "−" : "＋";
     });
     select.value = String(selected);
     const paintRecap = () => {
       const experiment = data.experiments[selected]; if (!experiment) return;
-      this.host.querySelector(".cube-preset-rail p")!.textContent = experiment.description;
-      this.host.querySelector(".cube-recap-content")!.innerHTML = `<div class="projection-recap">${experiment.retrospective.map(p => `<p>${escapeHtml(p)}</p>`).join("")}</div><div class="projection-sources">${sourceMarkup(experiment.sources)}</div>`;
+      this.host.querySelector(".cube-preset-count")!.textContent = `${String(selected + 1).padStart(2, "0")} / ${String(data.experiments.length).padStart(2, "0")}`;
+      this.host.querySelector(".cube-recap-heading h2")!.textContent = experiment.title;
+      this.host.querySelector(".cube-recap-reading")!.innerHTML = `<div class="projection-recap">${experiment.retrospective.map(p => `<p>${escapeHtml(p)}</p>`).join("")}</div><div class="projection-sources">${sourceMarkup(experiment.sources)}</div>`;
       this.host.querySelector<HTMLElement>(".cube-experiment-recap")!.dataset.experiment = experiment.id;
+      this.cube?.setArchiveContext(experiment.title, experiment.description, experiment.state);
     };
-    paintRecap();
     this.cube = new CubeProjection(this.host.querySelector(".cube-host")!, { experiment: this.cubeSnapshots.get(record.id) ?? data.experiments[selected]?.state, reducedMotion: this.options.reducedMotion });
+    paintRecap();
     const view = this.cubeViews.get(record.id);
     if (view) this.cube.restoreInspectionState(view);
     select.addEventListener("change", () => {
       selected = Number(select.value); this.presetMemory.set(record.id, selected);
-      this.cube?.loadExperiment(data.experiments[selected]?.state); paintRecap();
+      this.cube?.loadExperiment(data.experiments[selected]?.state, { resetHistory: true }); paintRecap();
       this.root.querySelector(".projection-announcement")!.textContent = `已载入${data.experiments[selected].title}，复盘已同步。`;
     });
   }
