@@ -175,25 +175,39 @@ export const carrierCue = (milliseconds: number) => clamp(milliseconds / CARRIER
  * then make one C2 approach. No transient velocity is returned to zero later. */
 export const carrierCameraProgress = (progress: number) => between(progress, carrierCue(4200), 1);
 
+/** Typography belongs to the camera approach, after the actual structure has
+ * formed. These independent C2 envelopes use the already-presented camera
+ * state: reverse travel revisits the same exposure without a second clock. */
+export function carrierReadingChannels(camera: number) {
+  const p = clamp(camera);
+  return {
+    identity: between(p, .36, .82),
+    landmarks: between(p, .10, .48),
+    names: between(p, .40, .88),
+    context: between(p, .62, .94),
+    reading: between(p, .58, .95),
+  };
+}
+
 /** Independent optical envelopes. Source/beam may fade while the finite plate
  * and its closed rim remain visible; no single light gate owns all materials. */
 export function carrierChannels(progress: number, camera = carrierCameraProgress(progress)) {
   const p = clamp(progress), cue = (a: number, b: number) => between(p, carrierCue(a), carrierCue(b));
   const frameBuild = cue(1350, 1850);
-  const contentResolve = clamp((p - carrierCue(1900)) / (carrierCue(3600) - carrierCue(1900)));
+  const contentResolve = clamp((p - carrierCue(1700)) / (carrierCue(4000) - carrierCue(1700)));
   const sourcePower = cue(0, 550) * (1 - between(camera, .38, .80));
   const beamPower = cue(550, 1050) * (1 - between(camera, .30, .72));
   const platePresence = cue(1350, 1650) * (1 - between(camera, .88, 1));
   const edgePresence = cue(1350, 1550) * (1 - between(camera, .985, 1));
-  const image = cue(1850, 1900);
+  const image = cue(1650, 1780);
   return {
     sourcePower, beamPower, platePresence, edgePresence, frameBuild, contentResolve,
     image, reveal: contentResolve,
     charge: cue(0, 550), beamReach: cue(550, 1350), beamSpread: cue(750, 1350),
     environment: between(camera, .70, .95),
     interface: between(camera, .80, .98),
-    // Title and content inhabit one plane and resolve through the same mask.
-    header: image,
+    // The plane exists before its typography. Reading has its own envelopes.
+    header: carrierReadingChannels(camera).identity,
     light: Math.max(sourcePower, beamPower, platePresence, edgePresence),
     emitter: sourcePower,
     frame: frameBuild * edgePresence,
@@ -313,7 +327,7 @@ export function carrierFrame(progress: number, viewport: { width: number; height
   return {
     progress: p, camera, requestedCamera, rig,
     beat: p < carrierCue(550) ? "ignition" : p < carrierCue(1350) ? "beam-forming" :
-      p < carrierCue(1900) ? "frame-forming" : channels.contentResolve < .999 ? "image-forming" :
+      p < carrierCue(1700) ? "frame-forming" : channels.contentResolve < .999 ? "image-forming" :
       p < carrierCue(4200) ? "image-held" : camera < .96 ? "camera-transfer" : "settling",
     ...channels,
     rayLength: channels.beamReach,

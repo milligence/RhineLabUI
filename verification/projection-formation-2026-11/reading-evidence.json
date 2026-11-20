@@ -1,0 +1,8 @@
+{
+  "state": "open",
+  "mapStyle": "width: 3570px; height: 980px; transform: translate3d(100.429px, 126px, 0px) scale(0.179592); --label-scale: 5.122727272727273; --focus-label-scale: 5.568181818181818;",
+  "bodyStyle": "--projection-clip-top: 126px; --projection-clip-bottom: 116px; --projection-line-main: 1; --projection-line-secondary: 1; --projection-label-size: 1; --projection-caption-size: 1; --projection-core-main: 1; --projection-core-selected: 1; --projection-detail: 1; --projection-name-clip: 0.0000%; --reading-context: 1; --reading-content: 1;",
+  "primaryWidth": "1.7px",
+  "nodeCount": 36,
+  "edgeCount": 39
+}

@@ -1,0 +1,56 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> rhine-lab-analysis-os@1.0.0 check:projection-ui-state
+> node --experimental-strip-types scripts/check-projection-ui-state.mjs
+
+{
+  "passed": true,
+  "executed": "2026-11-20T16:50:21.760Z",
+  "node": "v24.22.3",
+  "scope": "Production state methods with inert UI/rendering effects; no browser layout or WebGL acceptance.",
+  "sourceDigest": "56f0ed4d1318b60c88c0a15b9202c4dd5803bb3be39a8ad187c2148969a63012",
+  "sourceFiles": {
+    "src/research-projection.ts": "6a5867eb8753f6416dd7f4f90f1fd15172bc1676813c84477e8efa2a5b447e5a",
+    "src/cube-projection.ts": "6204298ec0f52a53b5d94e97e4179906e6bec492514ffbdcd3f27579c7820169",
+    "src/cube-rotation.ts": "6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972",
+    "src/html.ts": "2ba5ade6bdeef34d5328844bf2b4190c3cefe3d81f90cc78e85ea0abd81d2fad",
+    "src/projection-types.ts": "0e918dff4806e0c02190b1a9c9ff2701cdcb459d81496c29a9d49fc098336fb6",
+    "src/research-formation.ts": "b6308333f5f69edf7851664a732b899bd66bb71d58f475bab90fdd940e339794",
+    "src/carrier-flight.ts": "3d0c19c4a5226fd25ae0fdc0f67024f4e88bc8c134046261e0bd7b7cafbf4ec3",
+    "scripts/check-projection-ui-state.mjs": "56aa4354737e98fa0119b306bee8987bb2e68b02130f733916beaaa028f5f318",
+    "package-lock.json": "5aad190f8a7a1687a3f17a67805e019bde3ff705d1a5d31d7f25d19deea4ff53"
+  },
+  "checks": {
+    "research": [
+      "transfer snapshot protection",
+      "synchronous reading restoration",
+      "diagnostic read purity",
+      "reversible measured-path exposure and bounded real-arc light",
+      "complete and reduced-motion mask removal",
+      "camera-owned reading channels independent of tree deposition",
+      "reversible reading and reduced-motion restoration",
+      "selective held labels and continuous restoration",
+      "screen compensation leaves graph anchors unchanged",
+      "mobile landmarks use complete visible bounds and refresh on resize",
+      "suspended replay and flight cannot advance hidden state",
+      "reopening preserves pending destination, replay cursor and elapsed time",
+      "closing snapshots preserve captured reading",
+      "explicit pause survives suspension and reopen",
+      "synchronous viewport reframe supersedes suspended destination",
+      "animated hidden reframe waits for reopen and retains the new target"
+    ],
+    "cube": [
+      "normalized baseline",
+      "free camera isolation",
+      "geometry and face provenance",
+      "observer provenance",
+      "undo and redo provenance",
+      "preset history isolation",
+      "gesture grouping reset",
+      "undoable file import",
+      "invalid-load preservation",
+      "contour before material",
+      "reversible formation preserves experiment, camera, counting and history"
+    ]
+  }
+}

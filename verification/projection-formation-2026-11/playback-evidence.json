@@ -1,0 +1,191 @@
+{
+  "identity": {
+    "created": "2026-11-20T16:50:31.208Z",
+    "content": "public synthetic fixture only",
+    "reviewKind": "projection-cinematic",
+    "nodes": 36,
+    "edges": 39,
+    "route": 23,
+    "scope": "Production ProjectionViewer and CarrierFlight continuously played or replayed at fixed display steps, with real ResearchProjection and CubeProjection. The labelled synthetic calibration plane uses the same camera projection. No ArchiveScene, GLB, real physical carrier, GPU occlusion or Cube WebGL pixel acceptance.",
+    "sourceDigest": "682d6490a064128b4ab544ca8caa38d3e33dfec6307f33f5b0371782dc79085b",
+    "sourceFiles": {
+      "content/fixtures/array-5x10.json": "0f692641a6df58baddf5844caaa6d560a237fe67fb1a6dbd17ee5376f0bd4506",
+      "reference/projection-cinematic-review.css": "d078d2e3f440fac03e16243b2a3da8984062bc9cf15b33b2f9f6d1dd41d75abf",
+      "reference/projection-cinematic-review.ts": "f2b813c8403226583942db7d041d07a1bb410bfd11766119c816ecd2457844e0",
+      "src/archive-entry.css": "0bdafbda0f84aeb7a1a8aefdd8b56a676bff1fce0b9523f59478766c00419e71",
+      "src/archive-template.css": "b0d87885b9f9e484b9decc38fa4fa36243d36f4d956f590022594a37ebd8ab9c",
+      "src/carrier-flight.ts": "3d0c19c4a5226fd25ae0fdc0f67024f4e88bc8c134046261e0bd7b7cafbf4ec3",
+      "src/carrier-optics.ts": "579383dec6176cefbe96118fea1a66e57daf572ac27af9728669233516788cd2",
+      "src/cube-optics.css": "f3c3bb9df044693fabc4edd07da8a5a4119c86b1b801067009b77ee5ce3430b4",
+      "src/cube-projection.ts": "6204298ec0f52a53b5d94e97e4179906e6bec492514ffbdcd3f27579c7820169",
+      "src/cube-rotation.ts": "6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972",
+      "src/fonts.css": "63d5271b9154a55e23a26e1a5ec73ffa9e6874d56db4c6a629c88175d50fa975",
+      "src/html.ts": "2ba5ade6bdeef34d5328844bf2b4190c3cefe3d81f90cc78e85ea0abd81d2fad",
+      "src/projection-atmosphere.css": "25934147a1e9e097cd4d523b8a705ef515263419ffa12fc3e1b7735befc18bba",
+      "src/projection-types.ts": "0e918dff4806e0c02190b1a9c9ff2701cdcb459d81496c29a9d49fc098336fb6",
+      "src/projection-viewer.ts": "3d4a50f97acaeedc8096da256c310fe4a733a2cbb9d9d6b647f762e6e047cb97",
+      "src/projection.css": "03ada7330f551b1d4c62c3b02201dca59c229c8bafadb692def45dd3599cfff1",
+      "src/quality-settings.css": "ef3398d7ee3ce5906cb954a4f6ddc53f0eae2547e5c4daa2249e2c096df1090b",
+      "src/research-formation.ts": "b6308333f5f69edf7851664a732b899bd66bb71d58f475bab90fdd940e339794",
+      "src/research-optics.css": "b1e14ca9376187ce36df065e8755ded5726479e78cd4e56cca93a76d946feb8c",
+      "src/research-projection.ts": "6a5867eb8753f6416dd7f4f90f1fd15172bc1676813c84477e8efa2a5b447e5a",
+      "src/research-tree.css": "0dce0d02b747ffae197af24511e12faf0b4a843378f76dc8730f6c3b3551927a",
+      "src/responsive.css": "f384e944084436708228bc54b64c8617e298d48f292a769dfaf018a2807cd844",
+      "src/style.css": "2f08b47140f01a7ad4bdc787672a9c91c6a94d14b1b5ee968f03488a4182b790",
+      "src/theme-ui.ts": "5fb72944e37878926287de5f66589518842559671c63b1d087fb96c108e293fa",
+      "src/theme.css": "fbf9d648be1ac5cf680420db22d19bb5442fb404dbec4ee60df1606dc3942ab1",
+      "package-lock.json": "5aad190f8a7a1687a3f17a67805e019bde3ff705d1a5d31d7f25d19deea4ff53",
+      "reference/projection-cinematic-review.html": "8007741b5e61da22bf47226d5c5196df7f2f7cb7873a506775407e7cde27ad1b",
+      "scripts/review-projection-cinematic.mjs": "5621f963baa1d7b4b05056809a7234ccb7099a1ff74a8bb32a6912a67a9a444d"
+    },
+    "fonts": {
+      "source": "https://raw.githubusercontent.com/milligence/RhineLabUI/70b614d252a31fbd80efd0d61fe79ba126f2bd85/public/",
+      "faces": 100,
+      "inline": false,
+      "bytes": 0
+    }
+  },
+  "current": {
+    "scope": "rhine-projection-cinematic-review",
+    "event": "state",
+    "width": 1280,
+    "height": 800,
+    "elapsedMs": 6808.611999999994,
+    "running": false,
+    "reduced": false,
+    "speed": 1,
+    "mode": "entrance",
+    "entranceMs": 6800,
+    "returnMs": 2400,
+    "source": "labelled synthetic calibration plane; no archive GLB",
+    "stats": {
+      "open": true,
+      "kind": "research",
+      "phase": "open",
+      "beat": "open",
+      "flight": {
+        "progress": 1,
+        "presentedPhase": 1,
+        "sourcePower": 0,
+        "beamPower": 0,
+        "platePresence": 0,
+        "edgePresence": 0,
+        "frameBuild": 1,
+        "contentResolve": 1,
+        "velocity": 0,
+        "presentedMs": 6808.611999999994,
+        "camera": 1,
+        "requestedCamera": 1,
+        "perspective": 12,
+        "position": {
+          "x": -1.697670650988058,
+          "y": 0.4886444119000993,
+          "z": 5.222442313099166
+        },
+        "aim": {
+          "x": 0.39220269646827766,
+          "y": 0.04201674528126626,
+          "z": 0.34999999999999964
+        },
+        "image": 1,
+        "clarity": 1,
+        "opticalMask": "none",
+        "reveal": 1,
+        "beamReach": 1,
+        "environment": 1,
+        "corners": [
+          {
+            "x": 1.8189894035458565e-12,
+            "y": 1.7053025658242404e-13
+          },
+          {
+            "x": 1279.9999999999998,
+            "y": 2.2737367544323206e-13
+          },
+          {
+            "x": 1280.0000000000002,
+            "y": 799.9999999999998
+          },
+          {
+            "x": 1.3642420526593924e-12,
+            "y": 799.9999999999997
+          }
+        ],
+        "trace": [
+          {
+            "beat": "ignition",
+            "elapsed": 0,
+            "progress": 0
+          },
+          {
+            "beat": "beam-forming",
+            "elapsed": 565,
+            "progress": 0.08303117647058732
+          },
+          {
+            "beat": "frame-forming",
+            "elapsed": 1397,
+            "progress": 0.2053841176470579
+          },
+          {
+            "beat": "image-forming",
+            "elapsed": 1717,
+            "progress": 0.25244294117646965
+          },
+          {
+            "beat": "image-held",
+            "elapsed": 4007,
+            "progress": 0.5892076470588226
+          },
+          {
+            "beat": "camera-transfer",
+            "elapsed": 4263,
+            "progress": 0.626854705882352
+          },
+          {
+            "beat": "settling",
+            "elapsed": 6375,
+            "progress": 0.9374429411764696
+          },
+          {
+            "beat": "open",
+            "elapsed": 6809,
+            "progress": 1
+          }
+        ]
+      },
+      "record": "Q-001",
+      "research": {
+        "selected": "T13",
+        "x": -1481.14,
+        "y": -344.343534,
+        "scale": 1.35,
+        "focused": true,
+        "reading": {},
+        "playing": false,
+        "nodeCount": 36,
+        "narrativeSteps": 23,
+        "layout": "evolution",
+        "edgeCount": 39,
+        "formation": 1,
+        "readingProgress": 1,
+        "presentationSuspended": false,
+        "presentationScale": 1,
+        "presentationDetail": 1,
+        "presentationNames": 1,
+        "formedEdges": 39,
+        "retrospectiveNode": "T13",
+        "reducedMotion": false,
+        "settled": true,
+        "anchor": {
+          "x": 203.66000000000008,
+          "y": 453.50646600000005
+        },
+        "viewport": {
+          "width": 1198,
+          "height": 602
+        }
+      }
+    }
+  }
+}

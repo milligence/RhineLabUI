@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { installProjectorAperture, setProjectorAperturePower, PROJECTOR_APERTURE } from "../src/projector-aperture.ts";
 import { themeMaterial } from "../src/theme-material.ts";
-import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierCameraProgress, carrierCamera, carrierFrame, carrierLocalPoint, projectOpticalPoint, carrierCue, carrierChannels, carrierReceiverPlane, carrierPlaneCorners } from "../src/carrier-flight.ts";
+import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierCameraProgress, carrierCamera, carrierFrame, carrierLocalPoint, projectOpticalPoint, carrierCue, carrierChannels, carrierReadingChannels, carrierReceiverPlane, carrierPlaneCorners } from "../src/carrier-flight.ts";
 import { archiveFraming, viewportLayout } from "../src/viewport-layout.ts";
 import { INSPECTION_LIFT, smooth as nativeEase } from "../src/motion.ts";
 
@@ -16,7 +16,7 @@ const box = { left: 46, top: 98, width: 1348, height: 824 };
 const flight = new CarrierFlight();
 flight.startPresentation(0);
 const sample = time => carrierFrame(flight.step(time), viewport, box);
-const ignition = sample(550), beam = sample(700), beamArrived = sample(1350), frameClosed = sample(1850), forming = sample(2750), held = sample(3900), transfer = sample(6000), arrived = sample(CARRIER_ENTRANCE_MS);
+const ignition = sample(550), beam = sample(700), beamArrived = sample(1350), frameClosed = sample(1850), forming = sample(2750), held = sample(4100), transfer = sample(6000), arrived = sample(CARRIER_ENTRANCE_MS);
 assert.equal(ignition.image, 0, "The physical source lights before any image appears");
 assert(ignition.sourcePower > .9 && ignition.environment === 0);
 assert.equal(ignition.camera, 0, "The original settled shot establishes the port and formation without residual camera bounce");
@@ -24,16 +24,16 @@ assert(beam.beamReach > 0 && beam.beamReach < .5 && beam.reveal === 0, "The beam
 close(beamArrived.beamReach, 1, "The beam reaches the receiver before the finite frame begins", 1e-12);
 assert.equal(beamArrived.frameBuild, 0);
 assert.equal(beamArrived.reveal, 0);
-assert.equal(frameClosed.frameBuild, 1, "The finite frame closes before the main information appears");
-assert.equal(frameClosed.reveal, 0);
+assert.equal(frameClosed.frameBuild, 1, "The finite frame closes while the first structural seed begins");
+assert(frameClosed.reveal > 0 && frameClosed.reveal < .1, "Only the opening of the structure overlaps the frame's last edge");
 assert.equal(forming.image, 1, "Spatial exposure owns image formation without a second whole-page fade");
 assert(forming.reveal > .1 && forming.reveal < .7, "The image is spatially revealed over time");
 assert.equal(held.image, 1); assert.equal(held.reveal, 1); assert.equal(held.contentResolve, 1);
 assert.equal(held.environment, 0); assert.equal(held.beat, "image-held");
-const coexistStart = carrierFrame(carrierCue(3600), viewport, box), coexistEnd = carrierFrame(carrierCue(4200), viewport, box);
+const coexistStart = carrierFrame(carrierCue(4000), viewport, box), coexistEnd = carrierFrame(carrierCue(4200), viewport, box);
 assert.equal(coexistStart.contentResolve, 1); assert.equal(coexistEnd.contentResolve, 1);
 assert.equal(coexistStart.camera, 0); assert.equal(coexistEnd.camera, 0);
-assert.deepEqual(coexistStart.matrix, coexistEnd.matrix, "The completed image and real carrier coexist for 600ms before camera departure");
+assert.deepEqual(coexistStart.matrix, coexistEnd.matrix, "The completely settled image and real carrier coexist before camera departure");
 assert.deepEqual(coexistStart.rig.centre, coexistEnd.rig.centre, "The receiving plane stays fixed throughout the shot");
 assert.deepEqual(coexistStart.rig.normal, coexistEnd.rig.normal);
 assert(transfer.camera > .7 && transfer.camera < .9);
@@ -54,8 +54,8 @@ assert.equal(waitingForCamera.reveal, 0);
 
 // Formation has one uniform presentation clock. Its structural channels may
 // ease locally; the whole image cannot be accelerated by an outer quintic.
-for (let time=1900;time<=3600;time+=100)
-  close(carrierChannels(carrierCue(time)).contentResolve,(time-1900)/1700,"Formation retains the full 1700ms local interval",1e-12);
+for (let time=1700;time<=4000;time+=100)
+  close(carrierChannels(carrierCue(time)).contentResolve,(time-1700)/2300,"Formation retains the full 2300ms local interval",1e-12);
 const departure=carrierCue(4200), h=.1/CARRIER_ENTRANCE_MS;
 close(carrierCameraProgress(departure),0,"Camera departure starts at rest");
 assert(carrierCameraProgress(departure+h)/h<1e-4,"Camera departure has zero first derivative");
@@ -215,7 +215,7 @@ for (const lens of [.3,.8,1.49]) assert.deepEqual(carrierCamera(0,viewport,lens)
 // of it. Pure camera tests alone missed mixing a scaled stage's screen rect
 // with its unscaled offsetWidth and CSS transform coordinates.
 const viewerSource = readFileSync(new URL("../src/projection-viewer.ts",import.meta.url),"utf8").replace(/^import .+;\r?\n/gm,"");
-const painterContext = {exports:{},carrierFrame,carrierCameraProgress,carrierLocalPoint,cancelAnimationFrame:()=>{}};
+const painterContext = {exports:{},carrierFrame,carrierCameraProgress,carrierReadingChannels,carrierLocalPoint,cancelAnimationFrame:()=>{}};
 vm.runInNewContext(ts.transpileModule(viewerSource,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,painterContext);
 let scaledPainterCases = 0;
 for (const [width,height] of [[1280,720],[1366,768],[1536,864],[2560,1440],[390,844]]) {
@@ -287,7 +287,7 @@ const settled=Object.assign(Object.create(painterContext.exports.ProjectionViewe
   host:{inert:true,replaceChildren:()=>{clearedHost++;}},
   root:{style:{setProperty:(key,value)=>settledProperties.set(key,value)},dataset:{state:"opening"},querySelector:()=>settledIgnition,hidden:false},
   flight:new CarrierFlight(),setBeat:()=>{},opticalMask:"formation",opticalClarity:.4,
-  optics:{dispose:()=>{disposedOptics++;}},research:{setFormation:()=>{},setPresentationScale:()=>{},dispose:()=>{disposedContent++;}},
+  optics:{dispose:()=>{disposedOptics++;}},research:{setFormation:()=>{},setPresentationScale:()=>{},setReadingProgress:()=>{},resumePresentation:()=>{},dispose:()=>{disposedContent++;}},
   siblings:[{node:sibling,inert:false}],opener:{isConnected:true,focus:()=>{restoredFocus++;}},
   options:{onCameraProgress:value=>{lastCamera=value;},onClose:()=>{closedCallbacks++;}},
   isOpen:true,closing:false,
@@ -472,4 +472,4 @@ appearance.dispose(selectedPort);appearance.dispose(returningPort);appearance.di
 for(const inst of backgroundPorts){inst.material.dispose();inst.dispose();}
 for(const geometry of new Set(portMeshes.map(mesh=>mesh.geometry)))geometry.dispose();
 
-console.log(JSON.stringify({checks:"Uniform presentation time, source/beam/frame/image causal timing, 600ms completed-image hold, C2 one-way camera approach, stall-safe time, exact landing and bounded reversals; actual Scene methods with GLB-derived front glass, on-screen/front-facing/stable-camera gating, smooth rotated-entry preparation/cancellation, positive forward rays against the original cover, fixed world plane, physical beam/DOM agreement through resize, scaled-stage synchronization and complete optical cleanup",reversalCases,actualSceneCases,oldBackwardsRayCases,scaledPainterCases,opticalLifecycleCases:2,projectorBackgroundGroups:backgroundPorts.length,minimumPhysicalClearance,maxProjectionErrorPx:maxProjectionError,maxExposedOverlap},null,2));
+console.log(JSON.stringify({checks:"Uniform presentation time, source/beam/frame/image causal timing, 2300ms topology formation and settled-image hold, C2 one-way camera approach, stall-safe time, exact landing and bounded reversals; actual Scene methods with GLB-derived front glass, on-screen/front-facing/stable-camera gating, smooth rotated-entry preparation/cancellation, positive forward rays against the original cover, fixed world plane, physical beam/DOM agreement through resize, scaled-stage synchronization and complete optical cleanup",reversalCases,actualSceneCases,oldBackwardsRayCases,scaledPainterCases,opticalLifecycleCases:2,projectorBackgroundGroups:backgroundPorts.length,minimumPhysicalClearance,maxProjectionErrorPx:maxProjectionError,maxExposedOverlap},null,2));

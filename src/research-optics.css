@@ -29,19 +29,18 @@
 .projection-shell[data-kind="research"] .research-links path.is-active { stroke: var(--optical-accent); stroke-width: 1.7; }
 .projection-shell[data-kind="research"] .research-links path.is-future { opacity: .18; }
 
-/* Formation belongs to the topology. The masks expose measured path lengths;
-   node cores and crisp letters arrive where those paths actually terminate. */
+/* A single causal front deposits the real topology. A core is engraved from
+   its incoming direction; its centre settles only after the rim is present. */
 .projection-shell[data-kind="research"] .research-body[data-forming="true"] :is(.research-links path, .research-node, .research-node-title, .research-era, .research-phase, .research-thread, .research-acts, .research-current-record) { transition: none; }
 .projection-shell[data-kind="research"] .research-body[data-forming="true"] .research-node-core {
-  opacity: var(--formation-core, 0); scale: calc(.72 + var(--formation-core, 0) * .28);
+  opacity: var(--formation-core, 0);
+  mask-image: conic-gradient(from var(--formation-origin, 270deg), #000 calc(var(--formation-sweep, 0deg) - 24deg), transparent var(--formation-sweep, 0deg));
+  -webkit-mask-image: conic-gradient(from var(--formation-origin, 270deg), #000 calc(var(--formation-sweep, 0deg) - 24deg), transparent var(--formation-sweep, 0deg));
+  transition: none;
 }
-.projection-shell[data-kind="research"] .research-body[data-forming="true"] .research-node-title {
-  mask-image: linear-gradient(90deg, #000 calc(var(--formation-label-edge, -5%) - 4%), transparent var(--formation-label-edge, -5%));
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--formation-label-edge, -5%) - 4%), transparent var(--formation-label-edge, -5%));
-}
-.projection-shell[data-kind="research"] .research-body[data-forming="true"] :is(.research-stage-label, .research-acts, .research-era, .research-phase, .research-thread, .research-current-record) { opacity: var(--formation-context, 0); }
-.projection-shell[data-kind="research"] .research-body[data-forming="true"] .research-optical-volume { opacity: var(--formation-field, 0); }
-.projection-shell[data-kind="research"] .research-body[data-forming="true"][data-view="focus"] :is(.projection-inspector, .research-focus-light) { opacity: var(--formation-reading, 0); transition: none; }
+.projection-shell[data-kind="research"] .research-body[data-forming="true"] .research-node-core i { opacity: calc(.75 * var(--formation-fill, 0)); }
+.projection-shell[data-kind="research"] .research-body[data-forming="true"] .research-node:is([data-status="question"], [data-status="open"]) .research-node-core i { opacity: 0; }
+.projection-shell[data-kind="research"] .research-body[data-forming="true"] .research-node.is-selected .research-node-core i { opacity: var(--formation-fill, 0); }
 .research-formation-heads { pointer-events: none; }
 
 /* A held projection is a readable lineage, not a thumbnail of 36 labels.
@@ -53,7 +52,7 @@
 .projection-shell[data-kind="research"] .research-body[data-projecting="true"] .research-node:is([data-role="spine"], [data-mainline="true"]) { --projection-core-size: var(--projection-core-main, 1); }
 .projection-shell[data-kind="research"] .research-body[data-projecting="true"] .research-node.is-selected { --projection-core-size: var(--projection-core-selected, 1); }
 .projection-shell[data-kind="research"] .research-body[data-projecting="true"] .research-node-core { scale: var(--projection-core-size, 1); }
-.projection-shell[data-kind="research"] .research-body[data-projecting="true"][data-forming="true"] .research-node-core { scale: calc(var(--projection-core-size, 1) * (.72 + var(--formation-core, 0) * .28)); }
+.projection-shell[data-kind="research"] .research-body[data-projecting="true"][data-forming="true"] .research-node-core { scale: var(--projection-core-size, 1); }
 .projection-shell[data-kind="research"] .research-body[data-projecting="true"][data-view="overview"] .research-node-title {
   opacity: 1; clip-path: inset(0 var(--projection-name-clip, 100%) 0 0); transition: none;
 }

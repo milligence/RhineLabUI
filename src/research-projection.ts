@@ -1,5 +1,7 @@
 import { escapeHtml } from "./html";
 import { researchStatus, safeSourceUrl, type ArchiveSource, type ResearchProjectionData } from "./projection-types";
+import { buildResearchFormation, sampleResearchEdge, sampleResearchNode, type ResearchNodeFormationCue, type ResearchEdgeFormationCue } from "./research-formation";
+import { carrierReadingChannels } from "./carrier-flight";
 import "./research-optics.css";
 import "./research-tree.css";
 
@@ -19,7 +21,7 @@ export interface ResearchViewState {
 }
 type Point = { x: number; y: number };
 type Node = ResearchProjectionData["nodes"][number];
-type FormingEdge = { path: SVGPathElement; mask: SVGPathElement; id: string; length: number; start: number; end: number; head?: SVGCircleElement; trace?: SVGPathElement };
+type FormingEdge = ResearchEdgeFormationCue & { path: SVGPathElement; mask: SVGPathElement; id: string; samples: Point[]; head: SVGCircleElement; trace: SVGPathElement; grains: SVGCircleElement[] };
 let formationInstance = 0;
 const exposure = (value: number, start: number, end: number) => {
   const t = Math.max(0, Math.min(1, (value - start) / (end - start)));
@@ -45,6 +47,8 @@ export class ResearchProjection {
   private x = 0;
   private y = 0;
   private scale = 1;
+  /** The held image may use more of the stage than the saved reading view. */
+  private renderedMapScale = 1;
   private velocity = { x: 0, y: 0, scale: 0 };
   private target = { x: 0, y: 0, scale: 0 };
   private mapWidth = 1;
@@ -68,7 +72,12 @@ export class ResearchProjection {
   private resizeFrame = 0;
   private formation = 1;
   private formationEdges: FormingEdge[] = [];
-  private formationNodes: { node: HTMLElement; arrival: number }[] = [];
+  private formationNodes: { node: HTMLElement; cue: ResearchNodeFormationCue }[] = [];
+  private readingProgress = 1;
+  private presentationSuspended = false;
+  private suspendedTarget?: { x: number; y: number; scale: number };
+  private suspendedReplay = false;
+  private playTick?: FrameRequestCallback;
   private presentationScale = 1;
   private presentationDetail = 1;
   private presentationNames = 1;
@@ -103,7 +112,7 @@ export class ResearchProjection {
           <svg class="research-links" width="${this.mapWidth}" height="${this.mapHeight}" aria-hidden="true">${edges}</svg>
           ${this.phasePositions.map(p => `<div class="research-phase" style="left:${p.x}px;top:8px"><small>${escapeHtml(p.date)}</small><span>${escapeHtml(p.title)}</span></div>`).join("")}
           ${this.lanePositions.map(p => `<div class="research-thread" style="left:0;top:${p.y}px">${escapeHtml(p.title)}</div>`).join("")}
-          ${this.ordered.map(node => { const p = this.positions.get(node.id)!; return `<button type="button" class="research-node" data-node="${escapeHtml(node.id)}" data-status="${node.status}" data-role="${node.role ?? "branch"}" data-mainline="${data.narrativePath ? data.narrativePath.includes(node.id) : true}" style="left:${p.x}px;top:${p.y}px" aria-label="${escapeHtml(node.title)}，${escapeHtml(node.date)}，${escapeHtml(node.statusLabel ?? researchStatus[node.status])}" aria-pressed="false"><span class="research-node-core" aria-hidden="true"><i></i></span><strong class="research-node-title">${escapeHtml(node.title)}</strong></button>`; }).join("")}
+          ${this.ordered.map(node => { const p = this.positions.get(node.id)!; return `<button type="button" class="research-node" data-node="${escapeHtml(node.id)}" data-status="${node.status}" data-role="${node.role ?? "branch"}" data-mainline="${data.narrativePath ? data.narrativePath.includes(node.id) : true}" style="left:${p.x}px;top:${p.y}px" aria-label="${escapeHtml(node.title)}，${escapeHtml(node.date)}，${escapeHtml(node.statusLabel ?? researchStatus[node.status])}" aria-pressed="false"><span class="research-node-core" aria-hidden="true"><i></i></span><strong class="research-node-title"><span class="research-node-ink">${escapeHtml(node.title)}</span></strong></button>`; }).join("")}
         </div></div>
       </div>
       <svg class="research-focus-light" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="focus-beam" x1="0" y1="1" x2=".45" y2="0"><stop stop-color="var(--optical-accent)" stop-opacity=".20"/><stop offset=".28" stop-color="var(--optical-accent)" stop-opacity=".055"/><stop offset="1" stop-color="var(--optical-accent)" stop-opacity="0"/></linearGradient><linearGradient id="focus-white" x1="0" y1="1" x2="0" y2="0"><stop stop-color="white" stop-opacity=".36"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs><path class="focus-cone-fill" d="M170 452 L290 55 Q530 5 765 130 Z" fill="url(#focus-beam)"/><path d="M170 452 L290 55 Q440 35 555 75 Z" fill="url(#focus-white)"/><path class="focus-cone-edge" d="M170 452 L290 55 M170 452 L765 130"/><path class="focus-section-rim" d="M290 55 Q530 5 765 130 Q520 84 290 55 Z"/><ellipse class="focus-aperture" cx="170" cy="458" rx="58" ry="12"/><ellipse class="focus-aperture inner" cx="170" cy="458" rx="37" ry="7"/><path class="focus-guide record-guide" d="M170 452 L280 247 L321 247"/><path class="focus-guide retrospective-guide" d="M170 452 L635 318 L692 318"/><path class="focus-guide evidence-guide" d="M170 452 L335 508 L408 508"/></svg>
@@ -142,6 +151,9 @@ export class ResearchProjection {
         if (!this.pointers.size) {
           if (this.focused) this.focusCamera(false);
           else this.fit(false);
+        } else {
+          this.paintPresentationMap();
+          if (this.formation < 1) this.setFormation(this.formation, true);
         }
       });
     });
@@ -166,15 +178,16 @@ export class ResearchProjection {
     const heads = document.createElementNS(ns, "g");
     heads.classList.add("research-formation-heads"); heads.style.display = "none";
     const serial = ++formationInstance;
-    const xs = [...this.positions.values()].map(p => p.x), minX = Math.min(...xs), span = Math.max(1, Math.max(...xs) - minX);
-    const arrivals = new Map<string, number>();
-    this.ordered.forEach(node => {
-      const rank = (this.positions.get(node.id)!.x - minX) / span;
-      // The main lineage writes first. Branches resolve a fraction later, with
-      // the same clock and the same real topology; there is no particle cloud.
-      arrivals.set(node.id, .16 + rank * .41 + (node.role === "branch" ? .045 : 0));
-    });
-    this.formationNodes = this.nodes.map(node => ({ node, arrival: arrivals.get(node.dataset.node!) ?? .3 }));
+    const paths = [...svg.querySelectorAll<SVGPathElement>("path[data-from]")];
+    const schedule = buildResearchFormation(this.ordered.map(node => ({
+      ...this.positions.get(node.id)!, id: node.id, stage: node.stage, lane: node.lane,
+      role: node.role, mainline: this.route.includes(this.ordered.indexOf(node)),
+    })), paths.map(path => ({
+      from: path.dataset.from!, to: path.dataset.to!, length: Math.max(1, path.getTotalLength()),
+      weight: path.dataset.weight as ResearchProjectionData["edges"][number]["weight"],
+      kind: path.dataset.kind as ResearchProjectionData["edges"][number]["kind"],
+    })), { entryNodeId: this.data.entryNodeId, narrativePath: this.data.narrativePath });
+    this.formationNodes = this.nodes.map(node => ({ node, cue: schedule.nodes.get(node.dataset.node!)! }));
     const phases = this.data.phases ?? this.phasePositions;
     const landmarkPhases = phases.length <= 5 ? phases : Array.from({ length: 5 }, (_, i) => phases[Math.round(i * (phases.length - 1) / 4)]);
     for (const phase of landmarkPhases) {
@@ -191,9 +204,9 @@ export class ResearchProjection {
     for (const index of [this.route[0], this.route.at(-1)]) {
       if (index !== undefined && this.presentationLabels.size < 6) this.presentationLabels.add(this.ordered[index].id);
     }
-    [...svg.querySelectorAll<SVGPathElement>("path[data-from]")].forEach((path, index) => {
+    paths.forEach((path, index) => {
       const id = `research-deposit-${serial}-${index}`;
-      const length = Math.max(1, path.getTotalLength());
+      const cue = schedule.edges[index], length = cue.length;
       const mask = document.createElementNS(ns, "mask");
       mask.id = id; mask.setAttribute("maskUnits", "userSpaceOnUse"); mask.setAttribute("maskContentUnits", "userSpaceOnUse");
       mask.setAttribute("x", "-100"); mask.setAttribute("y", "-100");
@@ -206,67 +219,115 @@ export class ResearchProjection {
       brush.style.strokeDasharray = `${length} ${length + 1}`;
       brush.style.strokeDashoffset = String(length);
       mask.append(brush); defs.append(mask);
-      const start = (arrivals.get(path.dataset.from!) ?? .16) + .018;
-      const end = Math.max(start + .085, (arrivals.get(path.dataset.to!) ?? .50) + .015);
-      const edge: FormingEdge = { path, mask: brush, id, length, start, end };
-      if (path.dataset.weight === "primary" || path.dataset.kind === "merge") {
-        const trace = document.createElementNS(ns, "path");
-        trace.setAttribute("d", path.getAttribute("d")!);
-        trace.style.cssText = "fill:none;stroke:var(--optical-accent);stroke-linecap:round;vector-effect:none;transition:none;opacity:0;";
-        const head = document.createElementNS(ns, "circle");
-        head.style.cssText = "fill:var(--optical-accent);stroke:var(--theme-paper);stroke-width:0.7;vector-effect:non-scaling-stroke;opacity:0;";
-        heads.append(trace, head); edge.head = head; edge.trace = trace;
-      }
+      // Sample the real arc once. The moving light and its microscopic edge
+      // scatter use these same coordinates, never a second substitute drawing.
+      const samples = Array.from({ length: 97 }, (_, i) => {
+        const point = path.getPointAtLength(length * i / 96);
+        return { x: point.x, y: point.y };
+      });
+      const trace = document.createElementNS(ns, "path");
+      trace.setAttribute("d", path.getAttribute("d")!);
+      trace.style.cssText = "fill:none;stroke:var(--optical-accent);stroke-linecap:round;vector-effect:none;transition:none;opacity:0;";
+      const head = document.createElementNS(ns, "circle");
+      head.style.cssText = "fill:var(--optical-accent);stroke:var(--theme-paper);stroke-width:0.45;vector-effect:non-scaling-stroke;opacity:0;";
+      const grains = Array.from({ length: cue.primary ? 3 : 2 }, () => {
+        const grain = document.createElementNS(ns, "circle");
+        grain.style.cssText = "fill:var(--optical-accent);stroke:none;opacity:0;";
+        return grain;
+      });
+      heads.append(trace, ...grains, head);
+      const edge: FormingEdge = { ...cue, path, mask: brush, id, samples, head, trace, grains };
       this.formationEdges.push(edge);
     });
+    for (const { node, cue } of this.formationNodes) {
+      const incoming = this.formationEdges.filter(edge => edge.to === cue.id && !edge.feedback).sort((a, b) => b.end - a.end)[0];
+      if (incoming) {
+        const end = incoming.samples.at(-1)!, before = incoming.samples.at(-2)!;
+        node.style.setProperty("--formation-origin", `${Math.atan2(before.x - end.x, end.y - before.y) * 180 / Math.PI}deg`);
+      }
+    }
     svg.prepend(defs); svg.append(heads);
   }
 
-  /** Pure reversible exposure. Only actual graph strokes, node cores and
-   * labels are generated; the completed document keeps its original styling. */
+  /** The same measured tree is deposited and withdrawn by a pure clock.
+   * Reading has its own camera channel and never becomes part of this image. */
   setFormation(value: number, force = false) {
     const progress = this.reduced ? 1 : Math.max(0, Math.min(1, value));
     if (this.formation === progress && !force) return;
     this.formation = progress;
     const forming = progress < 1;
     this.body.dataset.forming = String(forming);
-    this.body.style.setProperty("--formation-context", String(exposure(progress, .52, .91)));
-    this.body.style.setProperty("--formation-reading", String(exposure(progress, .51, .97)));
-    this.body.style.setProperty("--formation-field", String(exposure(progress, .18, .68)));
     const heads = this.map.querySelector<SVGGElement>(".research-formation-heads")!;
     heads.style.display = forming ? "" : "none";
-    for (const { node, arrival } of this.formationNodes) {
-      node.style.setProperty("--formation-core", String(exposure(progress, arrival - .025, arrival + .060)));
-      const label = exposure(progress, Math.max(.34, arrival + .12), Math.max(.54, arrival + .36));
-      node.style.setProperty("--formation-label-edge", `${(-5 + label * 110).toFixed(4)}%`);
+    for (const { node, cue } of this.formationNodes) {
+      const { core } = sampleResearchNode(cue, progress);
+      node.style.setProperty("--formation-core", String(exposure(core, 0, .24)));
+      node.style.setProperty("--formation-sweep", `${(core * 390).toFixed(4)}deg`);
+      node.style.setProperty("--formation-fill", String(exposure(core, .38, 1)));
     }
     for (const edge of this.formationEdges) {
       if (!forming) { edge.path.removeAttribute("mask"); continue; }
       edge.path.setAttribute("mask", `url(#${edge.id})`);
-      // Arc-length growth stays linear so a long branch cannot materialize
-      // instantly in the middle of an eased, already-eased global wipe.
-      const p = Math.max(0, Math.min(1, (progress - edge.start) / (edge.end - edge.start)));
-      edge.mask.style.strokeDashoffset = String(edge.length * (1 - p));
-      if (edge.head && edge.trace) {
-        const light = exposure(p, 0, .10) * (1 - exposure(p, .82, 1));
-        const point = edge.path.getPointAtLength(edge.length * p);
-        edge.head.setAttribute("cx", String(point.x)); edge.head.setAttribute("cy", String(point.y));
-        const pixelScale = Math.max(.06, this.scale * this.presentationScale);
-        edge.head.setAttribute("r", String(1.35 / pixelScale));
-        edge.head.style.opacity = String(light * .90);
-        const tail = Math.min(edge.length * p, 7 / pixelScale);
-        edge.trace.style.strokeDasharray = `0 ${Math.max(0, edge.length * p - tail)} ${tail} ${edge.length + 1}`;
-        edge.trace.style.strokeWidth = String(1.55 / pixelScale);
-        edge.trace.style.opacity = String(light * .50);
-      }
+      const sample = sampleResearchEdge(edge, progress);
+      edge.mask.style.strokeDashoffset = String(edge.length - sample.distance);
+      const pixelScale = Math.max(.04, (this.renderedMapScale ?? this.scale) * this.presentationScale);
+      const energy = sample.head * (edge.primary ? .90 : .52);
+      edge.head.style.opacity = String(energy);
+      edge.trace.style.opacity = String(energy * .46);
+      if (energy < .0001) { edge.grains.forEach(grain => grain.style.opacity = "0"); continue; }
+      const point = this.formationPoint(edge, sample.growth);
+      edge.head.setAttribute("cx", String(point.x)); edge.head.setAttribute("cy", String(point.y));
+      edge.head.setAttribute("r", String((edge.primary ? 1.05 : .72) / pixelScale));
+      const tail = Math.min(sample.distance, (edge.primary ? 12 : 8) / pixelScale);
+      edge.trace.style.strokeDasharray = `0 ${Math.max(0, sample.distance - tail)} ${tail} ${edge.length + 1}`;
+      edge.trace.style.strokeWidth = String((edge.primary ? 1.35 : .85) / pixelScale);
+      edge.grains.forEach((grain, i) => {
+        // Fixed phase and a bounded distance from the real front: no per-frame
+        // random noise, lingering cloud, independent particle clock or flicker.
+        const phase = sample.growth * Math.PI * 2 + edge.index * .73 + i * 2.1;
+        const distance = Math.max(0, sample.distance - (2.2 + i * 3.1) / pixelScale);
+        const at = this.formationPoint(edge, distance / edge.length);
+        const spread = Math.sin(phase) * (1.1 + i * .45) / pixelScale;
+        grain.setAttribute("cx", String(at.x - at.dy * spread));
+        grain.setAttribute("cy", String(at.y + at.dx * spread));
+        grain.setAttribute("r", String((.30 + i * .09) / pixelScale));
+        grain.style.opacity = String(energy * (.22 + .22 * (1 + Math.cos(phase)) / 2));
+      });
     }
+  }
+
+  private formationPoint(edge: FormingEdge, progress: number) {
+    const index = Math.max(0, Math.min(1, progress)) * (edge.samples.length - 1);
+    const before = Math.min(edge.samples.length - 2, Math.floor(index)), t = index - before;
+    const a = edge.samples[before], b = edge.samples[before + 1];
+    const length = Math.max(.001, Math.hypot(b.x - a.x, b.y - a.y));
+    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, dx: (b.x - a.x) / length, dy: (b.y - a.y) / length };
+  }
+
+  /** Text is made readable by approach, after the complete tree has formed.
+   * A nested ink span preserves the existing collision/focus visibility. */
+  setReadingProgress(value: number, force = false) {
+    const progress = this.reduced ? 1 : Math.max(0, Math.min(1, value));
+    if (this.readingProgress === progress && !force) return;
+    this.readingProgress = progress;
+    this.paintPresentationMap();
+    const channels = carrierReadingChannels(progress);
+    this.body.style.setProperty("--reading-context", String(channels.context));
+    this.body.style.setProperty("--reading-content", String(channels.reading));
+    for (const { node, cue } of this.formationNodes) {
+      const landmark = this.presentationLabels.has(cue.id);
+      const start = (landmark ? .12 : .34) + cue.arrival * .13;
+      const end = (landmark ? .54 : .80) + cue.arrival * .12;
+      node.style.setProperty("--reading-node", String(exposure(progress, start, end)));
+    }
+    if (this.formation < 1) this.setFormation(this.formation, true);
   }
 
   /** Keep the held image optically legible without moving a single graph
    * anchor. More names become readable as this same plate approaches. */
   setPresentationScale(value: number, force = false) {
     const scale = this.reduced ? 1 : Math.max(.15, Math.min(1, value));
-    if (Math.abs(scale - this.presentationScale) < .0001 && !force) return;
+    if (!force && (scale === this.presentationScale || (scale !== 1 && Math.abs(scale - this.presentationScale) < .0001))) return;
     this.presentationScale = scale;
     this.presentationDetail = exposure(scale, .60, .94);
     this.presentationNames = exposure(scale, .80, .96);
@@ -280,6 +341,7 @@ export class ResearchProjection {
     style.setProperty("--projection-line-secondary", String(Math.min(1.6, 1 / scale)));
     style.setProperty("--projection-detail", String(this.presentationDetail));
     style.setProperty("--projection-name-clip", `${((1 - this.presentationNames) * 100).toFixed(4)}%`);
+    this.paintPresentationMap();
     this.paintPresentationLabels();
     if (this.formation < 1) this.setFormation(this.formation, true);
   }
@@ -468,7 +530,7 @@ export class ResearchProjection {
     const id = this.inspector.dataset.nodeId;
     // During a node transfer the new DOM is still at zero and its saved
     // position has not been restored. It must not replace that saved reading.
-    if (!id || !this.focused || !this.settled) return;
+    if (!id || !this.focused || !this.settled || this.presentationSuspended) return;
     const top = (selector: string) => this.inspector.querySelector<HTMLElement>(selector)?.scrollTop ?? 0;
     this.reading.set(id, { body: this.body.scrollTop, record: top(".research-contemporary .research-plane-scroll"), retrospective: top(".research-hindsight .research-plane-scroll"), evidence: top(".research-evidence-scroll") });
   }
@@ -485,12 +547,53 @@ export class ResearchProjection {
     const top = this.data.layout === "evolution" ? 126 : 70;
     const bottom = this.stage.clientWidth < 760 && this.data.layout === "evolution" ? 180 : 116;
     const height = Math.max(1, this.stage.clientHeight - top - bottom);
-    return { top, height, centerY: top + height / 2 };
+    return { top, bottom, height, centerY: top + height / 2 };
+  }
+  /** The image gets the stage while it forms; reading later reserves its rails.
+   * Only this presented transform changes. The saved camera, world positions,
+   * navigator and text collision layout continue to use the base x/y/scale.
+   * The already-presented carrier camera is the sole interpolation clock. */
+  private paintPresentationMap() {
+    this.renderedMapScale = this.scale;
+    const width = this.stage?.clientWidth, height = this.stage?.clientHeight;
+    // Before attachment (and in isolated channel checks), layout may not yet
+    // exist. Do not invent a viewport or mutate the user's reading snapshot.
+    if (!this.map?.style || !Number.isFinite(width) || !Number.isFinite(height) ||
+        width <= 0 || height <= 0 || !(this.mapWidth > 0) || !(this.mapHeight > 0)) return;
+    const bounds = this.overviewViewport();
+    let x = this.x, y = this.y, scale = this.scale;
+    let top = bounds.top, bottom = bounds.bottom;
+    if (!this.focused && width >= 760 && this.readingProgress < .58) {
+      const transfer = exposure(this.readingProgress, .04, .58);
+      const heldScale = Math.max(.001, Math.min((width - 70) / this.mapWidth, (height - 48) / this.mapHeight));
+      const heldX = (width - this.mapWidth * heldScale) / 2;
+      const heldY = (height - this.mapHeight * heldScale) / 2;
+      x = heldX + (this.x - heldX) * transfer;
+      y = heldY + (this.y - heldY) * transfer;
+      scale = heldScale + (this.scale - heldScale) * transfer;
+      top = 24 + (bounds.top - 24) * transfer;
+      bottom = 24 + (bounds.bottom - 24) * transfer;
+    }
+    // At reading arrival, write the untouched base numbers verbatim rather
+    // than interpolating at t=1 and accumulating a floating-point remainder.
+    this.renderedMapScale = scale;
+    this.map.style.transform = `translate3d(${x}px,${y}px,0) scale(${scale})`;
+    this.map.style.setProperty("--label-scale", String(Math.max(1, .92 / scale)));
+    this.map.style.setProperty("--focus-label-scale", String(1 / scale));
+    this.body.style.setProperty("--projection-clip-top", `${top}px`);
+    this.body.style.setProperty("--projection-clip-bottom", `${bottom}px`);
+    // SVG non-scaling-stroke does not cancel the CSS transforms on its map
+    // and optical plate. Keep the held lineage a fine screen-space drawing,
+    // then hand ink weight back to the unchanged reading theme.
+    const pixelScale = Math.max(.04, scale * this.presentationScale);
+    const heldInk = 1 - exposure(this.readingProgress, .40, .94);
+    const mainInk = this.focused ? Math.min(1.9, 1 / this.presentationScale) : 1 + (Math.max(1, .9 / (1.7 * pixelScale)) - 1) * heldInk;
+    const secondaryInk = this.focused ? Math.min(1.6, 1 / this.presentationScale) : 1 + (Math.max(1, .55 / (.8 * pixelScale)) - 1) * heldInk;
+    this.body.style.setProperty("--projection-line-main", String(mainInk));
+    this.body.style.setProperty("--projection-line-secondary", String(secondaryInk));
   }
   private paintMap() {
-    this.map.style.transform = `translate3d(${this.x}px,${this.y}px,0) scale(${this.scale})`;
-    this.map.style.setProperty("--label-scale", String(Math.max(1, .92 / this.scale)));
-    this.map.style.setProperty("--focus-label-scale", String(1 / this.scale));
+    this.paintPresentationMap();
     this.host.querySelector(".research-zoom")!.textContent = `${Math.round(this.scale * 100)}%`;
     this.body.dataset.density = this.scale < (this.data.layout === "evolution" ? .21 : .3) ? "compact" : "readable";
     this.placeLabels();
@@ -542,6 +645,12 @@ export class ResearchProjection {
   private stopFlight() { cancelAnimationFrame(this.flightFrame); this.flightFrame = 0; this.flightLast = 0; this.velocity = { x: 0, y: 0, scale: 0 }; }
   private flyTo(x: number, y: number, scale: number, animate = true) {
     this.target = { x, y, scale: Math.log(scale) };
+    if (this.presentationSuspended) {
+      // A viewport/font reframe during return owns the new destination.
+      // Never restore a target measured against the viewport we just left.
+      this.suspendedTarget = animate ? { ...this.target } : undefined;
+      if (animate) return;
+    }
     this.settled = false; this.body.dataset.settled = "false";
     if (this.reduced || !animate) {
       this.stopFlight(); this.x = x; this.y = y; this.scale = scale; this.paintMap(); this.finishFlight(); return;
@@ -738,7 +847,7 @@ export class ResearchProjection {
     this.playing = true; this.elapsed = 0; this.playLast = 0;
     this.playButton.textContent = "暂停回放"; this.playButton.setAttribute("aria-pressed", "true"); this.host.dataset.replaying = "true";
     const tick = (ms: number) => {
-      if (!this.playing) return;
+      if (!this.playing || this.presentationSuspended) return;
       if (this.playLast && !document.hidden) this.elapsed += Math.min(.1, (ms - this.playLast) / 1000);
       this.playLast = ms;
       const position = Math.min(this.route.length - 1, this.playPosition + this.elapsed / 9), step = Math.floor(position);
@@ -756,19 +865,48 @@ export class ResearchProjection {
       if (position >= this.route.length - 1) this.pause();
       else this.playFrame = requestAnimationFrame(tick);
     };
+    this.playTick = tick;
     this.playFrame = requestAnimationFrame(tick);
   }
   private pause() {
+    this.suspendedReplay = false;
     this.playing = false; cancelAnimationFrame(this.playFrame); this.playButton.textContent = this.data.narrativePath ? "主线回放" : "历程回放"; this.playButton.setAttribute("aria-pressed", "false"); delete this.host.dataset.replaying;
     this.nodes.forEach(node => node.classList.remove("is-future"));
     this.map.querySelectorAll<SVGPathElement>("path[data-from]").forEach(path => { path.classList.remove("is-future"); path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; });
+  }
+  /** Freeze the inner narrative at the frame the outer return starts from.
+   * Reopening can resume it without advancing a hidden node or reading pane. */
+  suspendPresentation() {
+    if (this.presentationSuspended) return;
+    this.captureReadingPosition();
+    this.presentationSuspended = true;
+    this.suspendedReplay = this.playing;
+    cancelAnimationFrame(this.playFrame);
+    if (this.flightFrame) {
+      this.suspendedTarget = { ...this.target };
+      this.stopFlight();
+    }
+  }
+  resumePresentation() {
+    if (!this.presentationSuspended) return;
+    this.presentationSuspended = false;
+    if (this.suspendedTarget) {
+      const { x, y, scale } = this.suspendedTarget;
+      this.suspendedTarget = undefined;
+      this.flyTo(x, y, Math.exp(scale));
+    }
+    if (this.suspendedReplay && this.playing && this.playTick) {
+      this.playLast = 0;
+      this.playFrame = requestAnimationFrame(this.playTick);
+    }
+    this.suspendedReplay = false;
   }
   private snapshotState(): ResearchViewState { return { selected: this.ordered[this.selected]?.id ?? "", x: this.x, y: this.y, scale: this.scale, focused: this.focused, reading: Object.fromEntries(this.reading) }; }
   getState(): ResearchViewState { this.captureReadingPosition(); return this.snapshotState(); }
   getStats() {
     const node = this.positions.get(this.ordered[this.selected]?.id);
-    return { ...this.snapshotState(), playing: this.playing, nodeCount: this.ordered.length, narrativeSteps: this.route.length, layout: this.data.layout ?? "catalogue", edgeCount: this.data.edges.length, formation: this.formation, presentationScale: this.presentationScale, presentationDetail: this.presentationDetail, presentationNames: this.presentationNames, formedEdges: this.formationEdges.filter(edge => this.formation >= edge.end).length, retrospectiveNode: this.inspector.dataset.nodeId, activeSource: this.body.dataset.source, reducedMotion: this.reduced, settled: this.settled, anchor: node ? { x: this.x + node.x * this.scale, y: this.y + node.y * this.scale } : null, viewport: { width: this.stage.clientWidth, height: this.stage.clientHeight } };
+    return { ...this.snapshotState(), playing: this.playing, nodeCount: this.ordered.length, narrativeSteps: this.route.length, layout: this.data.layout ?? "catalogue", edgeCount: this.data.edges.length, formation: this.formation, readingProgress: this.readingProgress, presentationSuspended: this.presentationSuspended, presentationScale: this.presentationScale, presentationDetail: this.presentationDetail, presentationNames: this.presentationNames, formedEdges: this.formationEdges.filter(edge => this.formation >= edge.end).length, retrospectiveNode: this.inspector.dataset.nodeId, activeSource: this.body.dataset.source, reducedMotion: this.reduced, settled: this.settled, anchor: node ? { x: this.x + node.x * this.scale, y: this.y + node.y * this.scale } : null, viewport: { width: this.stage.clientWidth, height: this.stage.clientHeight } };
   }
-  setReducedMotion(value: boolean) { this.reduced = value; this.host.dataset.reduced = String(value); if (value && this.flightFrame) this.flyTo(this.target.x, this.target.y, Math.exp(this.target.scale), false); if (value && this.formation < 1) this.setFormation(1); if (value && this.presentationScale < 1) this.setPresentationScale(1); }
+  setReducedMotion(value: boolean) { this.reduced = value; this.host.dataset.reduced = String(value); if (value && this.flightFrame) this.flyTo(this.target.x, this.target.y, Math.exp(this.target.scale), false); if (value && this.formation < 1) this.setFormation(1); if (value && this.presentationScale < 1) this.setPresentationScale(1); if (value && this.readingProgress < 1) this.setReadingProgress(1); }
   dispose() { this.pause(); this.stopFlight(); this.abort.abort(); this.observer.disconnect(); cancelAnimationFrame(this.resizeFrame); this.host.replaceChildren(); }
 }

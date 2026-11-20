@@ -3,7 +3,7 @@ import { escapeHtml } from "./html";
 import { ResearchProjection, sourceMarkup, type ResearchViewState } from "./research-projection";
 import { CubeProjection } from "./cube-projection";
 import type { CubeProjectionData } from "./projection-types";
-import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierFrame, carrierCameraProgress, carrierLocalPoint, type CarrierCameraSample, type CarrierSample, type FlightBox } from "./carrier-flight";
+import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierFrame, carrierCameraProgress, carrierReadingChannels, carrierLocalPoint, type CarrierCameraSample, type CarrierSample, type FlightBox } from "./carrier-flight";
 import { CarrierOptics } from "./carrier-optics";
 import "./projection-atmosphere.css";
 import "./cube-optics.css";
@@ -123,6 +123,9 @@ export class ProjectionViewer {
       this.plane.style.setProperty("-webkit-mask-image", "none");
       this.opticalMask = "";
       this.root.style.setProperty("--carrier-detail", "0");
+      this.root.style.setProperty("--carrier-identity-opacity", "0");
+      this.root.style.setProperty("--carrier-rule", "0");
+      this.root.style.setProperty("--carrier-interface", "0");
       this.root.querySelector<HTMLElement>(".projection-environment")!.style.opacity = "0";
     }
     this.root.querySelector(".projection-eyebrow")!.textContent = `${record.id} / ${record.projection.kind === "research" ? "RESEARCH" : "EXPERIMENT"}`;
@@ -197,26 +200,20 @@ export class ProjectionViewer {
     this.root.style.setProperty("--carrier-interface", String(f.interface));
     this.root.style.setProperty("--carrier-light", String(f.light));
     const formation = this.options.reducedMotion ? 1 : f.contentResolve;
-    const exposure = (a: number, b: number) => {
-      const t = Math.max(0, Math.min(1, (formation - a) / (b - a)));
-      return t * t * (3 - 2 * t);
-    };
-    // The phase is linear over 1700ms. These short local exposures are allowed
-    // to ease; another global ease would compress formation into a flash.
-    this.root.style.setProperty("--carrier-identity-edge", `${(-5 + exposure(0, .235) * 110).toFixed(4)}%`);
-    this.root.style.setProperty("--carrier-identity-opacity", String(exposure(0, .045)));
-    this.root.style.setProperty("--carrier-rule", String(exposure(.50, .83)));
+    // The structure belongs to the projected image. Text belongs to reading
+    // distance and follows the camera actually drawn by the shared scene.
+    const reading = carrierReadingChannels(this.options.reducedMotion ? 1 : f.camera);
+    this.root.style.setProperty("--carrier-identity-opacity", String(reading.identity));
+    this.root.style.setProperty("--carrier-rule", String(reading.context));
     const corners = f.corners;
     const edgeLength = (a: number, b: number) => Math.hypot(corners[a].x - corners[b].x, corners[a].y - corners[b].y);
     const plateScale = Math.sqrt((edgeLength(0, 1) + edgeLength(3, 2)) / (2 * Math.max(1, this.imageBox.width))
       * (edgeLength(0, 3) + edgeLength(1, 2)) / (2 * Math.max(1, this.imageBox.height)));
     this.research?.setPresentationScale(this.options.reducedMotion ? 1 : plateScale);
     this.research?.setFormation(formation);
+    this.research?.setReadingProgress(this.options.reducedMotion ? 1 : f.camera);
     this.cube?.setFormation(formation);
-    // Keep the archive identity legible while the plate is suspended. Its
-    // typographic scale settles continuously as the same image fills the view.
-    const titleArrival = Math.max(0, Math.min(1, (f.camera - .12) / .68));
-    this.root.style.setProperty("--carrier-title-size", String(1 + .5 * (1 - titleArrival * titleArrival * (3 - 2 * titleArrival))));
+    this.root.style.setProperty("--carrier-title-size", "1");
     ignition.style.opacity = "1";
     const localEdge = sample?.edge ? [
       carrierLocalPoint(sample.edge[0], rect, surface),
@@ -281,9 +278,10 @@ export class ProjectionViewer {
     this.root.style.setProperty("--carrier-identity-edge", "105%");
     this.root.style.setProperty("--carrier-identity-opacity", "1");
     this.root.style.setProperty("--carrier-rule", "1");
-    this.research?.setFormation(1); this.research?.setPresentationScale(1); this.cube?.setFormation(1);
+    this.research?.setFormation(1); this.research?.setPresentationScale(1); this.research?.setReadingProgress(1); this.cube?.setFormation(1);
     this.host.inert = false;
     this.root.dataset.state = "open";
+    this.research?.resumePresentation();
     this.root.querySelector<HTMLElement>(".projection-ignition")!.style.opacity = "0";
     this.setBeat("open");
   }
@@ -328,7 +326,7 @@ export class ProjectionViewer {
 
   close(immediate = false) {
     if (!this.isOpen || (this.closing && !immediate)) return;
-    this.closing = true; this.saveState();
+    this.closing = true; this.research?.suspendPresentation(); this.saveState();
     this.root.dataset.state = "closing";
     cancelAnimationFrame(this.flightRaf);
     this.host.inert = true;

@@ -62,13 +62,39 @@
 }
 .projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-identity {
   opacity: var(--carrier-identity-opacity, 0);
-  mask-image: linear-gradient(90deg, #000 calc(var(--carrier-identity-edge, -5%) - 3%), transparent var(--carrier-identity-edge, -5%));
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--carrier-identity-edge, -5%) - 3%), transparent var(--carrier-identity-edge, -5%));
-  mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+  mask-image: none; -webkit-mask-image: none;
 }
 .projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-header {
   border-bottom-color: color-mix(in srgb, var(--optical-line) calc(var(--carrier-rule, 0) * 100%), transparent);
 }
+
+/* The held frame contains the complete tree, without a miniature reading UI.
+   Camera-driven ink is nested inside the existing label visibility rules, so
+   hidden/colliding/focused names remain hidden at every transition endpoint. */
+.research-node-ink { display: block; }
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-view="overview"] .research-map-viewport {
+  clip-path: inset(var(--projection-clip-top, 24px) 0 var(--projection-clip-bottom, 24px));
+}
+/* Keep optical width compensation above the evolution theme's base widths.
+   The reading-camera channel returns both multipliers to exactly 1. */
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-layout="evolution"][data-view="overview"] .research-links > path[data-weight="primary"] { stroke-width: calc(1.7px * var(--projection-line-main, 1)); }
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-layout="evolution"][data-view="overview"] .research-links > path[data-weight="secondary"] { stroke-width: calc(.8px * var(--projection-line-secondary, 1)); }
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-layout="evolution"][data-view="overview"] .research-links > path[data-kind="merge"] { stroke-width: calc(1.6px * var(--projection-line-main, 1)); }
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-links > path { transition: none; }
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-projecting] .research-node-title {
+  mask-image: none; -webkit-mask-image: none; clip-path: none; transition: none;
+}
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-node-ink { opacity: var(--reading-node, 0); }
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-projecting][data-view="overview"] .research-node[data-label-hidden="true"]:not(.is-selected) .research-node-title { opacity: 0; }
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-view="overview"] :is(.research-stage-label, .research-acts, .research-era, .research-phase, .research-thread, .research-current-record) {
+  opacity: var(--reading-context, 0); transition: none;
+}
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-optical-volume { opacity: var(--reading-context, 0); }
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-view="focus"][data-settled="true"] :is(.projection-inspector, .research-focus-light) {
+  opacity: var(--reading-content, 0); transition: none;
+}
+.projection-shell[data-kind="research"]:is([data-state="opening"], [data-state="closing"]) .research-body[data-view="focus"] :is(.research-phase, .research-thread) { opacity: calc(.08 * var(--reading-context, 0)); }
+.projection-shell:is([data-state="opening"], [data-state="closing"]) :is(.projection-identity, .projection-header, .projection-back, .projection-mode-label, .projection-timeline, .research-map-tools, .research-navigator, .research-status-key, .research-node, .research-acts, .research-era, .research-phase, .research-thread, .research-current-record, .projection-inspector, .research-focus-light) { transition: none; }
 
 /* Notes open beside the construction without changing its canvas geometry. */
 .projection-shell[data-kind="cube"] .projection-content { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px; overflow: visible; }

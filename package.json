@@ -11,7 +11,7 @@
     "prebuild": "node scripts/patch-rolling-number.mjs && node scripts/export-records.mjs && node scripts/prepare-webfonts.mjs",
     "check:content": "node --experimental-strip-types --test scripts/check-content.mjs",
     "check:optical": "node --test scripts/check-optical-content.mjs && node --experimental-strip-types scripts/check-cube-projection.mjs",
-    "check:projection": "node --experimental-strip-types scripts/check-carrier-flight.mjs && node --experimental-strip-types scripts/check-entry-routing.mjs && node --experimental-strip-types scripts/check-archive-arrival.mjs && node --experimental-strip-types scripts/check-research-schema.mjs",
+    "check:projection": "node --experimental-strip-types scripts/check-carrier-flight.mjs && node --experimental-strip-types scripts/check-projection-reading.mjs && node --experimental-strip-types scripts/check-research-formation.mjs && node --experimental-strip-types scripts/check-entry-routing.mjs && node --experimental-strip-types scripts/check-archive-arrival.mjs && node --experimental-strip-types scripts/check-research-schema.mjs",
     "check:projection-ui-state": "node --experimental-strip-types scripts/check-projection-ui-state.mjs",
     "check:carrier-optics": "node --experimental-strip-types scripts/check-carrier-optics.mjs",
     "check:viewport": "node --experimental-strip-types scripts/check-viewport.mjs",

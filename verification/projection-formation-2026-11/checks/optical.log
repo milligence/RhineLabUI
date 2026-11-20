@@ -1,0 +1,39 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> rhine-lab-analysis-os@1.0.0 check:optical
+> node --test scripts/check-optical-content.mjs && node --experimental-strip-types scripts/check-cube-projection.mjs
+
+✔ a two-record private collection validates without padding fictional records (2.122158ms)
+✔ small and uneven collections retain valid reference slots and loop selections (360.264361ms)
+✔ collection slot capacity cannot spill a record into the next catalog lane (1.120063ms)
+✔ story export preserves complete paragraphs and their narrative order (0.964168ms)
+✔ research references cannot silently drop unknown or reversed edges (1.349678ms)
+✔ research source links reject executable URLs (0.527232ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 552.359526
+{
+  "passed": true,
+  "accumulatedInspectionRadians": 10.4706,
+  "freePoleRange": [
+    -1,
+    1
+  ],
+  "frameRateOrientationDifference": 0,
+  "checks": [
+    "continuous pole crossings",
+    "explicit roll",
+    "analytic release damping",
+    "re-grab continuity",
+    "reduced motion",
+    "held release",
+    "v1/v2 data boundary",
+    "inside and surface occupancy",
+    "invalid data rejection"
+  ]
+}
