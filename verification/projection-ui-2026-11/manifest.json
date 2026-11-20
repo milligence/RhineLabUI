@@ -1,0 +1,51 @@
+{
+  "created": "2026-11-20T06:10:08.805Z",
+  "content": "public synthetic fixture only",
+  "nodes": 36,
+  "edges": 39,
+  "route": 23,
+  "scope": "Production ProjectionViewer, ResearchProjection and CubeProjection at stable entry; no physical ArchiveScene or carrier acceptance.",
+  "sourceDigest": "3842e7cadceadbd8f9477a05b29e3b70cdb70346047e1ef8f3f7e93d931acd14",
+  "sourceFiles": {
+    "content/fixtures/array-5x10.json": "0f692641a6df58baddf5844caaa6d560a237fe67fb1a6dbd17ee5376f0bd4506",
+    "reference/projection-ui-review.ts": "6075ff6e51adb79dc83eb3f19dd1adc42e02f5dfbba14bbe33c1e2af7610ed98",
+    "src/archive-entry.css": "0bdafbda0f84aeb7a1a8aefdd8b56a676bff1fce0b9523f59478766c00419e71",
+    "src/archive-template.css": "b0d87885b9f9e484b9decc38fa4fa36243d36f4d956f590022594a37ebd8ab9c",
+    "src/carrier-flight.ts": "58dc45928e91887d2c0baec0a0aadf4db4e5f60d508bf0b0b21043496f753678",
+    "src/cube-optics.css": "12a1eec62a12a1292bb958dc599a4a8601bca5ed51c255dd98d48b13865ae4c5",
+    "src/cube-projection.ts": "762e2461c82f4cc9bb383e3c56bf6e72161658d39572f2026f711ed566959f75",
+    "src/cube-rotation.ts": "6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972",
+    "src/fonts.css": "63d5271b9154a55e23a26e1a5ec73ffa9e6874d56db4c6a629c88175d50fa975",
+    "src/html.ts": "2ba5ade6bdeef34d5328844bf2b4190c3cefe3d81f90cc78e85ea0abd81d2fad",
+    "src/projection-atmosphere.css": "2efd0fb7dd38b4024b0d5e93fd365223645abc613ba0bd18d39ea6f87e389616",
+    "src/projection-types.ts": "0e918dff4806e0c02190b1a9c9ff2701cdcb459d81496c29a9d49fc098336fb6",
+    "src/projection-viewer.ts": "30960d35496b818ec036a43fc7d46fe6b7346311f14dba397ce581bf4b781f3a",
+    "src/projection.css": "03ada7330f551b1d4c62c3b02201dca59c229c8bafadb692def45dd3599cfff1",
+    "src/quality-settings.css": "ef3398d7ee3ce5906cb954a4f6ddc53f0eae2547e5c4daa2249e2c096df1090b",
+    "src/research-optics.css": "b870b0f8b2e3360ff8773031a5503e95903bfdbda12fc1b557144f3d7ef7a53c",
+    "src/research-projection.ts": "7d402c23c17197460c454742f49472243f5b2bed9652cee98ce386acf59328f5",
+    "src/research-tree.css": "0dce0d02b747ffae197af24511e12faf0b4a843378f76dc8730f6c3b3551927a",
+    "src/responsive.css": "f384e944084436708228bc54b64c8617e298d48f292a769dfaf018a2807cd844",
+    "src/style.css": "2f08b47140f01a7ad4bdc787672a9c91c6a94d14b1b5ee968f03488a4182b790",
+    "src/theme-ui.ts": "5fb72944e37878926287de5f66589518842559671c63b1d087fb96c108e293fa",
+    "src/theme.css": "fbf9d648be1ac5cf680420db22d19bb5442fb404dbec4ee60df1606dc3942ab1",
+    "package-lock.json": "5aad190f8a7a1687a3f17a67805e019bde3ff705d1a5d31d7f25d19deea4ff53",
+    "reference/projection-ui-review.html": "1aa2da8a03af64baf569c28e3469b992f208e40d58c9b490f50c6b9ef4828acc",
+    "reference/projection-ui-review.css": "9a292903c618bfe577dccb57946c013ef3c5c09ec8542e4a6d0f7c963a76c762",
+    "scripts/review-projection-ui.mjs": "3d8d2664aafff52674cc2ec6c126053d7dad7d3c51e13469049a7c5aa9fff314"
+  },
+  "fonts": {
+    "source": "https://raw.githubusercontent.com/milligence/RhineLabUI/f82e1d2cf6419fa029fb488ade88f90574e83399/public/",
+    "faces": 100,
+    "inline": false,
+    "bytes": 0
+  },
+  "bundle": {
+    "file": "projection-ui-review.bundle.html",
+    "bytes": 311227,
+    "sha256": "6591ba41d89612f28029b5639f7f1f9110e5a6a37b75292b3d7b71befa186999",
+    "compressed": true,
+    "frameBytes": 1139927,
+    "frameSha256": "1ce6ed4dbc7aa0cf2cd3a5097707e6d788df5149cf1ba69033ffa22c898ce686"
+  }
+}

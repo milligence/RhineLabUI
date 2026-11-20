@@ -44,7 +44,7 @@ const nodes: ResearchNode[] = titles.map((title, i) => {
     evidence: "公开合成记录 · 用于观察布局与交互",
     question: i === 12 ? "当比较条件已经发生变化，旧结论是否仍然成立？" : "当前记录改变了下一次观察的哪项条件？",
     attempt: "固定参照后重复观察。", result: "保留结果并重新安排下一次试作。",
-    interpretation: "先核对能够复现的部分，再决定下一项工作。", 
+    interpretation: "先核对能够复现的部分，再决定下一项工作。",
     record: i === 12 ? longRecord : longRecord.slice(i % 3, i % 3 + 2),
     retrospective: i === 2 || i === 35 ? [] : ["这份记录改变了工作的顺序。结论被重新检查时，角色也开始明确各自承担的判断。", "后来的复核将当时混在一起的条件分开，保留了原始观察，也收窄了可以成立的解释。"],
     retrospectiveDate: "2000.03.01",

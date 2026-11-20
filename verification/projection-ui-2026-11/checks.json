@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "artifactChangesAfterCapture": {
+    "productionComponentsChanged": false,
+    "qaFixtureChange": "One trailing space removed in reference/projection-ui-review.ts; identical sample values and runtime behavior.",
+    "frozenManifestSourceCommit": "7888dd6a1ef53940f9d70dbe35f71c6fde86c335"
+  },
+  "date": "2026-11-20",
+  "timezone": "Asia/Shanghai",
+  "scope": "Public synthetic production-component UI review; excludes full ArchiveScene/carrier and WebGL pixels.",
+  "implementationCommit": "7888dd6a1ef53940f9d70dbe35f71c6fde86c335",
+  "previewCommit": "45d23611bbb7673aedfcc55345ef59086d0f9cc9",
+  "sourceDigest": "3842e7cadceadbd8f9477a05b29e3b70cdb70346047e1ef8f3f7e93d931acd14",
+  "bundle": {
+    "bytes": 311227,
+    "sha256": "6591ba41d89612f28029b5639f7f1f9110e5a6a37b75292b3d7b71befa186999"
+  },
+  "commands": [
+    {
+      "command": "npm run check:projection",
+      "exitCode": 0,
+      "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> rhine-lab-analysis-os@1.0.0 check:projection\n> node --experimental-strip-types scripts/check-carrier-flight.mjs && node --experimental-strip-types scripts/check-entry-routing.mjs && node --experimental-strip-types scripts/check-archive-arrival.mjs && node --experimental-strip-types scripts/check-research-schema.mjs\n\n{\n  \"checks\": \"Readable ignition, geometric beam growth, progressive image reveal and stationary hold, stall-safe presentation time, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization, scaled-stage production painting\",\n  \"reversalCases\": 252,\n  \"scaledPainterCases\": 25,\n  \"maxProjectionErrorPx\": 8.854634927502048e-7,\n  \"maxExposedOverlap\": 0\n}\n{\n  \"passed\": true,\n  \"scope\": \"Actual main.ts state-transition functions with inert DOM/scene fixtures; no visual rendering claim\",\n  \"checks\": [\n    \"Actual moving aperture is sampled continuously in viewport coordinates, camera progress reaches ArchiveScene, and array return cannot flash the reading article\",\n    \"Esc/back invalidates the pending RAF and hides the never-exposed article synchronously\",\n    \"A modal interrupts extraction, preserves its opener, and cannot be overtaken by a pending projection\",\n    \"Reading-origin projection returns to the same reading surface without rerender or scroll reset\",\n    \"An explicit reading request takes over a pending extraction without a stale projection opening\",\n    \"Without a 3D carrier the fallback comes from the actual triggering control and keeps the article inert\",\n    \"A modal during a still-extracting reading-origin request retains the reading route and cancels stale projection work\",\n    \"Natural first entry remains on the array with the first archive sealed; an explicit read starts unsealing only after physical clearance\",\n    \"Explicit wallpaper detail playback and frozen reference review retain their opt-in timeline\",\n    \"Entering a different reading session clears the previous opaque paper before revealing its UI container\",\n    \"Reduced motion still requires intentional activation and does not wait for suppressed extraction motion\",\n    \"Ordinary reading arrows retain native scrolling while array and gamepad navigation remain available\",\n    \"Esc during extraction preserves the originating reading or array route and cancels the queued projection\"\n  ]\n}\n{\n  \"passed\": true,\n  \"scope\": \"Deterministic timing and state only\",\n  \"checks\": [\n    \"One monotone web arrival reaches the exact interactive field, lift and camera endpoint without a second wave packet\",\n    \"Brand timing reaches its final value before the opening layout is released\",\n    \"Slow first GPU frames advance the existing opening clock by at most 50 ms; earlier artwork and explicit seeks remain exact\",\n    \"Paper waits for physical clearance, framed camera and current unsealing, reveals over 1.1 s, closes and resets without retaining opaque state\",\n    \"Text reveal begins on visible paper and uses presented frame increments rather than expiring behind a slow render\",\n    \"Actual Scene.setMode preserves completed reference/wallpaper reading while keeping fresh and incomplete entries behind the paper gate\"\n  ]\n}\n✔ a narrative route can omit a side experiment while preserving the full tree (1.506324ms)\n✔ legacy research catalogs remain valid without authored evolution fields (0.358739ms)\n✔ main routes reject missing, repeated and too few node references (0.709837ms)\n✔ main routes cannot reverse chronology or conceal equal-time steps (0.279741ms)\n✔ evolution layouts require a complete set of finite viewport coordinates (0.781955ms)\n✔ entry references and phase membership cannot silently target absent nodes (0.249255ms)\n✔ unknown visual roles, line semantics and layouts fail explicitly (1.057468ms)\n✔ contemporary records accept complete paragraphs and reject invalid members (0.26655ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 11.219387\n"
+    },
+    {
+      "command": "npm run check:optical",
+      "exitCode": 0,
+      "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> rhine-lab-analysis-os@1.0.0 check:optical\n> node --test scripts/check-optical-content.mjs && node --experimental-strip-types scripts/check-cube-projection.mjs\n\n✔ a two-record private collection validates without padding fictional records (1.812083ms)\n✔ small and uneven collections retain valid reference slots and loop selections (328.695116ms)\n✔ collection slot capacity cannot spill a record into the next catalog lane (0.635655ms)\n✔ story export preserves complete paragraphs and their narrative order (0.71866ms)\n✔ research references cannot silently drop unknown or reversed edges (1.041856ms)\n✔ research source links reject executable URLs (0.25284ms)\nℹ tests 6\nℹ suites 0\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 470.102693\n{\n  \"passed\": true,\n  \"accumulatedInspectionRadians\": 10.4706,\n  \"freePoleRange\": [\n    -1,\n    1\n  ],\n  \"frameRateOrientationDifference\": 0,\n  \"checks\": [\n    \"continuous pole crossings\",\n    \"explicit roll\",\n    \"analytic release damping\",\n    \"re-grab continuity\",\n    \"reduced motion\",\n    \"held release\",\n    \"v1/v2 data boundary\",\n    \"inside and surface occupancy\",\n    \"invalid data rejection\"\n  ]\n}\n"
+    },
+    {
+      "command": "npm run check:projection-ui-state",
+      "exitCode": 0,
+      "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> rhine-lab-analysis-os@1.0.0 check:projection-ui-state\n> node --experimental-strip-types scripts/check-projection-ui-state.mjs\n\n{\n  \"passed\": true,\n  \"executed\": \"2026-11-20T06:07:26.144Z\",\n  \"node\": \"v24.22.3\",\n  \"scope\": \"Production state methods with inert UI/rendering effects; no browser layout or WebGL acceptance.\",\n  \"sourceDigest\": \"5013b353d6b6caa634f3efe71322229562345999bedc5a21cc4c1e597509e455\",\n  \"sourceFiles\": {\n    \"src/research-projection.ts\": \"7d402c23c17197460c454742f49472243f5b2bed9652cee98ce386acf59328f5\",\n    \"src/cube-projection.ts\": \"762e2461c82f4cc9bb383e3c56bf6e72161658d39572f2026f711ed566959f75\",\n    \"src/cube-rotation.ts\": \"6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972\",\n    \"src/html.ts\": \"2ba5ade6bdeef34d5328844bf2b4190c3cefe3d81f90cc78e85ea0abd81d2fad\",\n    \"src/projection-types.ts\": \"0e918dff4806e0c02190b1a9c9ff2701cdcb459d81496c29a9d49fc098336fb6\",\n    \"scripts/check-projection-ui-state.mjs\": \"53da425cf2d6235063bc71aceac6425943befcae7703f0934b551f9d4185eb95\",\n    \"package-lock.json\": \"5aad190f8a7a1687a3f17a67805e019bde3ff705d1a5d31d7f25d19deea4ff53\"\n  },\n  \"checks\": {\n    \"research\": [\n      \"transfer snapshot protection\",\n      \"synchronous reading restoration\",\n      \"diagnostic read purity\"\n    ],\n    \"cube\": [\n      \"normalized baseline\",\n      \"free camera isolation\",\n      \"geometry and face provenance\",\n      \"observer provenance\",\n      \"undo and redo provenance\",\n      \"preset history isolation\",\n      \"gesture grouping reset\",\n      \"undoable file import\",\n      \"invalid-load preservation\"\n    ]\n  }\n}\n"
+    }
+  ],
+  "build": {
+    "public": {
+      "passed": true,
+      "release": "2b6a5b7f5e03a696",
+      "fileCount": 819
+    },
+    "privateCompatibility": {
+      "passed": true,
+      "isolated": true,
+      "contentChanged": false,
+      "outputPublished": false
+    },
+    "warning": "Existing minified chunk size > 500 kB"
+  },
+  "browser": {
+    "environment": "Cloud Chromium, exact version not recorded",
+    "webgl": {
+      "verified": false,
+      "vendor": "Disabled",
+      "renderer": "Disabled",
+      "error": "THREE.WebGLRenderer: A WebGL context could not be created. BindToCurrentSequence failed"
+    },
+    "research": {
+      "observedViewports": [
+        [
+          1280,
+          800
+        ],
+        [
+          900,
+          614
+        ],
+        [
+          390,
+          780
+        ]
+      ],
+      "desktopReadingReturn": {
+        "from": "T13",
+        "through": "T14",
+        "back": "T13",
+        "before": 732,
+        "after": 732
+      },
+      "mobileReopen": {
+        "node": "T13",
+        "scrollTop": 2413
+      },
+      "sourceFocus": {
+        "target": "R04",
+        "visibleAt900": [
+          466,
+          496
+        ]
+      },
+      "mobileOverview": {
+        "selectedY": 375,
+        "visibleBand": [
+          259,
+          492
+        ]
+      },
+      "emptyRetrospective": "未收录独立复盘。",
+      "themesObserved": [
+        "light desktop",
+        "dark 390px"
+      ],
+      "reducedMotionExercised": true,
+      "fullThemeViewportMatrix": false
+    },
+    "cube": {
+      "uiObserved": true,
+      "pixelsVerified": false,
+      "mediumViewport": [
+        900,
+        614
+      ],
+      "stageHeight": 355,
+      "inspectorHeight": 355,
+      "inspectorScrollHeight": 1241,
+      "mobileViewport": [
+        390,
+        780
+      ],
+      "mobileStageHeight": 350,
+      "mobileWorkspaceClientWidth": 348,
+      "mobileWorkspaceScrollWidth": 348,
+      "presetCounts": {
+        "present": 24,
+        "removed": 3
+      },
+      "modifiedCounts": {
+        "present": 23,
+        "removed": 4,
+        "label": "LOCAL STUDY"
+      },
+      "undoRestoredBaseline": true,
+      "presetHistoryIsolated": true
+    },
+    "keyboard": {
+      "escapeLocalMenusAndFocusReturn": true,
+      "completeTabCycleAudit": false,
+      "crossArchiveAnnouncementCleared": true
+    },
+    "finalBootstrap": {
+      "autoFrame": [
+        1320,
+        810
+      ],
+      "outerClientWidth": 1348,
+      "outerScrollWidth": 1348,
+      "fixedFrame": [
+        1280,
+        800
+      ],
+      "oversizedFixedFrameTested": false
+    },
+    "unverified": [
+      "Cube WebGL pixels and pixel measurement",
+      "full ArchiveScene/carrier transition",
+      "hardware performance",
+      "complete keyboard Tab cycle",
+      "all theme/viewport/motion combinations",
+      "private prose visual review"
+    ]
+  },
+  "media": [
+    {
+      "file": "media/research-overview-final.jpg",
+      "bytes": 71882,
+      "sha256": "bd41dca03bf85eaff2b684a1239069a44d2848af81b200c2773e2711aad239dc"
+    },
+    {
+      "file": "media/research-focus-desktop-final.jpg",
+      "bytes": 72529,
+      "sha256": "21c5507855dbefd7a13dfae24a46c31a192e35f72c75be320ff2cb6375cf578d"
+    },
+    {
+      "file": "media/research-mobile-dark-final.jpg",
+      "bytes": 27178,
+      "sha256": "0f84d02757995ad724e232c3265082a3955cf4bfdab302bb1b806056c6c596e5"
+    },
+    {
+      "file": "media/cube-ui-webgl-unavailable-final.jpg",
+      "bytes": 30405,
+      "sha256": "3818270621fc3caa2349d205616798310195df68cd78ea337217cbff83f0d351"
+    }
+  ],
+  "mediaProvenance": {
+    "capture": "Actual final production iframe rectangles, directly captured as JPEG",
+    "content": "Public synthetic fixture only",
+    "fixture": "reference/projection-ui-review.ts",
+    "fixtureSha256": "6075ff6e51adb79dc83eb3f19dd1adc42e02f5dfbba14bbe33c1e2af7610ed98",
+    "privateArchiveLoaded": false
+  }
+}
