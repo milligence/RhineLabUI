@@ -1,0 +1,381 @@
+<div id="rhine-direction" class="rh-direction">
+  <header class="rh-masthead">
+    <div class="rh-brand"><strong>THE ARCHIVE</strong><span>PERSONAL RECORDS / 个人档案馆</span></div>
+    <div class="rh-edition"><span>DESIGN STUDY</span><span>构图与成像示意</span></div>
+  </header>
+  <div class="rh-context"><span>ARCHIVE / 01</span><span>研究中的一次转折</span><span class="rh-context-right">EXHIBIT 01</span></div>
+  <main class="rh-main">
+    <section class="rh-exhibit" aria-label="档案实体、投影口与事件对象的概念构图">
+      <div class="rh-stage" role="img" aria-label="玻璃档案左下方固定，光从右上角口径发出，前方的少量对象按连续前沿形成。仅作空间与成像示意。"></div>
+      <div class="rh-exhibit-caption"><span class="rh-dot"></span><span class="rh-stage-label">局部关系 / 过程示意</span><span class="rh-stage-state" aria-live="polite">观察</span></div>
+    </section>
+    <article class="rh-reading">
+      <div class="rh-record-meta"><span>RECORD / 001</span><span>叙事示意</span></div>
+      <h2 class="rh-record-title">重新检查</h2>
+      <div class="rh-record-rule"></div>
+      <p class="rh-lead">已有的结果被保留。<br>对结果的解释，重新接受检查。</p>
+      <div class="rh-short-record">
+        <p>一项独立对照改变了接下来的工作。研究者将其中的一处差异单独提出，重新安排核查的顺序。</p>
+        <p>观察围绕这处差异继续。此前的记录留在原位，成为下一步判断的依据。</p>
+      </div>
+      <div class="rh-more-record" hidden>
+        <p>原有方案暂时停止扩展。新的记录从一个较小的问题开始：哪些结果能够重复，哪些判断仍需检验。</p>
+        <p>转向前后的材料均被保留。尚未解决的问题继续列入记录，等待下一次核查。</p>
+      </div>
+      <button class="rh-read-button cursor-interaction" type="button" aria-expanded="false">展开记录 <span aria-hidden="true">↗</span></button>
+      <div class="rh-reading-foot">示意文案 · 非真实事件记录</div>
+    </article>
+  </main>
+  <footer class="rh-transport">
+    <div class="rh-transport-primary"><button class="rh-replay cursor-interaction" type="button">重播成像</button><button class="rh-reverse cursor-interaction" type="button">收束投影</button></div>
+    <label class="rh-progress-label"><span>成像进度</span><input class="rh-progress" type="range" min="0" max="1000" step="1" value="1000" aria-label="成像进度，可来回拖动"/><output class="rh-progress-output">100%</output></label>
+    <div class="rh-modes" role="group" aria-label="演示对象"><button class="cursor-interaction" data-mode="research" type="button" aria-pressed="true">关系</button><button class="cursor-interaction" data-mode="cube" type="button" aria-pressed="false">构造</button></div>
+  </footer>
+</div>
+<style>
+#rhine-direction{--rh-paper:#e9e7e0;--rh-ink:#242824;--rh-muted:#74786e;--rh-line:#bcbeb1;--rh-accent:#9d773f;--rh-white:#f5f4ed;color-scheme:light;background:var(--rh-paper);color:var(--rh-ink);font-family:"MiSans","Helvetica Neue","PingFang SC","Microsoft YaHei",Arial,sans-serif;position:relative;width:100%;overflow:hidden;text-align:left;font-size:14px;line-height:1.65;box-sizing:border-box}
+#rhine-direction *{box-sizing:border-box}
+#rhine-direction .rh-masthead{display:flex;align-items:start;justify-content:space-between;gap:24px;padding:30px 34px 24px}
+#rhine-direction .rh-brand{display:grid;gap:0}
+#rhine-direction .rh-brand strong{font-family:"Arial",sans-serif;font-weight:700;letter-spacing:-1px;font-size:30px;line-height:1.1}
+#rhine-direction .rh-brand>span{font-size:10px;letter-spacing:1.35px;margin-top:7px}
+#rhine-direction .rh-edition{display:grid;text-align:right;gap:4px;padding-right:64px;color:var(--rh-muted);font-size:10px;letter-spacing:1.4px}
+#rhine-direction .rh-context{margin:0 34px;border-top:1px solid var(--rh-line);display:flex;gap:20px;padding:12px 0 0;font-size:11px;color:var(--rh-muted);letter-spacing:.8px}
+#rhine-direction .rh-context-right{margin-left:auto;letter-spacing:1.8px}
+#rhine-direction .rh-main{display:grid;grid-template-columns:minmax(0,1fr) 276px;gap:10px;min-height:430px;padding:0 34px 22px 14px;align-items:center}
+#rhine-direction .rh-exhibit{position:relative;min-width:0;padding:10px 0 0}
+#rhine-direction .rh-stage{height:400px;min-width:0;position:relative;overflow:hidden}
+#rhine-direction .rh-stage>svg,#rhine-direction .rh-stage>canvas{width:100%;height:100%;display:block}
+#rhine-direction .rh-exhibit-caption{display:flex;align-items:center;gap:8px;margin:0 8% 8px;font-size:11px;color:var(--rh-muted);letter-spacing:.7px}
+#rhine-direction .rh-dot{width:4px;height:4px;background:var(--rh-accent);display:block;flex:0 0 auto}
+#rhine-direction .rh-stage-state{margin-left:auto;min-width:28px;text-align:right;color:var(--rh-accent)}
+#rhine-direction .rh-reading{padding:30px 0 12px 24px;align-self:center;position:relative;min-width:0}
+#rhine-direction .rh-record-meta{display:flex;gap:10px;color:var(--rh-muted);font-size:10px;letter-spacing:1px}
+#rhine-direction h2.rh-record-title{margin:17px 0 0;font-weight:500;font-size:27px;line-height:1.35;letter-spacing:.3px}
+#rhine-direction .rh-record-rule{width:30px;height:2px;background:var(--rh-accent);margin:21px 0 19px}
+#rhine-direction .rh-reading p{font-size:13px;line-height:1.95;letter-spacing:.2px;margin:0 0 15px;color:#5a6057}
+#rhine-direction .rh-reading p.rh-lead{font-size:15px;line-height:1.8;color:var(--rh-ink);margin-bottom:23px}
+#rhine-direction button{font:inherit;appearance:none;border:0;background:transparent;color:var(--rh-ink);padding:9px 0;border-radius:0;letter-spacing:.3px;min-height:40px;text-align:left}
+#rhine-direction button:focus-visible{outline:2px solid var(--rh-accent);outline-offset:4px}
+#rhine-direction button:hover{color:var(--rh-accent)}
+#rhine-direction .rh-read-button{font-size:12px;border-bottom:1px solid var(--rh-line);display:flex;justify-content:space-between;width:100%;margin-top:4px}
+#rhine-direction .rh-read-button span{font-size:18px;color:var(--rh-accent)}
+#rhine-direction .rh-reading-foot{font-size:10px;color:var(--rh-muted);margin-top:18px;letter-spacing:.4px}
+#rhine-direction .rh-transport{margin:0 34px;padding:12px 0 20px;border-top:1px solid var(--rh-line);display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+#rhine-direction .rh-transport-primary{display:flex;gap:19px}
+#rhine-direction .rh-transport button{font-size:11px;white-space:nowrap}
+#rhine-direction .rh-replay{color:var(--rh-accent)}
+#rhine-direction .rh-progress-label{display:flex;align-items:center;gap:12px;flex:1;min-width:220px;font-size:10px;color:var(--rh-muted);letter-spacing:.8px}
+#rhine-direction .rh-progress{appearance:none;flex:1;min-width:70px;width:100%;height:2px;background:#c7c9bc;accent-color:var(--rh-accent);margin:14px 0}
+#rhine-direction .rh-progress::-webkit-slider-thumb{appearance:none;border:0;width:9px;height:9px;border-radius:50%;background:var(--rh-accent)}
+#rhine-direction .rh-progress::-moz-range-thumb{border:0;width:9px;height:9px;border-radius:50%;background:var(--rh-accent)}
+#rhine-direction .rh-progress:focus-visible{outline:2px solid var(--rh-accent);outline-offset:6px}
+#rhine-direction .rh-progress-output{min-width:35px;text-align:right;font-variant-numeric:tabular-nums}
+#rhine-direction .rh-modes{display:flex;gap:15px}
+#rhine-direction .rh-modes button{position:relative;color:var(--rh-muted)}
+#rhine-direction .rh-modes button[aria-pressed=true]{color:var(--rh-ink)}
+#rhine-direction .rh-modes button[aria-pressed=true]:after{content:"";position:absolute;bottom:5px;left:0;right:0;height:1px;background:var(--rh-accent)}
+#rhine-direction [hidden]{display:none!important}
+@media(max-width:760px){#rhine-direction .rh-main{grid-template-columns:minmax(0,1fr) 235px;padding-right:24px;gap:0}#rhine-direction .rh-stage{height:380px}#rhine-direction .rh-reading{padding-left:13px}#rhine-direction .rh-masthead{padding:26px 24px 22px}#rhine-direction .rh-context,#rhine-direction .rh-transport{margin-left:24px;margin-right:24px}#rhine-direction .rh-transport{gap:10px 20px}#rhine-direction .rh-edition{padding-right:50px}}
+@media(max-width:600px){#rhine-direction .rh-main{grid-template-columns:1fr;padding:0 18px 20px;gap:0}#rhine-direction .rh-stage{height:350px}#rhine-direction .rh-reading{padding:20px 7px 0;max-width:100%}#rhine-direction .rh-brand strong{font-size:25px}#rhine-direction .rh-brand>span{font-size:9px;letter-spacing:.7px}#rhine-direction .rh-edition{font-size:9px;padding-right:45px;gap:2px;max-width:140px}#rhine-direction .rh-masthead{padding:24px 20px 20px;gap:12px}#rhine-direction .rh-context,#rhine-direction .rh-transport{margin-left:24px;margin-right:24px}#rhine-direction .rh-context{gap:12px;font-size:10px}#rhine-direction .rh-context-right{display:none}#rhine-direction .rh-reading p{font-size:14px}#rhine-direction .rh-reading h2{font-size:26px}#rhine-direction .rh-progress-label{order:3;flex-basis:100%}#rhine-direction .rh-modes{margin-left:auto}#rhine-direction .rh-reading-foot{font-size:11px}}
+</style>
+<script>
+/* Native, deterministic composition study. No external assets or research data.
+   A projection front is evaluated in one world coordinate system. */
+(function () {
+  'use strict';
+  window.createRhineStage = function createRhineStage(container) {
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-label', '档案投影构图研究：玻璃载体、出光口与空间对象');
+    canvas.setAttribute('role', 'img');
+    Object.assign(canvas.style, { width: '100%', height: '100%', display: 'block' });
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let width = 650, height = 430, scale = 1, ox = 0, oy = 0;
+    let progress = 1, mode = 'research', disposed = false;
+    const PI = Math.PI;
+    const sat = n => Math.max(0, Math.min(1, n));
+    const ease = n => { n = sat(n); return n * n * n * (10 + n * (-15 + n * 6)); };
+    const cue = (a, b) => ease((progress - a) / (b - a));
+    const mix = (a, b, t) => a + (b - a) * t;
+    const add = (a, b) => a.map((v, i) => v + b[i]);
+    const lerp = (a, b, t) => a.map((v, i) => mix(v, b[i], t));
+    const source = [-1.52, -.42, .35];
+    const yaw = -24 * PI / 180, pitch = 19 * PI / 180;
+    const cp = Math.cos(pitch), sp = Math.sin(pitch), cy = Math.cos(yaw), sy = Math.sin(yaw);
+    const rgb = (c, a) => `rgba(${c},${sat(a)})`;
+    const INK = '62,63,58', LINE = '112,107,96', AMBER = '162,126,80';
+    const rand = i => { const v = Math.sin(i * 127.1 + 311.7) * 43758.5453123; return v - Math.floor(v); };
+    function project(v) {
+      const x = v[0] * cy + v[2] * sy;
+      const z = -v[0] * sy + v[2] * cy;
+      const y = v[1] * cp - z * sp;
+      return { x: 442 + x * 78, y: 282 - y * 78, z: v[1] * sp + z * cp };
+    }
+    function path(points, close) {
+      ctx.beginPath();
+      points.forEach((v, i) => { const p = project(v); i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
+      if (close) ctx.closePath();
+    }
+    function polygon(points, fill, stroke, lineWidth = .7) {
+      if (points.length < 3) return;
+      path(points, true);
+      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lineWidth; ctx.stroke(); }
+    }
+    function line(points, color, lineWidth = 1) {
+      if (points.length < 2) return;
+      path(points, false); ctx.strokeStyle = color; ctx.lineWidth = lineWidth; ctx.stroke();
+    }
+    function screenLabel(text, p, options) {
+      const o = options || {}, q = project(p);
+      ctx.save();
+      ctx.fillStyle = o.color || rgb(INK, .78);
+      ctx.font = `${o.weight || 400} ${Math.max((o.size || 11) / scale, 14)}px "MiSans", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif`;
+      ctx.textAlign = o.align || 'left'; ctx.textBaseline = 'middle';
+      ctx.globalAlpha = o.alpha === undefined ? 1 : o.alpha;
+      ctx.fillText(text, q.x + (o.dx || 0), q.y + (o.dy || 0));
+      ctx.restore();
+    }
+    function cubic(a, b, c, d, t) {
+      const u = 1 - t;
+      return a.map((v, i) => u*u*u*v + 3*u*u*t*b[i] + 3*u*t*t*c[i] + t*t*t*d[i]);
+    }
+    function curve(a, b, c, d, steps = 80) {
+      return Array.from({ length: steps + 1 }, (_, i) => cubic(a, b, c, d, i / steps));
+    }
+    // One continuous oblique light front; every object samples the same field.
+    const score = p => (p[0] - source[0]) * .76 + (p[1] - source[1]) * .50 + (p[2] - source[2]) * .17;
+    const formation = () => sat((progress - .22) / .58);
+    const frontier = () => mix(.30, 5.50, formation());
+    function clip(points, limit = frontier()) {
+      const out = [];
+      for (let i = 0; i < points.length; i++) {
+        const a = points[i], b = points[(i + 1) % points.length], da = score(a) - limit, db = score(b) - limit;
+        if (da <= 0) out.push(a);
+        if ((da < 0 && db > 0) || (da > 0 && db < 0)) out.push(lerp(a, b, da / (da - db)));
+      }
+      return out;
+    }
+    function revealLine(points, color, lineWidth = 1) {
+      const f = frontier(); let run = [];
+      const finish = () => { if (run.length > 1) line(run, color, lineWidth); run = []; };
+      for (let i = 0; i < points.length; i++) {
+        const a = points[i], da = score(a) - f;
+        if (da <= 0) run.push(a);
+        if (i + 1 < points.length) {
+          const b = points[i + 1], db = score(b) - f;
+          if ((da < 0 && db > 0) || (da > 0 && db < 0)) {
+            const p = lerp(a, b, da / (da - db));
+            if (da <= 0) { run.push(p); finish(); } else run.push(p);
+          }
+        }
+        if (da > 0) finish();
+      }
+      finish();
+    }
+    function frontParticles(points, seed, amount = 1) {
+      if (progress <= .22 || progress >= .8) return;
+      const f = frontier();
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i], band = Math.abs(score(p) - f);
+        if (band > .21 || rand(i + seed) > .55) continue;
+        const q = project(p), a = Math.pow(1 - band / .21, 1.3) * amount;
+        const jitter = 4.5 * (1 - formation());
+        ctx.fillStyle = rgb(rand(i + seed + 97) > .55 ? AMBER : INK, a * .55);
+        ctx.beginPath(); ctx.arc(q.x + (rand(i + seed + 4) - .5) * jitter, q.y + (rand(i + seed + 13) - .5) * jitter, .43 + rand(i + seed + 56) * .55, 0, PI * 2); ctx.fill();
+      }
+    }
+    function ellipse(center, rx, ry, z, color, lw) {
+      const points = Array.from({ length: 96 }, (_, i) => [center[0] + Math.cos(i / 95 * PI * 2) * rx, center[1] + Math.sin(i / 95 * PI * 2) * ry, z]);
+      line(points, color, lw);
+    }
+    function archive() {
+      const back = [[-4.35,-2.2,-.08],[-1.23,-2.2,-.08],[-1.23,-.18,-.08],[-4.35,-.18,-.08]];
+      const face = back.map(p => [p[0],p[1],.25]);
+      // The only substantial shadow belongs to the physical carrier.
+      const q = project([-2.7,-2.24,-.05]);
+      ctx.save(); ctx.translate(q.x + 12, q.y + 8); ctx.rotate(.12); ctx.scale(1,.13);
+      const shadow = ctx.createRadialGradient(0,0,0,0,0,150);
+      shadow.addColorStop(0, 'rgba(73,64,51,.13)'); shadow.addColorStop(.65,'rgba(73,64,51,.04)'); shadow.addColorStop(1,'rgba(73,64,51,0)');
+      ctx.fillStyle=shadow; ctx.fillRect(-155,-155,310,310); ctx.restore();
+      polygon(back, 'rgba(217,212,201,.60)', 'rgba(117,109,95,.30)', .8);
+      polygon([back[1],back[2],face[2],face[1]], 'rgba(179,170,153,.37)', 'rgba(123,115,99,.26)', .7);
+      polygon([back[0],back[1],face[1],face[0]], 'rgba(240,238,230,.72)', 'rgba(125,117,101,.21)', .65);
+      polygon(face, 'rgba(248,246,239,.38)', 'rgba(255,255,250,.92)', 1.3);
+      // Two quiet internal optical rings, behind the clear cover.
+      ellipse([-3.42,-1.12], .56,.56,.18, 'rgba(131,125,111,.19)', 6);
+      ellipse([-3.42,-1.12], .56,.56,.19, 'rgba(255,255,249,.65)', .8);
+      ellipse([-2.45,-1.29], .35,.35,.19, 'rgba(162,131,88,.22)', 4);
+      ellipse([-2.45,-1.29], .35,.35,.2, 'rgba(255,255,249,.64)', .7);
+      const inner = [[-4.19,-2.06,.27],[-1.40,-2.06,.27],[-1.40,-.32,.27],[-4.19,-.32,.27]];
+      line([inner[0],inner[3],inner[2]], 'rgba(111,105,91,.21)', .75);
+      line([face[0],face[3],face[2]], 'rgba(255,255,252,.94)', 1.15);
+      // Small mechanical fasteners, not decorative HUD dots.
+      [[-4.16,-2.02,.28],[-1.42,-.36,.28]].forEach(p=>{
+        const v=project(p); ctx.fillStyle='rgba(111,103,88,.40)';ctx.beginPath();ctx.arc(v.x,v.y,1.8,0,PI*2);ctx.fill();
+        ctx.strokeStyle='rgba(255,255,249,.8)';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(v.x-1,v.y);ctx.lineTo(v.x+1,v.y);ctx.stroke();
+      });
+      const port = [[-1.98,-.53,.30],[-1.43,-.53,.30],[-1.43,-.34,.30],[-1.98,-.34,.30]];
+      polygon(port, 'rgba(98,97,87,.46)', 'rgba(255,255,248,.9)', .8);
+      const charge=cue(.015,.15), settle=1-cue(.79,1)*.66;
+      polygon(port.map(p=>[p[0],p[1],p[2]+.025]), rgb('229,211,176',.2+charge*.65*settle), rgb('255,250,230',.4+charge*.6), .9);
+      const g=project([-1.68,-.42,.34]);
+      ctx.save(); ctx.globalAlpha=charge*settle;
+      const bloom=ctx.createRadialGradient(g.x,g.y,0,g.x,g.y,25);
+      bloom.addColorStop(0,'rgba(245,225,181,.32)');bloom.addColorStop(1,'rgba(245,225,181,0)');ctx.fillStyle=bloom;ctx.fillRect(g.x-25,g.y-25,50,50);ctx.restore();
+      if(width>=440) screenLabel('ARCHIVE  /  01',[-4.10,-1.91,.32],{size:10,color:'rgba(98,95,85,.7)'});
+    }
+    function beam() {
+      const reach=cue(.10,.28), strength=cue(.10,.22)*(1-cue(.73,1)*.82);
+      if(strength<.001)return;
+      const base=[[-1.98,-.53,.34],[-1.43,-.53,.34],[-1.43,-.34,.34],[-1.98,-.34,.34]];
+      const ends= mode==='cube' ? [[.55,.15,.45],[3.25,.15,.45],[3.25,2.25,.45],[.55,2.25,.45]] : [[-.38,.18,.10],[3.6,.18,.10],[3.6,2.12,.10],[-.38,2.12,.10]];
+      const far=ends.map((p,i)=>lerp(base[i],p,reach));
+      for(let i=0;i<4;i++) {
+        const j=(i+1)%4;
+        const a=project(base[i]),b=project(far[i]);
+        const grad=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+        grad.addColorStop(0,rgb('230,206,161',strength*.12));
+        grad.addColorStop(.48,rgb('246,235,210',strength*.05));
+        grad.addColorStop(1,rgb('250,244,231',strength*.015));
+        polygon([base[i],base[j],far[j],far[i]],grad,null);
+      }
+      // No triangle outline. A single oblique glint makes the light path legible.
+      const a=project(base[2]),b=project(far[2]);
+      const glint=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+      glint.addColorStop(0,rgb(AMBER,strength*.32));glint.addColorStop(.64,rgb(AMBER,strength*.10));glint.addColorStop(1,rgb(AMBER,0));
+      line([base[2],far[2]],glint,.65);
+    }
+    const nodes=[[-.42,1.10,.16],[.78,1.58,.22],[2.05,1.35,.37],[3.38,1.80,.52],[.94,.34,-.19],[2.40,.44,-.08]];
+    const edges=[
+      [nodes[0],[-.02,1.12,.18],[.30,1.57,.20],nodes[1]],
+      [nodes[1],[1.24,1.58,.23],[1.55,1.35,.33],nodes[2]],
+      [nodes[2],[2.53,1.36,.39],[2.86,1.79,.50],nodes[3]],
+      [nodes[0],[.04,1.10,.12],[.30,.35,-.17],nodes[4]],
+      [nodes[4],[1.44,.33,-.17],[1.95,.44,-.09],nodes[5]],
+      [nodes[5],[2.93,.44,-.08],[2.96,1.79,.46],nodes[3]]
+    ].map(e=>curve(...e));
+    function research() {
+      if(progress<=.22)return;
+      const f=frontier(), alpha=cue(.22,.29);
+      ctx.save();ctx.globalAlpha=alpha;
+      // A very thin transparent evidence ribbon holds the principal lineage.
+      const main=edges.slice(0,3).flat();
+      const lower=main.map(p=>add(p,[0,-.33,-.29]));
+      polygon(clip(main.concat(lower.slice().reverse())), 'rgba(216,207,188,.34)', null);
+      revealLine(lower, 'rgba(147,133,109,.40)', .85);
+      const lip=lower.map(p=>add(p,[0,-.035,.035]));
+      polygon(clip(lower.concat(lip.slice().reverse())), 'rgba(255,254,246,.73)', null);
+      [.25,.60].forEach(t=>revealLine(main.map(p=>add(p,[0,-.33*t,-.29*t])), 'rgba(255,254,246,.56)', .65));
+      edges.forEach((points,i)=>{
+        const secondary=i>=3;
+        revealLine(points, rgb(secondary?LINE:INK,secondary?.35:.71),secondary?.85:1.05);
+        frontParticles(points,i*112+13,secondary?.58:.85);
+      });
+      nodes.forEach((p,i)=>{
+        const a=ease((f-score(p)+.08)/.30); if(a<=0)return;
+        const q=project(p),selected=i===2;
+        ctx.save();ctx.globalAlpha=a;
+        const r=selected?5.0:3.3;
+        ctx.fillStyle='rgba(248,246,239,.94)';ctx.strokeStyle=rgb(selected?AMBER:INK,selected?.85:.62);ctx.lineWidth=.9;
+        ctx.beginPath();ctx.arc(q.x,q.y,r,0,PI*2);ctx.fill();ctx.stroke();
+        if(selected){ctx.fillStyle=rgb(AMBER,.72);ctx.beginPath();ctx.arc(q.x,q.y,1.5,0,PI*2);ctx.fill();}
+        ctx.restore();
+      });
+      // Labels are sparse and screen-readable; no prose belongs to the image.
+      const labels=width<440?[[0,'既有结果'],[3,'重新检查']]:[[0,'既有结果'],[2,'独立对照'],[3,'重新检查']];
+      labels.forEach(([i,text])=>screenLabel(text,nodes[i],{alpha:ease((f-score(nodes[i])-.08)/.32),size:11,align:i===3?'right':'center',dx:i===3?25:0,dy:i===2?30:-30,color:rgb(INK,.70)}));
+      ctx.restore();
+    }
+    function cube() {
+      if(progress<=.22)return;
+      const cells=[], side=.48, faces=[];
+      for(let x=0;x<3;x++)for(let y=0;y<3;y++)for(let z=0;z<3;z++) {
+        // An explicitly illustrative aperture, without a visibility claim.
+        if(x===1 && y===1)continue;
+        cells.push({x,y,z});
+      }
+      const present=(x,y,z)=>cells.some(c=>c.x===x&&c.y===y&&c.z===z);
+      for(const cell of cells){
+        const x=.90+cell.x*side,y=.42+cell.y*side,z=-.55+cell.z*side,gap=.025;
+        const X=x+side-gap,Y=y+side-gap,Z=z+side-gap;
+        const options=[
+          {side:[0,1,0], p:[[x,Y,z],[X,Y,z],[X,Y,Z],[x,Y,Z]],fill:'rgba(251,250,244,.92)'},
+          {side:[1,0,0], p:[[X,y,z],[X,Y,z],[X,Y,Z],[X,y,Z]],fill:'rgba(213,206,192,.78)'},
+          {side:[0,0,1], p:[[x,y,Z],[X,y,Z],[X,Y,Z],[x,Y,Z]],fill:'rgba(237,231,219,.88)'}
+        ];
+        options.forEach(o=>{if(!present(cell.x+o.side[0],cell.y+o.side[1],cell.z+o.side[2]))faces.push({...o,depth:o.p.reduce((s,p)=>s+project(p).z,0)/4});});
+      }
+      faces.sort((a,b)=>a.depth-b.depth).forEach((face,i)=>{
+        const visible=clip(face.p);
+        polygon(visible,face.fill,'rgba(125,117,101,.33)',.65);
+        frontParticles(face.p.flatMap((p,j)=>Array.from({length:20},(_,k)=>lerp(p,face.p[(j+1)%4],k/19))),i*93+31,.45);
+      });
+      const f=frontier();
+      screenLabel('构造观察',[1.3,2.25,.12],{size:11,alpha:ease((f-3.1)/.5),color:rgb(INK,.69)});
+      // A single plane of observation with finite endpoints; no diagram HUD.
+      const axis=curve([.65,.10,-.45],[1.25,.10,-.45],[2.4,.10,-.45],[3.1,.10,-.45]);
+      revealLine(axis,'rgba(153,139,116,.27)',.6);
+    }
+    function draw(){
+      if(disposed||!ctx)return;
+      const dpr=Math.min(2.5,window.devicePixelRatio||1);
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);
+      ctx.save();ctx.translate(ox,oy);ctx.scale(scale,scale);ctx.lineJoin='round';ctx.lineCap='round';
+      // Broad ambient light only, deliberately no enclosing projection plate.
+      const ambient=ctx.createRadialGradient(520,240,0,520,240,350);
+      ambient.addColorStop(0,'rgba(255,254,248,.19)');ambient.addColorStop(1,'rgba(255,254,248,0)');
+      ctx.fillStyle=ambient;ctx.fillRect(30,0,840,600);
+      archive();beam();mode==='cube'?cube():research();ctx.restore();
+    }
+    function resize(){
+      if(disposed)return;
+      const rect=container.getBoundingClientRect();
+      width=Math.max(1,rect.width||650);height=Math.max(1,rect.height||430);
+      const dpr=Math.min(2.5,window.devicePixelRatio||1);
+      canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
+      // Keep both the source and the image in one composition at narrow widths.
+      scale=Math.min(width/780,height/500);
+      ox=(width-780*scale)/2-58*scale;oy=(height-500*scale)/2+5*scale;
+      draw();
+    }
+    const observer=typeof ResizeObserver!=='undefined'?new ResizeObserver(resize):null;
+    observer?.observe(container);resize();
+    return {
+      setProgress(p){progress=sat(Number(p)||0);draw();},
+      setMode(next){mode=next==='cube'?'cube':'research';canvas.setAttribute('aria-label',mode==='cube'?'档案投影构图研究：示意立方构造':'档案投影构图研究：示意事件关系');draw();},
+      resize,
+      dispose(){disposed=true;observer?.disconnect();canvas.remove();}
+    };
+  };
+})();
+
+</script>
+<script>
+(function(){
+  const root=document.getElementById('rhine-direction');
+  if(!root)return;
+  const stage=window.createRhineStage(root.querySelector('.rh-stage'));
+  const range=root.querySelector('.rh-progress');
+  const output=root.querySelector('.rh-progress-output');
+  const play=root.querySelector('.rh-replay');
+  const reverse=root.querySelector('.rh-reverse');
+  const state=root.querySelector('.rh-stage-state');
+  const read=root.querySelector('.rh-read-button');
+  let p=1,raf=0,last=0,direction=1,playing=false;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const labels=['蓄光','光路','结构','成像','观察'];
+  function paint(){stage.setProgress(p);range.value=String(Math.round(p*1000));output.textContent=Math.round(p*100)+'%';const label=labels[p<.13?0:p<.30?1:p<.55?2:p<.94?3:4];if(state.textContent!==label)state.textContent=label;}
+  function stop(){playing=false;cancelAnimationFrame(raf);raf=0;last=0;play.textContent='重播成像';}
+  function frame(t){if(!playing)return;if(last)p=Math.max(0,Math.min(1,p+direction*Math.min(60,t-last)/5400));last=t;paint();if((direction>0&&p>=1)||(direction<0&&p<=0)){stop();return;}raf=requestAnimationFrame(frame);}
+  function run(d){stop();direction=d;if(reduced){p=d>0?1:0;paint();return;}playing=true;play.textContent='暂停';raf=requestAnimationFrame(frame);}
+  play.addEventListener('click',function(){if(playing){stop();return;}if(p>=1)p=0;run(1);});
+  reverse.addEventListener('click',function(){if(p<=0){run(1);}else run(-1);});
+  range.addEventListener('input',function(){stop();p=Number(range.value)/1000;paint();});
+  read.addEventListener('click',function(){const open=read.getAttribute('aria-expanded')!=='true';read.setAttribute('aria-expanded',String(open));root.querySelector('.rh-more-record').hidden=!open;read.innerHTML=open?'收起记录 <span aria-hidden="true">↙</span>':'展开记录 <span aria-hidden="true">↗</span>';});
+  root.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener('click',function(){stop();const mode=b.dataset.mode;root.querySelectorAll('[data-mode]').forEach(function(n){n.setAttribute('aria-pressed',String(n===b));});stage.setMode(mode);root.querySelector('.rh-stage-label').textContent=mode==='cube'?'空间构造 / 几何示意':'局部关系 / 过程示意';p=1;paint();});});
+  document.addEventListener('visibilitychange',function(){if(document.hidden&&playing)stop();});
+  paint();
+})();
+</script>
