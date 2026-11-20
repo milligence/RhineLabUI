@@ -152,7 +152,7 @@ for (const lens of [.3,.8,1.49]) assert.deepEqual(carrierCamera(0,viewport,lens)
 // of it. Pure camera tests alone missed mixing a scaled stage's screen rect
 // with its unscaled offsetWidth and CSS transform coordinates.
 const viewerSource = readFileSync(new URL("../src/projection-viewer.ts",import.meta.url),"utf8").replace(/^import .+;\r?\n/gm,"");
-const painterContext = {exports:{},carrierFrame,carrierCameraProgress,carrierLocalPoint};
+const painterContext = {exports:{},carrierFrame,carrierCameraProgress,carrierLocalPoint,cancelAnimationFrame:()=>{}};
 vm.runInNewContext(ts.transpileModule(viewerSource,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,painterContext);
 let scaledPainterCases = 0;
 for (const [width,height] of [[1280,720],[1366,768],[1536,864],[2560,1440],[390,844]]) {
@@ -168,17 +168,30 @@ for (const [width,height] of [[1280,720],[1366,768],[1536,864],[2560,1440],[390,
     const expectedFrame=carrierFrame(progress,surface,b,drawn);
     const sourceLocal=projectOpticalPoint({x:-.27,y:.04,z:.01},expectedFrame.rig,surface);
     const sourceScreen={x:rect.left+sourceLocal.x*layout.scale,y:rect.top+sourceLocal.y*layout.scale};
+    const edgeLocal=[{x:sourceLocal.x-5,y:sourceLocal.y+2},{x:sourceLocal.x+5,y:sourceLocal.y-2}];
+    const edgeScreen=edgeLocal.map(p=>({x:rect.left+p.x*layout.scale,y:rect.top+p.y*layout.scale}));
+    let opticalInput;
+    // Rendering is inert here; the actual production painter still owns the
+    // camera and both screen-to-local conversions passed to the optical field.
+    const optics={render:input=>{opticalInput=input;return {maskImage:"none",clarity:1,active:false};}};
     const viewer=Object.assign(Object.create(painterContext.exports.ProjectionViewer.prototype),{
       parent:{clientWidth:surface.width,clientHeight:surface.height,getBoundingClientRect:()=>rect},
-      root:{style:style(),querySelector:selector=>nodes[selector]},
+      root:{style:style(),querySelector:selector=>nodes[selector],closest:()=>null},
       host:{offsetLeft:b.left,offsetTop:b.top,offsetWidth:b.width,offsetHeight:b.height,style:style()},
-      flight:{value:progress},closing:false,setBeat:()=>{},
-      options:{reducedMotion:false,onCameraProgress:()=>drawn,sampleCarrier:()=>({origin:sourceScreen})},
+      flight:{value:progress},clock:{value:1234},optics,closing:false,setBeat:()=>{},
+      options:{reducedMotion:false,onCameraProgress:()=>drawn,sampleCarrier:()=>({origin:sourceScreen,edge:edgeScreen})},
     });
     viewer.paintFlight();
     close(parseFloat(properties.get("--projection-origin-x")),sourceLocal.x,"Scaled stage source X remains on the physical carrier");
     close(parseFloat(properties.get("--projection-origin-y")),sourceLocal.y,"Scaled stage source Y remains on the physical carrier");
     assert.deepEqual(viewer.frameState.matrix,expectedFrame.matrix,"Production image transform uses local dimensions at non-unit stage scales");
+    assert.equal(opticalInput.frame,viewer.frameState,"Optical field uses the exact drawn-camera frame used by the production image");
+    close(opticalInput.origin.x,sourceLocal.x,"Optical field receives a local emitter X");
+    close(opticalInput.origin.y,sourceLocal.y,"Optical field receives a local emitter Y");
+    opticalInput.edge.forEach((point,i)=>{
+      close(point.x,edgeLocal[i].x,"Optical aperture edge X shares the scaled-stage boundary");
+      close(point.y,edgeLocal[i].y,"Optical aperture edge Y shares the scaled-stage boundary");
+    });
     viewer.frameState.corners.forEach((point,i)=>{
       close(rect.left+point.x*layout.scale,rect.left+expectedFrame.corners[i].x*layout.scale,"Displayed image X follows the scaled stage");
       close(rect.top+point.y*layout.scale,rect.top+expectedFrame.corners[i].y*layout.scale,"Displayed image Y follows the scaled stage");
@@ -186,4 +199,35 @@ for (const [width,height] of [[1280,720],[1366,768],[1536,864],[2560,1440],[390,
     scaledPainterCases++;
   }
 }
-console.log(JSON.stringify({checks:"Readable ignition, geometric beam growth, progressive image reveal and stationary hold, stall-safe presentation time, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization, scaled-stage production painting",reversalCases,scaledPainterCases,maxProjectionErrorPx:maxProjectionError,maxExposedOverlap},null,2));
+// The granular image must leave a normal document behind, and closing an
+// interrupted transfer must release its optical resources and input isolation.
+const settledProperties=new Map();
+const settledStyle={maskImage:"url(data:image/png;base64,formation)",setProperty:(key,value)=>settledProperties.set(key,value)};
+const settledIgnition={style:{opacity:"1"},replaceChildren:()=>{}};
+let disposedOptics=0,disposedContent=0,restoredFocus=0,closedCallbacks=0,clearedHost=0,lastCamera;
+const sibling={inert:true};
+const settled=Object.assign(Object.create(painterContext.exports.ProjectionViewer.prototype),{
+  host:{style:settledStyle,inert:true,replaceChildren:()=>{clearedHost++;}},
+  root:{style:{setProperty:(key,value)=>settledProperties.set(key,value)},dataset:{state:"opening"},querySelector:()=>settledIgnition,hidden:false},
+  flight:new CarrierFlight(),setBeat:()=>{},opticalMask:"formation",opticalClarity:.4,
+  optics:{dispose:()=>{disposedOptics++;}},research:{dispose:()=>{disposedContent++;}},
+  siblings:[{node:sibling,inert:false}],opener:{isConnected:true,focus:()=>{restoredFocus++;}},
+  options:{onCameraProgress:value=>{lastCamera=value;},onClose:()=>{closedCallbacks++;}},
+  isOpen:true,closing:false,
+});
+settled.finishEntrance();
+assert.equal(settled.host.style.maskImage,"none","Settled text must not retain the formation mask");
+assert.equal(settledProperties.get("-webkit-mask-image"),"none","WebKit receives the same clean mask endpoint");
+assert.equal(settled.opticalClarity,1,"Settled labels are fully resolved");
+assert.equal(settled.host.inert,false,"Settled projection controls become interactive");
+assert.equal(settled.root.dataset.state,"open");
+assert.equal(settledIgnition.style.opacity,"0","The temporary optical layer is absent from stable reading");
+settled.finishClose();
+assert.equal(disposedOptics,1,"Closing releases the optical renderer once");
+assert.equal(disposedContent,1,"Closing releases the production content once");
+assert.equal(settled.optics,undefined);
+assert.equal(settled.isOpen,false);assert.equal(settled.root.hidden,true);
+assert.equal(lastCamera,0,"A completed return restores the physical camera endpoint");
+assert.equal(sibling.inert,false,"Closing restores the underlying archive's input state");
+assert.equal(restoredFocus,1);assert.equal(closedCallbacks,1);assert.equal(clearedHost,1);
+console.log(JSON.stringify({checks:"Readable ignition, geometric beam growth, progressive image reveal and stationary hold, stall-safe presentation time, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization, scaled-stage production painting and optical source alignment, settled mask removal and resource/input cleanup",reversalCases,scaledPainterCases,opticalLifecycleCases:2,maxProjectionErrorPx:maxProjectionError,maxExposedOverlap},null,2));

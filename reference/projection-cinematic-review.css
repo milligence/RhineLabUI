@@ -1,0 +1,40 @@
+/* Review controls live outside the production iframe. The calibration plane
+   is a labelled input fixture, never a substitute for the archive GLB. */
+.cinematic-review-page { margin: 0; min-height: 100%; color: #30332e; background: #cbc8c1; font: 12px/1.45 system-ui, sans-serif; }
+.cinematic-review-page * { box-sizing: border-box; }
+.cinematic-review-toolbar { position: sticky; top: 0; z-index: 20; padding: 11px 16px; border-bottom: 1px solid #ada595; background: #f0eee8; }
+.cinematic-review-toolbar header { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline; margin-bottom: 9px; }
+.cinematic-review-toolbar strong { font-size: 11px; letter-spacing: .14em; }
+.cinematic-review-toolbar small { color: #6c6b62; }
+.cinematic-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 11px; }
+.cinematic-controls + .cinematic-controls { margin-top: 8px; }
+.cinematic-controls button, .cinematic-controls select, .cinematic-controls input[type="number"] { min-height: 31px; padding: 5px 9px; color: inherit; font: inherit; background: #fbfaf5; border: 1px solid #bcb5a7; }
+.cinematic-controls button { cursor: pointer; }
+.cinematic-controls label { display: flex; align-items: center; gap: 5px; }
+.cinematic-controls input[type="number"] { width: 88px; font-variant-numeric: tabular-nums; }
+.cinematic-controls input[type="range"] { flex: 1 1 180px; min-width: 120px; max-width: 380px; accent-color: #967344; }
+.cinematic-controls input[type="file"] { max-width: 190px; font-size: 10px; }
+.cinematic-controls button:focus-visible, .cinematic-controls input:focus-visible, .cinematic-controls select:focus-visible { outline: 2px solid #967344; outline-offset: 2px; }
+.cinematic-controls button[aria-pressed="true"] { background: #dfd5c4; }
+.cinematic-review-status { display: block; margin-top: 8px; color: #65675e; font-variant-numeric: tabular-nums; }
+.cinematic-review-errors { display: block; color: #8c3c2f; white-space: pre-wrap; }
+.cinematic-review-stage { display: flex; justify-content: flex-start; padding: 14px; overflow: auto; }
+#cinematic-frame { display: block; flex: 0 0 auto; margin-inline: auto; border: 0; background: #e8e5e1; box-shadow: 0 8px 26px #171a1424; }
+.cinematic-review-report { margin: 0 16px 12px; }
+.cinematic-review-report pre { max-height: 330px; padding: 12px; overflow: auto; background: #eeebe3; font: 11px/1.5 ui-monospace, monospace; }
+.cinematic-review-hidden .cinematic-review-toolbar { display: none; }
+.cinematic-review-hidden .cinematic-review-stage { padding: 0; }
+#cinematic-restore { position: fixed; z-index: 30; right: 7px; bottom: 7px; padding: 6px 9px; border: 1px solid #a79b85; background: #eeeae2ec; color: #3b4039; font: 10px system-ui, sans-serif; cursor: pointer; }
+.cinematic-calibration { position: absolute; inset: 0; overflow: hidden; color: var(--optical-ink, #252923); background: radial-gradient(ellipse at 30% 44%, #fff9 0, transparent 48%), var(--theme-paper, #e8e5e1); pointer-events: none; }
+.cinematic-calibration::after { content: ""; position: absolute; left: 8%; right: -10%; bottom: 18%; height: 1px; transform: rotate(-9deg); background: linear-gradient(90deg, transparent, #9c957e32, transparent); }
+.cinematic-calibration > svg { position: absolute; width: 100%; height: 100%; overflow: visible; }
+.cinematic-calibration-plate { fill: var(--theme-panel, #efede7); fill-opacity: .82; stroke: var(--optical-line, #aaa38f); stroke-width: .7; }
+.cinematic-calibration-inset { fill: none; stroke: var(--optical-line, #aaa38f); stroke-width: .55; opacity: .5; }
+.cinematic-calibration-aperture { fill: none; stroke: var(--optical-accent, #a17f50); stroke-width: 1.6; }
+.cinematic-calibration-markers { fill: none; stroke: var(--optical-muted, #8c8b7f); stroke-width: .65; opacity: .5; }
+.cinematic-calibration-title { fill: var(--optical-ink, #252923); font: 500 11px "MiSans", sans-serif; letter-spacing: 2px; }
+.cinematic-calibration-code { fill: var(--optical-muted, #8c8b7f); font: 400 8px "MiSans", sans-serif; letter-spacing: 1.6px; }
+.cinematic-calibration-caption { position: absolute; left: 32px; bottom: 27px; display: grid; gap: 7px; max-width: min(440px, calc(100% - 64px)); color: var(--optical-muted, #8c8b7f); font-size: 10px; line-height: 1.7; letter-spacing: .8px; }
+.cinematic-calibration-caption strong { color: var(--optical-ink, #252923); font-size: 10px; font-weight: 500; letter-spacing: 1.8px; }
+[data-dark-surface="true"] .cinematic-calibration { background: radial-gradient(ellipse at 30% 44%, #64736a24 0, transparent 55%), var(--theme-paper); }
+@media (max-width: 600px) { .cinematic-review-toolbar { padding: 9px; } .cinematic-review-stage { padding: 6px; } .cinematic-calibration-caption { left: 20px; bottom: 22px; max-width: calc(100% - 40px); font-size: 9px; } }
