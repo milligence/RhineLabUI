@@ -1,44 +1,34 @@
-/* A continuous research genealogy. Weight belongs to the argument, not to rows
-   in a transcript. Names stay short; dates and explanations live in the lens. */
-.research-acts { position: absolute; z-index: 4; top: 64px; left: 24px; right: 24px; display: grid; grid-template-columns: .9fr .9fr 1.45fr 1.1fr 1fr; gap: 20px; }
-.research-acts button { position: relative; display: grid; grid-template-columns: 22px 1fr; column-gap: 6px; row-gap: 4px; min-height: 57px; padding: 10px 0 8px; border-top: 1px solid var(--optical-line); background: none; color: var(--optical-body); text-align: left; }
-.research-acts small { grid-row: 1 / 3; padding-top: 2px; color: var(--optical-accent); font-size: 9px; letter-spacing: 1px; }
-.research-acts span { font-size: 13px; letter-spacing: 1px; }
-.research-acts time { color: var(--optical-muted); font-size: 9px; letter-spacing: .7px; }
-.research-acts button::before { content: ""; position: absolute; top: -1px; left: 0; width: 20px; height: 1px; background: var(--optical-accent); transition: width .45s; }
-.research-acts button:hover::before, .research-acts button.is-active::before { width: 100%; }
-.research-acts button.is-active span { color: var(--optical-ink); }
+/* The topology remains complete. The visual weight follows the mainline and
+   its decisions; the phase rail is an index into the same continuous field. */
+.research-acts { position: absolute; z-index: 4; top: 55px; left: 24px; right: 24px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: clamp(16px, 2vw, 32px); transition: opacity .35s, visibility .35s; }
+.research-acts button { position: relative; display: grid; grid-template-columns: 23px minmax(0, 1fr); align-content: start; gap: 4px 7px; min-height: 57px; padding: 11px 0 7px; border: 0; border-top: 1px solid var(--optical-line); background: none; color: var(--optical-body); text-align: left; }
+.research-acts small { grid-row: 1 / 3; padding-top: 3px; color: var(--optical-muted); font-size: 9px; letter-spacing: .7px; font-variant-numeric: tabular-nums; }
+.research-acts span { color: var(--optical-body); font-size: 14px; font-weight: 400; line-height: 1.5; letter-spacing: .4px; }
+.research-acts time { color: var(--optical-muted); font-size: 10px; line-height: 1.6; letter-spacing: .2px; font-variant-numeric: tabular-nums; }
+.research-acts button::before { content: ""; position: absolute; top: -1px; left: 0; width: 15px; height: 1px; background: var(--optical-accent); opacity: .7; transition: width .4s, opacity .3s; }
+.research-acts button:hover::before, .research-acts button.is-active::before { width: 100%; opacity: 1; }
+.research-acts button.is-active :is(span, small) { color: var(--optical-ink); }
+.research-acts button.is-active span { font-weight: 600; }
 .research-acts button:focus-visible { outline: 1px solid var(--optical-accent); outline-offset: 4px; }
-.research-body[data-layout="evolution"] .research-map-viewport { position: absolute; inset: 0; overflow: hidden; clip-path: inset(134px 0 65px); }
+.research-body[data-layout="evolution"] .research-map-viewport { position: absolute; inset: 0; overflow: hidden; clip-path: inset(126px 0 116px); }
 .research-body[data-layout="evolution"][data-view="focus"] .research-map-viewport { clip-path: none; }
 .projection-shell[data-kind="research"] .research-body[data-layout="evolution"][data-view="overview"] .research-node-title { top: calc(50% + var(--label-offset, 14px)); }
-.research-era { position: absolute; top: 50px; pointer-events: none; border-left: 1px solid color-mix(in srgb, var(--optical-line) 32%, transparent); background: linear-gradient(110deg, color-mix(in srgb, var(--optical-accent) 2.2%, transparent), transparent 80%); }
-.research-era > span { position: absolute; left: 16px; top: 4px; color: var(--optical-muted); font-size: 24px; letter-spacing: 2px; opacity: .55; }
-.research-era[data-phase-id="2"] { background: linear-gradient(115deg, color-mix(in srgb, var(--optical-accent) 7%, transparent), transparent 85%); border-color: color-mix(in srgb, var(--optical-accent) 28%, transparent); }
+.research-era { position: absolute; top: 50px; pointer-events: none; border-left: 1px solid color-mix(in srgb, var(--optical-line) 25%, transparent); background: linear-gradient(105deg, color-mix(in srgb, var(--optical-accent) 2.5%, transparent), transparent 65%); transition: opacity .35s; }
+.research-era > span { display: none; }
 .research-body[data-layout="evolution"] .research-phase { display: none; }
-.research-body[data-layout="evolution"] .research-status-key { top: 19px; right: 24px; }
 .research-body[data-layout="evolution"] .research-stage-label > span:last-child { display: none; }
-.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-links path[data-weight="primary"] { stroke: color-mix(in srgb, var(--optical-accent) 83%, var(--optical-ink)); stroke-width: 1.8; }
-.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-links path[data-weight="secondary"] { stroke: color-mix(in srgb, var(--optical-ink) 28%, transparent); stroke-width: .75; }
-.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-links path[data-kind="merge"] { stroke: var(--optical-accent); stroke-width: 2; }
-.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node[data-role="spine"] .research-node-core { width: 13px; height: 13px; border-color: var(--optical-accent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--optical-accent) 6%, transparent); }
-.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node[data-role="component"] .research-node-core { width: 12px; height: 12px; border-radius: 2px; border-color: var(--optical-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--optical-accent) 8%, transparent); }
-.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node[data-role="component"] .research-node-core i { border-radius: 0; background: var(--optical-accent); }
-.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node[data-role="branch"] .research-node-title { font-size: 11px; font-weight: 400; }
-.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node:not([data-role="branch"]) .research-node-title { color: var(--optical-ink); font-size: 13px; font-weight: 600; }
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-links path[data-weight="primary"] { stroke: color-mix(in srgb, var(--optical-accent) 76%, var(--optical-ink)); stroke-width: 1.7; }
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-links path[data-weight="secondary"] { stroke: color-mix(in srgb, var(--optical-ink) 29%, transparent); stroke-width: .8; }
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-links path[data-kind="merge"] { stroke: var(--optical-accent); stroke-width: 1.6; }
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node[data-role="spine"] .research-node-core { width: 12px; height: 12px; border-color: var(--optical-accent); }
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node[data-role="component"] .research-node-core { width: 11px; height: 11px; border-color: color-mix(in srgb, var(--optical-accent) 65%, var(--optical-ink)); }
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node[data-role="component"]:not([data-status="negative"]) .research-node-core { border-radius: 2px; }
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node[data-role="branch"] .research-node-title { font-size: 12px; font-weight: 400; }
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"] .research-node:not([data-role="branch"]) .research-node-title { color: var(--optical-ink); font-size: 13px; font-weight: 500; }
 .research-body[data-layout="evolution"][data-view="focus"] :is(.research-acts, .research-era) { opacity: 0; pointer-events: none; visibility: hidden; }
-.research-acts, .research-era { transition: opacity .5s, visibility .5s; }
-.research-body[data-layout="evolution"][data-view="focus"] .research-map .research-node.is-selected .research-node-core { width: 24px; height: 24px; }
-.research-authored-record p { margin-bottom: 17px; }
-.research-record-consequence { margin-top: 23px; border-top: 1px solid var(--optical-line); padding-top: 13px; }
-.research-record-consequence h3 { margin: 0 0 8px; font-size: 10px; font-weight: 400; color: var(--optical-accent); letter-spacing: 1.6px; }
-.research-record-consequence p { color: var(--optical-ink); }
-@media (max-width: 759px) {
-  .research-body[data-layout="evolution"] .research-map-viewport { clip-path: inset(126px 0 124px); }
-  .research-acts { top: 57px; left: 10px; right: 10px; display: flex; overflow-x: auto; gap: 15px; padding-bottom: 8px; scrollbar-width: none; }
-  .research-acts button { flex: 0 0 122px; min-height: 58px; grid-template-columns: 18px 1fr; }
-  .research-acts span { font-size: 12px; letter-spacing: .5px; }
-  .research-body[data-layout="evolution"] .research-status-key { top: 32px; left: 10px; right: auto; gap: 17px; font-size: 8px; }
-  .research-body[data-layout="evolution"] .research-stage-label { top: 7px; }
-  .research-body[data-layout="evolution"] .research-stage-label b { font-size: 16px; }
-}
+.projection-shell[data-kind="research"] .research-body[data-layout="evolution"][data-view="focus"] .research-map .research-node.is-selected .research-node-core { width: 25px; height: 25px; }
+.research-body[data-layout="evolution"][data-narrow="true"] .research-acts { top: 62px; left: 10px; right: 10px; display: flex; gap: 20px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+.research-body[data-layout="evolution"][data-narrow="true"] .research-acts button { flex: 0 0 auto; width: max-content; min-width: 133px; min-height: 57px; grid-template-columns: 19px auto; gap: 3px 6px; }
+.research-body[data-layout="evolution"][data-narrow="true"] .research-acts span { font-size: 13px; }
+.research-body[data-layout="evolution"][data-narrow="true"] .research-acts time { font-size: 9px; }
+.research-body[data-layout="evolution"][data-narrow="true"][data-view="overview"] .research-map-viewport { clip-path: inset(126px 0 180px); }

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rhine · projection UI review</title><style>/*__REVIEW_CSS__*/</style></head>
+<body>
+  <section class="review-toolbar" aria-label="公开界面验收工具">
+    <header><strong>RHINE / PRODUCTION UI REVIEW</strong><small>公开合成内容 · 生产组件稳态验收 · 不包含实体抽取与连续播放验收</small></header>
+    <div class="review-controls">
+      <button data-command="overview">全树 · 36 节点</button><button data-command="focus">聚焦长记录</button><button data-command="empty">无复盘记录</button><button data-command="cube">Cube 操作台</button><button data-command="open">重新打开</button>
+      <label>视口<select id="review-size"><option value="auto">跟随窗口</option><option value="1280x800">1280 × 800</option><option value="1024x768">1024 × 768</option><option value="900x614">900 × 614</option><option value="760x900">760 × 900</option><option value="390x780">390 × 780</option></select></label>
+      <label><input type="checkbox" id="review-dark">暗色</label><label><input type="checkbox" id="review-reduced">减少动态</label><button id="review-hide">隐藏验收栏</button>
+      <label>载入公开本地预览<input type="file" id="review-local" accept=".html,text/html" aria-label="载入公开本地预览文件"></label>
+    </div>
+    <output id="review-status">正在载入生产组件…</output><output id="review-errors" role="alert"></output>
+  </section>
+  <main class="review-stage"><iframe id="production-frame" title="生产版演化树与 Cube 操作台" sandbox="allow-scripts allow-same-origin allow-downloads allow-popups"></iframe></main>
+  <details class="review-report"><summary>实际组件状态与构建身份</summary><pre id="review-report"></pre></details>
+  <button id="review-restore" hidden>验收工具</button>
+  <script>
+    const frame = document.getElementById("production-frame");
+    const stage = document.querySelector(".review-stage");
+    const toolbar = document.querySelector(".review-toolbar");
+    const size = document.getElementById("review-size");
+    const status = document.getElementById("review-status");
+    const errors = document.getElementById("review-errors");
+    let identity = /*__REVIEW_IDENTITY__*/;
+    const framePayload = /*__FRAME_PAYLOAD__*/;
+    function send(command, value) { frame.contentWindow.postMessage({ scope: "rhine-projection-ui-review", command, value }, "*"); }
+    function layout() {
+      const hidden = document.body.classList.contains("review-hidden");
+      const style = getComputedStyle(stage);
+      const horizontalPadding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      const verticalPadding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+      // clientWidth excludes the outer page scrollbar; use the actual padding
+      // so the compact and hidden-toolbar variants keep the same viewport rule.
+      const dimensions = size.value === "auto" ? [Math.max(1, Math.floor(stage.clientWidth - horizontalPadding)), Math.max(400, innerHeight - (hidden ? 0 : toolbar.offsetHeight) - verticalPadding)] : size.value.split("x").map(Number);
+      frame.style.width = dimensions[0] + "px"; frame.style.height = dimensions[1] + "px";
+    }
+    document.querySelectorAll("[data-command]").forEach(button => button.addEventListener("click", () => send(button.dataset.command)));
+    document.getElementById("review-dark").addEventListener("change", event => send("theme", event.target.checked));
+    document.getElementById("review-reduced").addEventListener("change", event => send("reduced", event.target.checked));
+    size.addEventListener("change", layout); window.addEventListener("resize", layout);
+    const layoutObserver = new ResizeObserver(layout);
+    layoutObserver.observe(stage); layoutObserver.observe(toolbar);
+    document.getElementById("review-hide").addEventListener("click", () => { document.body.classList.add("review-hidden"); document.getElementById("review-restore").hidden = false; layout(); });
+    document.getElementById("review-restore").addEventListener("click", () => { document.body.classList.remove("review-hidden"); document.getElementById("review-restore").hidden = true; layout(); });
+    window.addEventListener("message", event => {
+      if (event.source !== frame.contentWindow || event.data?.scope !== "rhine-projection-ui-review") return;
+      if (event.data.event === "error") { errors.textContent += event.data.message + "\n"; return; }
+      const { width, height, stats, reduced } = event.data;
+      status.textContent = width + " × " + height + " · " + (stats.kind || "closed") + " · " + (stats.phase || "closed") + " · " + (reduced ? "减少动态" : "完整交互动态") + " · source " + identity.sourceDigest.slice(0, 12);
+      document.getElementById("review-report").textContent = JSON.stringify({ identity, current: event.data }, null, 2);
+    });
+    async function loadFrame(payload = framePayload) {
+      let documentHTML = payload.data;
+      if (payload.encoding === "gzip-base64") {
+        if (typeof DecompressionStream !== "function") throw new Error("浏览器不支持本预览所需的 gzip 解压，请使用未压缩的验收包。");
+        const compressed = Uint8Array.from(atob(payload.data), character => character.charCodeAt(0));
+        const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream("gzip"));
+        documentHTML = await new Response(stream).text();
+      }
+      frame.srcdoc = documentHTML;
+    }
+    // File.text stays in this page. There is no upload endpoint or network write.
+    document.getElementById("review-local").addEventListener("change", async event => {
+      const file = event.target.files?.[0]; if (!file) return;
+      errors.textContent = ""; status.textContent = "正在读取本地公开验收包…";
+      try {
+        const text = await file.text();
+        const payloadMatch = text.match(/const framePayload = ([^\n]+);\r?\n/);
+        const identityMatch = text.match(/(?:const|let) identity = ([^\n]+);\r?\n/);
+        if (payloadMatch && identityMatch) {
+          const nextIdentity = JSON.parse(identityMatch[1]);
+          if (nextIdentity.content !== "public synthetic fixture only") throw new Error("此入口只接受公开合成验收包。");
+          identity = nextIdentity; await loadFrame(JSON.parse(payloadMatch[1]));
+        } else {
+          const parsed = new DOMParser().parseFromString(text, "text/html");
+          if (parsed.querySelector('meta[name="rhine-review-content"]')?.content !== "public-synthetic") throw new Error("文件不是公开生产组件验收页。");
+          identity = { content: "public synthetic fixture only", sourceDigest: parsed.querySelector('meta[name="rhine-review-source"]')?.content || "local", loadedFile: file.name };
+          await loadFrame({ encoding: "plain", data: text });
+        }
+        document.getElementById("review-dark").checked = false;
+        document.getElementById("review-reduced").checked = false;
+      } catch (error) { status.textContent = "本地验收包载入失败"; errors.textContent = String(error); }
+      event.target.value = "";
+    });
+    layout();
+    loadFrame().catch(error => { status.textContent = "验收页面载入失败"; errors.textContent = String(error); });
+  </script>
+</body>
+</html>

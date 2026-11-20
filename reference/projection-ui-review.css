@@ -1,0 +1,22 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #c8c5bf; color: #292b27; font: 12px/1.4 system-ui, sans-serif; }
+.review-toolbar { position: sticky; top: 0; z-index: 20; padding: 10px 16px; background: #efede7; border-bottom: 1px solid #a49e92; }
+.review-toolbar header { display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; }
+.review-toolbar strong { font-size: 11px; letter-spacing: .1em; }
+.review-toolbar small { color: #66655f; }
+.review-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 12px; }
+.review-controls button, .review-controls select { font: inherit; color: inherit; min-height: 30px; background: #faf8f2; border: 1px solid #bbb4a6; padding: 4px 9px; }
+.review-controls label { display: flex; align-items: center; gap: 5px; }
+.review-controls input[type="file"] { max-width: 190px; font-size: 10px; }
+.review-controls button { cursor: pointer; }
+.review-controls button:focus-visible, .review-controls input:focus-visible, .review-controls select:focus-visible { outline: 2px solid #9b7247; outline-offset: 2px; }
+#review-status { display: block; margin-top: 7px; font-variant-numeric: tabular-nums; color: #5d6057; }
+#review-errors { display: block; color: #8d372c; white-space: pre-wrap; }
+.review-stage { padding: 14px; display: flex; justify-content: flex-start; overflow: auto; }
+#production-frame { display: block; border: 0; background: #e8e5e1; box-shadow: 0 7px 28px #18181328; flex: 0 0 auto; margin-inline: auto; }
+.review-report { margin: 0 16px 12px; }
+.review-report pre { overflow: auto; max-height: 300px; font: 11px/1.5 ui-monospace, monospace; background: #edeae3; padding: 10px; }
+.review-hidden .review-toolbar { display: none; }
+.review-hidden .review-stage { padding: 0; }
+#review-restore { position: fixed; right: 6px; bottom: 6px; z-index: 30; padding: 5px 8px; border: 1px solid #918672; background: #eee9dfe8; color: #3e4039; font: 10px system-ui, sans-serif; }
+@media (max-width: 500px) { .review-toolbar { padding: 8px; } .review-stage { padding: 6px; } }
