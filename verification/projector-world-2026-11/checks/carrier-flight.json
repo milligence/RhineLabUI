@@ -1,0 +1,12 @@
+{
+  "checks": "Uniform presentation time, source/beam/frame/image causal timing, 600ms completed-image hold, C2 one-way camera approach, stall-safe time, exact landing and bounded reversals; actual Scene methods with GLB-derived front glass, on-screen/front-facing/stable-camera gating, smooth rotated-entry preparation/cancellation, positive forward rays against the original cover, fixed world plane, physical beam/DOM agreement through resize, scaled-stage synchronization and complete optical cleanup",
+  "reversalCases": 324,
+  "actualSceneCases": 22,
+  "oldBackwardsRayCases": 8,
+  "scaledPainterCases": 25,
+  "opticalLifecycleCases": 2,
+  "projectorBackgroundGroups": 4,
+  "minimumPhysicalClearance": 0.899999999999995,
+  "maxProjectionErrorPx": 0.0000010752328307717107,
+  "maxExposedOverlap": 0
+}

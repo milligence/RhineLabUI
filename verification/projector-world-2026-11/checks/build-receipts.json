@@ -1,0 +1,103 @@
+{
+  "verifiedAt": "2026-11-20T10:20:21.090876+00:00",
+  "status": "passed",
+  "scope": "Production source/copy identity, isolated builds, offline asset identity and unchanged private input; not browser, private-content visual, editorial or mathematical acceptance.",
+  "publicBuild": {
+    "version": "18342937bf84e279",
+    "files": 819,
+    "bytes": 35680350,
+    "manifestSha256": "6a8fbe4241a3f61121f19415ece7df4594a9587ad8ef146d293dd01df86c7185",
+    "versionRecomputedFromWorkerAndEveryAsset": true,
+    "command": "npm run build",
+    "exitCode": 0,
+    "executedThisResume": false,
+    "log": "verification/projector-world-2026-11/checks/public-build.log",
+    "scope": "Successful build observed before interruption; existing release identity was recomputed from worker and every output asset after recovery."
+  },
+  "privateBuild": {
+    "version": "426a40604da6f252",
+    "files": 781,
+    "bytes": 35783127,
+    "manifestSha256": "0fdc9fb2cf3fd08ada8da08620d82ef853fae5b768559fd1fd571296e1a04bc8",
+    "versionRecomputedFromWorkerAndEveryAsset": true,
+    "command": "npm run archive:private -- <private site/archives.json>",
+    "exitCode": 0,
+    "executedThisResume": true,
+    "log": "verification/projector-world-2026-11/checks/private-build.log",
+    "isolatedWorkspace": ".private-build/archive-yhFNhI",
+    "records": 2
+  },
+  "sourceIdentity": {
+    "items": [
+      "src",
+      "scripts",
+      "wallpaper",
+      "index.html",
+      "package.json",
+      "package-lock.json",
+      "tsconfig.json",
+      "vite.config.ts"
+    ],
+    "publicCheckout": {
+      "sha256": "12f9e2498d2ac7abb73c3b660a6dde419d9f04cd978c9cb1e85cf03cb9f81737",
+      "files": 203,
+      "bytes": 3036651
+    },
+    "isolatedPrivateCheckout": {
+      "sha256": "12f9e2498d2ac7abb73c3b660a6dde419d9f04cd978c9cb1e85cf03cb9f81737",
+      "files": 203,
+      "bytes": 3036651
+    },
+    "unchangedDuringPrivateBuild": true,
+    "all203CopiedSourceFilesMatch": true,
+    "matchesFinalOpticalManifest": true,
+    "finalOpticalSourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6"
+  },
+  "publicInputs": {
+    "items": [
+      "content",
+      "public"
+    ],
+    "before": {
+      "sha256": "eda4b60acbdbd1507f8d883b003c770e50d6e78342492385fe1598af6614ec43",
+      "files": 824,
+      "bytes": 35290170
+    },
+    "after": {
+      "sha256": "eda4b60acbdbd1507f8d883b003c770e50d6e78342492385fe1598af6614ec43",
+      "files": 824,
+      "bytes": 35290170
+    },
+    "unchanged": true,
+    "publicBuildOutputUnchanged": true
+  },
+  "privateContentIdentity": {
+    "sourceSha256": "72bf1ed12ab6555e63be9523ed1b746e4f42bf24a7ef6bcf899ecd99a434589b",
+    "isolatedCopySha256": "72bf1ed12ab6555e63be9523ed1b746e4f42bf24a7ef6bcf899ecd99a434589b",
+    "unchanged": true,
+    "scope": "Byte identity only; previous narrative reconstruction and mathematical checks were not rerun."
+  },
+  "cssAssetIdentity": {
+    "public": {
+      "index-BO8M9h4n.css": "8f0a580a8fe8b44bf42c37d901f9ffc1989a7c628b621961c7429a151ee675e3"
+    },
+    "private": {
+      "index-BO8M9h4n.css": "8f0a580a8fe8b44bf42c37d901f9ffc1989a7c628b621961c7429a151ee675e3"
+    },
+    "identical": true
+  },
+  "warnings": [
+    "npm Unknown env config http-proxy",
+    "Vite existing chunk-size warning (>500 kB)"
+  ],
+  "logs": {
+    "public-build.log": {
+      "bytes": 1360,
+      "sha256": "b3760930bbe6085669ffe05662115dad7921562edfc743f7d06a74c05e5970a9"
+    },
+    "private-build.log": {
+      "bytes": 1867,
+      "sha256": "481975381dbcb81fffef39d2ee2619bc6d1975f31da824ea3be6d07bb56d121e"
+    }
+  }
+}

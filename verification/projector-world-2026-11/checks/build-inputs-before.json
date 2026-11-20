@@ -1,0 +1,43 @@
+{
+  "sampledAt": "2026-11-20T10:18:57.288758+00:00",
+  "sourceItems": [
+    "src",
+    "scripts",
+    "wallpaper",
+    "index.html",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "vite.config.ts"
+  ],
+  "sourceDigest": {
+    "sha256": "12f9e2498d2ac7abb73c3b660a6dde419d9f04cd978c9cb1e85cf03cb9f81737",
+    "files": 203,
+    "bytes": 3036651
+  },
+  "publicInputItems": [
+    "content",
+    "public"
+  ],
+  "publicInputDigest": {
+    "sha256": "eda4b60acbdbd1507f8d883b003c770e50d6e78342492385fe1598af6614ec43",
+    "files": 824,
+    "bytes": 35290170
+  },
+  "publicBuild": {
+    "version": "18342937bf84e279",
+    "files": 819,
+    "bytes": 35680350,
+    "manifestSha256": "6a8fbe4241a3f61121f19415ece7df4594a9587ad8ef146d293dd01df86c7185",
+    "versionRecomputedFromWorkerAndEveryAsset": true
+  },
+  "privateInputSha256": "72bf1ed12ab6555e63be9523ed1b746e4f42bf24a7ef6bcf899ecd99a434589b",
+  "changedSinceCoreChecks": [
+    {
+      "path": "src/research-optics.css",
+      "before": "889e3e32551ee643932b66214e7de100de01e41cc61149bd80ce01c535621861",
+      "after": "692574fc73b0b3167e9bfaf9250aed51c0813ed6426a1de6a95915cc28de5329"
+    }
+  ],
+  "scope": "Source/input identities sampled before isolated private build; no private narrative text."
+}

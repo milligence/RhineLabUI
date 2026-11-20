@@ -1,0 +1,75 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> rhine-lab-analysis-os@1.0.0 check:carrier-optics
+> node --experimental-strip-types scripts/check-carrier-optics.mjs
+
+{
+  "passed": true,
+  "scope": "Actual native mask output, fallback alpha buffer and lifecycle with inert Canvas boundaries; no browser compositing, WebGL or full-scene acceptance.",
+  "nativeFronts": [
+    9.4706,
+    28.1765,
+    50,
+    71.8235,
+    90.5294
+  ],
+  "receiverPixels": 70560,
+  "visibleConnectorPixels": 13821,
+  "resizeCases": [
+    {
+      "viewport": [
+        390,
+        780
+      ],
+      "canvas": [
+        585,
+        1170
+      ],
+      "beam": [
+        160,
+        240
+      ]
+    },
+    {
+      "viewport": [
+        2560,
+        1440
+      ],
+      "canvas": [
+        2066,
+        1162
+      ],
+      "beam": [
+        480,
+        176
+      ]
+    },
+    {
+      "viewport": [
+        7680,
+        4320
+      ],
+      "canvas": [
+        2066,
+        1162
+      ],
+      "beam": [
+        480,
+        192
+      ]
+    }
+  ],
+  "checks": [
+    "no synchronous bitmap encoding",
+    "monotone reversible native fallback",
+    "semantic formation bypass",
+    "independent physical-source and scene-beam ownership",
+    "zero light over receiver pixels",
+    "no silhouette hole",
+    "cached fallback geometry",
+    "theme invalidation",
+    "DPR budget",
+    "reduced-motion clearing",
+    "all surfaces released"
+  ]
+}

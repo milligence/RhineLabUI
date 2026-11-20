@@ -1,0 +1,16 @@
+✔ a narrative route can omit a side experiment while preserving the full tree (1.683308ms)
+✔ legacy research catalogs remain valid without authored evolution fields (0.593451ms)
+✔ main routes reject missing, repeated and too few node references (0.7194ms)
+✔ main routes cannot reverse chronology or conceal equal-time steps (0.410466ms)
+✔ evolution layouts require a complete set of finite viewport coordinates (1.067032ms)
+✔ entry references and phase membership cannot silently target absent nodes (0.244677ms)
+✔ unknown visual roles, line semantics and layouts fail explicitly (0.289966ms)
+✔ contemporary records accept complete paragraphs and reject invalid members (1.259151ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.286031

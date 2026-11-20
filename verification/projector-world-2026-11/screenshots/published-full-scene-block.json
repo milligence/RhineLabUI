@@ -1,0 +1,45 @@
+{
+  "url": "https://htmlpreview.github.io/?https://github.com/milligence/RhineLabUI/blob/5cc7bfd4bddebf55343d402ec3d8955c699a6b41/reference/projector-world-full-scene-review.bundle.html",
+  "issue": {
+    "status": "reported",
+    "hostname": "htmlpreview.github.io",
+    "issue_id": "ad75ff33-03ca-467d-a13b-498074fbdb80",
+    "evidence": {
+      "document_http_status": 200,
+      "observed_failed_requests": []
+    }
+  },
+  "logs": [
+    {
+      "level": "error",
+      "message": "Error sending browser metadata to extension: Object",
+      "timestamp": "2026-11-20T10:24:52.971Z",
+      "url": "chrome-extension://kcdongibgcplmaagnmgpjhpjgmmaaaaa/content-script.bundle.js"
+    },
+    {
+      "level": "error",
+      "message": "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = yes, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .",
+      "timestamp": "2026-11-20T10:24:53.610Z",
+      "url": "about:srcdoc"
+    },
+    {
+      "level": "error",
+      "message": "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = yes, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .",
+      "timestamp": "2026-11-20T10:24:53.611Z",
+      "url": "about:srcdoc"
+    },
+    {
+      "level": "error",
+      "message": "THREE.WebGLRenderer: Error creating WebGL context.",
+      "timestamp": "2026-11-20T10:24:53.611Z",
+      "url": "about:srcdoc"
+    },
+    {
+      "level": "error",
+      "message": "Error: Error creating WebGL context.\n    at new Yr (about:srcdoc:4058:23824)\n    at new Oh (about:srcdoc:5040:5547)\n    at about:srcdoc:5209:10540\n    at about:srcdoc:5221:3",
+      "timestamp": "2026-11-20T10:24:53.703Z",
+      "url": "about:srcdoc"
+    }
+  ],
+  "fullArchiveSceneAccepted": false
+}

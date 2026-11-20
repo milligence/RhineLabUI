@@ -1,0 +1,112 @@
+{
+  "label": "FINAL verification — formation R5 / beam Pass3",
+  "startedAt": "2026-11-20T09:52:19.983Z",
+  "finishedAt": "2026-11-20T09:52:55.595Z",
+  "node": "v24.22.3",
+  "baseCommit": "d20ca8957fa4f5f197873a2500f1f821c4ab80d6",
+  "passed": true,
+  "frozenSourcesUnchanged": true,
+  "changedSources": [],
+  "scope": "Type checking, production geometry/state/renderer-boundary regression tests, and tracked diff whitespace. No build, private build, browser or full-scene visual acceptance was performed by this verification run.",
+  "earlierReports": "Unprefixed reports in this directory predate this frozen final run. In particular projector-beam.log covers only the earlier standalone depth scope; final-projector-beam.log also exercises shared/standalone depth publication, the post-DOF pass, restoration and hardware-depth fallback.",
+  "checks": [
+    {
+      "name": "tsc",
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "durationSeconds": 3.238117725,
+      "log": "verification/projector-world-2026-11/checks/final-tsc.log",
+      "bytes": 150,
+      "sha256": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829"
+    },
+    {
+      "name": "projection",
+      "command": "npm run check:projection",
+      "exitCode": 0,
+      "durationSeconds": 2.547409044,
+      "log": "verification/projector-world-2026-11/checks/final-projection.log",
+      "bytes": 4683,
+      "sha256": "d92056ce31646caac3b91e14dc81c9a1c195db677437e9d60aee948bc2c06412"
+    },
+    {
+      "name": "carrier-optics",
+      "command": "npm run check:carrier-optics",
+      "exitCode": 0,
+      "durationSeconds": 0.794489799,
+      "log": "verification/projector-world-2026-11/checks/final-carrier-optics.log",
+      "bytes": 1528,
+      "sha256": "0e100ccfa69f461e11f3d1a1c1ad2f2d105cd5fa221f26ce6ad4b5a55173e16b"
+    },
+    {
+      "name": "projection-ui-state",
+      "command": "npm run check:projection-ui-state",
+      "exitCode": 0,
+      "durationSeconds": 1.273737854,
+      "log": "verification/projector-world-2026-11/checks/final-projection-ui-state.log",
+      "bytes": 2139,
+      "sha256": "45179ae95416b427c44e958b2c6205cc7ce2cf78d36757ea5d20ec0f30ec528c"
+    },
+    {
+      "name": "optical",
+      "command": "npm run check:optical",
+      "exitCode": 0,
+      "durationSeconds": 1.294368126,
+      "log": "verification/projector-world-2026-11/checks/final-optical.log",
+      "bytes": 1349,
+      "sha256": "b3344029c799ee2408f3d48702e025556e75cf111385b8b9336ea71118c35d26"
+    },
+    {
+      "name": "projector-beam",
+      "command": "node --experimental-transform-types scripts/check-projector-beam.mjs",
+      "exitCode": 0,
+      "durationSeconds": 0.318578528,
+      "log": "verification/projector-world-2026-11/checks/final-projector-beam.log",
+      "bytes": 966,
+      "sha256": "1be08219216dd77ea4a0ed16f34bca60a07d799bfd4bcb32946b3195ed751c8c"
+    },
+    {
+      "name": "projector-pipeline",
+      "command": "node --experimental-strip-types scripts/check-projector-pipeline.mjs",
+      "exitCode": 0,
+      "durationSeconds": 0.745714852,
+      "log": "verification/projector-world-2026-11/checks/final-projector-pipeline.log",
+      "bytes": 401,
+      "sha256": "a32070e5ece24aae8ab6771917a261e2591b86d7b785469b97b9f8ace1ac91ac"
+    },
+    {
+      "name": "diff",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationSeconds": 0.000040591,
+      "log": "verification/projector-world-2026-11/checks/final-diff.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sourceFiles": {
+    "src/carrier-flight.ts": "24feb315e1c18c46f38ee490270149ca01da0755a6fae03620b19b92c625fd8a",
+    "src/scene.ts": "16bc52727432212db9169d0587637f74a0fa1e378cea0d1d8d9745d9155e4a47",
+    "src/main.ts": "bb49a9d4ad09718ec9da4b1e5d3592923e01c4e47b2818df91531f7d3b173cbd",
+    "src/projector-beam.ts": "ae78388fc3d6ea4eb917e3f8b6d9937fa15085bdb946b044032979b2d29aea2a",
+    "src/shared-depth.ts": "d62839d140ab73d3882b6176c39690cc4a2aa6a224f074c1fa67931aa4bc0edb",
+    "src/carrier-optics.ts": "579383dec6176cefbe96118fea1a66e57daf572ac27af9728669233516788cd2",
+    "src/projection-viewer.ts": "ca06813fb312be1c103653874be2e1e9d974e39472f74e869c71e36945fb113a",
+    "src/research-projection.ts": "b3a42bea2e5ec06f3c1ac9da0025158988bb21562d54795222d840f07a093a8c",
+    "src/cube-projection.ts": "6204298ec0f52a53b5d94e97e4179906e6bec492514ffbdcd3f27579c7820169",
+    "src/projection-atmosphere.css": "f2003c281c27be94d5a95fc96fdd2b2628512b8bbf0078adeae163f3adebfe50",
+    "src/research-optics.css": "889e3e32551ee643932b66214e7de100de01e41cc61149bd80ce01c535621861",
+    "src/cube-optics.css": "f3c3bb9df044693fabc4edd07da8a5a4119c86b1b801067009b77ee5ce3430b4",
+    "scripts/check-carrier-flight.mjs": "ee39532551e592b2facd37ef03e7888b3464dc35b0585d5201fa74beb49a3d1e",
+    "scripts/check-entry-routing.mjs": "f9c5a586919df97e44d865c9182077566506924fbaec0c4311631bd5124af17a",
+    "scripts/check-projector-beam.mjs": "e4678112a0a0e72266416dc1b866d705e22f7a6fe44efb93b1156be34ab744d5",
+    "scripts/check-projector-pipeline.mjs": "9bd70a58657b9feb7b7c1b0767648dfffc72903c633722114267f014c36a7d9d",
+    "scripts/check-carrier-optics.mjs": "58f3e699da5492d78923afc45076f0040ae6cdbb352ebdb240eb8cb16619662a",
+    "scripts/check-projection-ui-state.mjs": "f298e797f93e61a99e9b4b31843585c22e7b5649fb98ba79d9e318c919a8901c",
+    "package.json": "22e122047ff890911a3f0508954c78d825c5b68051cad1b0ec07b31227838c0a",
+    "package-lock.json": "5aad190f8a7a1687a3f17a67805e019bde3ff705d1a5d31d7f25d19deea4ff53"
+  },
+  "observedWarnings": [
+    "npm: Unknown env config http-proxy",
+    "Node experimental-transform-types warning for the existing SharedDepthBokeh parameter property"
+  ]
+}

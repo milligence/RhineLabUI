@@ -1,0 +1,119 @@
+{
+  "scope": "Standalone production ProjectorBeam, actual aperture and solved receiver in settled entry camera; no archive meshes, AO/DOF, DOM, or compositor acceptance. Linear RGBA16F normal-alpha blending followed by actual Three OutputShader ACES/sRGB.",
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "pixelRatio": 2.0,
+  "themes": [
+    {
+      "name": "light",
+      "packedDepthOcclusion": "foreground blocked / background preserved exactly",
+      "backgroundRGB": [
+        221,
+        220,
+        218
+      ],
+      "maxChannelDifference": 25.0,
+      "maximumBrightening": 15.0,
+      "maximumDarkening": -24.5748,
+      "changedPixels": 51810,
+      "pixelsOver8RGB": 16783,
+      "profiles": [
+        {
+          "edge": 0,
+          "centre": [
+            592.9747814161744,
+            189.8094265132865
+          ],
+          "minimumDeltaY": -14.352973349161921,
+          "maximumDeltaY": 10.957415558568101,
+          "widthAboveHalfPeakCssPixels": 1.7999999999999936
+        },
+        {
+          "edge": 1,
+          "centre": [
+            957.2603313244516,
+            203.1996364289408
+          ],
+          "minimumDeltaY": -17.569508518631434,
+          "maximumDeltaY": 12.990357595016395,
+          "widthAboveHalfPeakCssPixels": 1.399999999999995
+        },
+        {
+          "edge": 2,
+          "centre": [
+            939.1280882499482,
+            416.17251174198043
+          ],
+          "minimumDeltaY": -7.282128650513369,
+          "maximumDeltaY": 6.877957105132041,
+          "widthAboveHalfPeakCssPixels": 3.4999999999999876
+        },
+        {
+          "edge": 3,
+          "centre": [
+            574.7317265136883,
+            397.50475460864527
+          ],
+          "minimumDeltaY": -14.668565031642519,
+          "maximumDeltaY": 9.645963778297757,
+          "widthAboveHalfPeakCssPixels": 1.699999999999994
+        }
+      ]
+    },
+    {
+      "name": "dark",
+      "packedDepthOcclusion": "foreground blocked / background preserved exactly",
+      "backgroundRGB": [
+        3,
+        7,
+        9
+      ],
+      "maxChannelDifference": 64.0,
+      "maximumBrightening": 59.557599999999994,
+      "maximumDarkening": 0.0,
+      "changedPixels": 54419,
+      "pixelsOver8RGB": 16247,
+      "profiles": [
+        {
+          "edge": 0,
+          "centre": [
+            592.9747814161744,
+            189.8094265132865
+          ],
+          "minimumDeltaY": 0.0,
+          "maximumDeltaY": 40.30163285263834,
+          "widthAboveHalfPeakCssPixels": 0.6999999999999975
+        },
+        {
+          "edge": 1,
+          "centre": [
+            957.2603313244516,
+            203.1996364289408
+          ],
+          "minimumDeltaY": 0.0,
+          "maximumDeltaY": 49.757683857164466,
+          "widthAboveHalfPeakCssPixels": 0.5999999999999979
+        },
+        {
+          "edge": 2,
+          "centre": [
+            939.1280882499482,
+            416.17251174198043
+          ],
+          "minimumDeltaY": 0.0,
+          "maximumDeltaY": 24.034675127879414,
+          "widthAboveHalfPeakCssPixels": 1.399999999999995
+        },
+        {
+          "edge": 3,
+          "centre": [
+            574.7317265136883,
+            397.50475460864527
+          ],
+          "minimumDeltaY": 0.0,
+          "maximumDeltaY": 34.41259616736916,
+          "widthAboveHalfPeakCssPixels": 0.8999999999999968
+        }
+      ]
+    }
+  ]
+}

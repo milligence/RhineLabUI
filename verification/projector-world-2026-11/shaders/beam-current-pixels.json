@@ -1,0 +1,108 @@
+{
+  "scope": "Standalone production ProjectorBeam, actual aperture and solved receiver in settled entry camera; no archive meshes, AO/DOF, DOM, or compositor acceptance. Linear RGBA16F normal-alpha blending followed by actual Three OutputShader ACES/sRGB.",
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "themes": [
+    {
+      "name": "light",
+      "backgroundRGB": [
+        221,
+        220,
+        218
+      ],
+      "maxChannelDifference": 3.0,
+      "maximumBrightening": 0.0,
+      "maximumDarkening": -2.7874000000000003,
+      "changedPixels": 40885,
+      "pixelsOver8RGB": 0,
+      "profiles": [
+        {
+          "edge": 0,
+          "centre": [
+            592.9747814161744,
+            189.8094265132865
+          ],
+          "minimumDeltaY": -0.7874,
+          "maximumDeltaY": 0.0
+        },
+        {
+          "edge": 1,
+          "centre": [
+            957.2603313244516,
+            203.1996364289408
+          ],
+          "minimumDeltaY": -1.787400000000006,
+          "maximumDeltaY": 0.0
+        },
+        {
+          "edge": 2,
+          "centre": [
+            939.1280882499482,
+            416.17251174198043
+          ],
+          "minimumDeltaY": -0.7152000000000203,
+          "maximumDeltaY": 0.0
+        },
+        {
+          "edge": 3,
+          "centre": [
+            574.7317265136883,
+            397.50475460864527
+          ],
+          "minimumDeltaY": -0.7874000000000406,
+          "maximumDeltaY": 0.0
+        }
+      ]
+    },
+    {
+      "name": "dark",
+      "backgroundRGB": [
+        3,
+        7,
+        9
+      ],
+      "maxChannelDifference": 139.0,
+      "maximumBrightening": 132.62179999999998,
+      "maximumDarkening": 0.0,
+      "changedPixels": 237838,
+      "pixelsOver8RGB": 22530,
+      "profiles": [
+        {
+          "edge": 0,
+          "centre": [
+            592.9747814161744,
+            189.8094265132865
+          ],
+          "minimumDeltaY": 0.0,
+          "maximumDeltaY": 77.04503123923296
+        },
+        {
+          "edge": 1,
+          "centre": [
+            957.2603313244516,
+            203.1996364289408
+          ],
+          "minimumDeltaY": 0.0,
+          "maximumDeltaY": 106.60943189278656
+        },
+        {
+          "edge": 2,
+          "centre": [
+            939.1280882499482,
+            416.17251174198043
+          ],
+          "minimumDeltaY": 0.0,
+          "maximumDeltaY": 55.295423204162226
+        },
+        {
+          "edge": 3,
+          "centre": [
+            574.7317265136883,
+            397.50475460864527
+          ],
+          "minimumDeltaY": 0.0,
+          "maximumDeltaY": 83.92146969035751
+        }
+      ]
+    }
+  ]
+}

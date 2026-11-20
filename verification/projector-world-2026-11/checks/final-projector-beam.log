@@ -1,0 +1,23 @@
+(node:5) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "passed": true,
+  "scope": "Production beam geometry, cache, shader extension anchors, resources, standalone/shared Bokeh depth routing and post-DOF optical draw state at an inert renderer boundary. No GPU compilation or visual acceptance claim.",
+  "triangles": 8,
+  "vertices": 16,
+  "depthFallbackCases": 3,
+  "checks": [
+    "real corner endpoints",
+    "front advance and widening",
+    "bounded buffer and static-frame cache",
+    "independent theme and power",
+    "actual Three shader hook anchors",
+    "real opaque-depth isolation",
+    "invalid-input containment",
+    "exception-safe visibility restoration",
+    "shared and standalone optical-depth publication",
+    "post-DOF state restoration",
+    "normal hardware-depth fallback",
+    "idempotent resource release"
+  ]
+}

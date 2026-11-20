@@ -1,0 +1,46 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> rhine-lab-analysis-os@1.0.0 check:projection-ui-state
+> node --experimental-strip-types scripts/check-projection-ui-state.mjs
+
+{
+  "passed": true,
+  "executed": "2026-11-20T09:52:21.764Z",
+  "node": "v24.22.3",
+  "scope": "Production state methods with inert UI/rendering effects; no browser layout or WebGL acceptance.",
+  "sourceDigest": "de90dfc4664a2445187538fae2303efd452b93a4e80c465591ed71f7de4c55bb",
+  "sourceFiles": {
+    "src/research-projection.ts": "b3a42bea2e5ec06f3c1ac9da0025158988bb21562d54795222d840f07a093a8c",
+    "src/cube-projection.ts": "6204298ec0f52a53b5d94e97e4179906e6bec492514ffbdcd3f27579c7820169",
+    "src/cube-rotation.ts": "6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972",
+    "src/html.ts": "2ba5ade6bdeef34d5328844bf2b4190c3cefe3d81f90cc78e85ea0abd81d2fad",
+    "src/projection-types.ts": "0e918dff4806e0c02190b1a9c9ff2701cdcb459d81496c29a9d49fc098336fb6",
+    "scripts/check-projection-ui-state.mjs": "f298e797f93e61a99e9b4b31843585c22e7b5649fb98ba79d9e318c919a8901c",
+    "package-lock.json": "5aad190f8a7a1687a3f17a67805e019bde3ff705d1a5d31d7f25d19deea4ff53"
+  },
+  "checks": {
+    "research": [
+      "transfer snapshot protection",
+      "synchronous reading restoration",
+      "diagnostic read purity",
+      "reversible measured-path exposure",
+      "complete and reduced-motion mask removal",
+      "selective held labels and continuous restoration",
+      "screen compensation leaves graph anchors unchanged",
+      "mobile landmarks use complete visible bounds and refresh on resize"
+    ],
+    "cube": [
+      "normalized baseline",
+      "free camera isolation",
+      "geometry and face provenance",
+      "observer provenance",
+      "undo and redo provenance",
+      "preset history isolation",
+      "gesture grouping reset",
+      "undoable file import",
+      "invalid-load preservation",
+      "contour before material",
+      "reversible formation preserves experiment, camera, counting and history"
+    ]
+  }
+}

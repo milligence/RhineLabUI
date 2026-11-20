@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "scope": "Actual Scene constructor/quality/resize binding with inert pipeline components; no GPU or visual acceptance claim.",
+  "qualityCases": 4,
+  "scaleCases": 5,
+  "checks": [
+    "post-Bokeh/pre-SMAA ordering",
+    "current packed depth binding",
+    "original DOF preserved",
+    "direct/DOF-off hardware-depth route",
+    "drawing-buffer and displayed-stage ratio"
+  ]
+}

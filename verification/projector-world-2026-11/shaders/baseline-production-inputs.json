@@ -1,0 +1,10 @@
+{
+  "three": "0.183.2",
+  "sourceHashes": {
+    "src/projector-beam.ts": "b32f1f15382705dbdd409e3fac9bc3462b7b3ec9b9d95d759f4eb0784aa68ab7",
+    "src/cube-projection.ts": "6204298ec0f52a53b5d94e97e4179906e6bec492514ffbdcd3f27579c7820169",
+    "src/carrier-flight.ts": "24feb315e1c18c46f38ee490270149ca01da0755a6fae03620b19b92c625fd8a",
+    "src/projector-aperture.ts": "8d27e1f56aec30626d49d1129f69e65ad5e79cff40fd3948ad63607949ad3850",
+    "src/viewport-layout.ts": "b9d8b41f70bce728df3dc44c449f674ede90db6dc2ed5914606a725022194dcd"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "scope": "Deterministic timing and state only",
+  "checks": [
+    "One monotone web arrival reaches the exact interactive field, lift and camera endpoint without a second wave packet",
+    "Brand timing reaches its final value before the opening layout is released",
+    "Slow first GPU frames advance the existing opening clock by at most 50 ms; earlier artwork and explicit seeks remain exact",
+    "Paper waits for physical clearance, framed camera and current unsealing, reveals over 1.1 s, closes and resets without retaining opaque state",
+    "Text reveal begins on visible paper and uses presented frame increments rather than expiring behind a slow render",
+    "Actual Scene.setMode preserves completed reference/wallpaper reading while keeping fresh and incomplete entries behind the paper gate"
+  ]
+}

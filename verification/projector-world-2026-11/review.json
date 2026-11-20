@@ -1,0 +1,749 @@
+{
+  "date": "2026-11-20",
+  "timezone": "Asia/Shanghai",
+  "edition": "world-space-projector-and-structured-image-formation",
+  "status": "Frozen implementation, immutable previews, scoped browser/component checks, and public/private builds complete; full ArchiveScene and Cube WebGL visual acceptance remain open.",
+  "baseCommit": "d20ca8957fa4f5f197873a2500f1f821c4ab80d6",
+  "implementationCommit": "b33b5ec2659ea26942a15f56f2261e5b21577ba0",
+  "contentScope": "public synthetic fixture only; no private archive prose or private Cube construction states",
+  "design": "../../docs/PROJECTION-WORLD-STAGING-2026-11-20.md",
+  "recovery": {
+    "status": "workspace recovered; original working changes and evidence retained",
+    "checkpointCommit": "8807384f74a1ee2622b50d9e700308aa52cccbe6",
+    "url": "https://github.com/milligence/RhineLabUI/blob/8807384f74a1ee2622b50d9e700308aa52cccbe6/verification/projector-world-2026-11/RECOVERY-CHECKPOINT.md",
+    "scope": "Historical interrupted-delivery record; it did not contain the final implementation or advance production main."
+  },
+  "bundles": {
+    "observedR5": {
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "sha256": "f946303349450f3d770e7d8ccf23f35d411cdf08eb289a301c54f0b7bbb7ceed",
+      "bytes": 333310,
+      "scope": "All copied *-final screenshots belong to R5 before the caption balancing CSS; original filenames preserved."
+    },
+    "finalOptical": {
+      "commit": "5cc7bfd4bddebf55343d402ec3d8955c699a6b41",
+      "url": "https://htmlpreview.github.io/?https://github.com/milligence/RhineLabUI/blob/5cc7bfd4bddebf55343d402ec3d8955c699a6b41/reference/projector-world-optical-review.bundle.html",
+      "path": "reference/projector-world-optical-review.bundle.html",
+      "sourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6",
+      "sha256": "8eed4cf4d1013125ade5c7dabda0ff0fc89d2792d26cad2192876e101b956841",
+      "bytes": 333314,
+      "publishedUrlObserved": true,
+      "scope": "Includes final caption CSS; immutable URL opened and source digest matched; actual production ResearchProjection DOM/Canvas2D with a labelled synthetic source. No actual ArchiveScene acceptance.",
+      "manifest": "checks/final-optical-manifest.json"
+    },
+    "finalFullScene": {
+      "commit": "5cc7bfd4bddebf55343d402ec3d8955c699a6b41",
+      "url": "https://htmlpreview.github.io/?https://github.com/milligence/RhineLabUI/blob/5cc7bfd4bddebf55343d402ec3d8955c699a6b41/reference/projector-world-full-scene-review.bundle.html",
+      "path": "reference/projector-world-full-scene-review.bundle.html",
+      "sourceDigest": "144f4f98e2d7bb159e7140974b2f50cd6421e5f0e368887b50ac97c38e3c562c",
+      "sha256": "74d4298fed5539e8fbd475001a99457826bdb057d207645d60ec02b75c975662",
+      "bytes": 703953,
+      "publishedUrlObserved": true,
+      "fullArchiveSceneAccepted": false,
+      "scope": "Actual ArchiveScene, original public GLBs, production ProjectionViewer, camera, aperture and optical field. Requires WebGL2. Public five-by-ten fixture only.",
+      "assetMode": "fixed public repository URLs",
+      "manifest": "checks/final-scene-manifest.json",
+      "browserBlockEvidence": {
+        "path": "screenshots/published-full-scene-block.json",
+        "bytes": 2121,
+        "sha256": "5d91ec4bf590fc5a6588a2902662960eae140f75bf8c50483ed40c0cdd0847a2"
+      },
+      "observedStatus": "GL_VENDOR=Disabled; GL_RENDERER=Disabled; Error creating WebGL context."
+    }
+  },
+  "builds": {
+    "public": {
+      "version": "18342937bf84e279",
+      "receipt": "checks/build-receipts.json",
+      "status": "passed",
+      "executedThisResume": false,
+      "scope": "Successful build observed before interruption; existing release identity was recomputed from worker and every output asset after recovery."
+    },
+    "private": {
+      "version": "426a40604da6f252",
+      "receipt": "checks/build-receipts.json",
+      "status": "passed",
+      "executedThisResume": true,
+      "sourceIdentityMatches": true,
+      "publicInputsUnchanged": true,
+      "privateContentUnchanged": true,
+      "scope": "Isolated build and byte identity; no private-content visual, editorial or mathematical acceptance."
+    }
+  },
+  "evidence": [
+    {
+      "id": "held-3850-r1",
+      "round": "R1",
+      "status": "failed-baseline",
+      "finding": "悬停内容呈现微缩完整界面，缺少可读重点；本条旧 JSON 的图布局状态先于 RAF，不作为几何证据。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "1fab2bed575ae0316baa4b3f45a6e312cc1dd3af019bc91619b057adb122235c",
+      "timeMs": 3850.0,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "image-held",
+      "screenshot": {
+        "path": "screenshots/held-3850-r1.jpg",
+        "bytes": 68639,
+        "sha256": "4c2a24b8ac9a35cedea807e7d78d1daff84497a5497de05da65712c8adcf220e"
+      },
+      "domReport": {
+        "path": "screenshots/held-3850-r1.json",
+        "bytes": 6534,
+        "sha256": "874b674dee97a1afb20879facad83a5b1c99d30b11054aa9be4933e151d5ac94"
+      },
+      "layoutReportUsable": false,
+      "research": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "formation": 1,
+        "presentationScale": null,
+        "presentationDetail": null,
+        "presentationNames": null
+      }
+    },
+    {
+      "id": "approach-5550-r2",
+      "round": "R2",
+      "status": "failed-baseline",
+      "finding": "接近阶段的普通名称以低透明度和放大字号叠成灰字层。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "b4c1dace28b888c4ba265275d7847957ba3733784e47f9107e1c15485f9938d2",
+      "timeMs": 5550,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "camera-transfer",
+      "screenshot": {
+        "path": "screenshots/approach-5550-r2.jpg",
+        "bytes": 76511,
+        "sha256": "6854fcc0d1130d81a339e0adf8ad033e802c030dc51a326b796224bef4950d70"
+      },
+      "domReport": {
+        "path": "screenshots/approach-5550-r2.json",
+        "bytes": 6979,
+        "sha256": "c9cb197970a30c1ce4c705523d4685d581f6369b8160e9965d6512603bc00ddd"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 1,
+        "presentationScale": 0.6918277293735643,
+        "presentationDetail": 0.17943045846385705,
+        "presentationNames": null
+      }
+    },
+    {
+      "id": "portrait-held-r2",
+      "round": "R2",
+      "status": "failed-baseline",
+      "finding": "390 px 画幅沿用全图锚点，右侧只显示被裁切的“第二…”名称。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "b4c1dace28b888c4ba265275d7847957ba3733784e47f9107e1c15485f9938d2",
+      "timeMs": 3850.0,
+      "viewport": {
+        "width": 390,
+        "height": 780
+      },
+      "phase": "opening",
+      "beat": "image-held",
+      "screenshot": {
+        "path": "screenshots/portrait-held-r2.jpg",
+        "bytes": 55299,
+        "sha256": "0b53e68b3942092b59f51d2ef101405aade9a8e3c745c18725898403cfe4f4b5"
+      },
+      "domReport": {
+        "path": "screenshots/portrait-held-r2.json",
+        "bytes": 6643,
+        "sha256": "d311895396da349f0f6b66b5109eb616cacc41a2aea016689eca483cfbf382de"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": -432.52,
+        "y": -47.089999999999975,
+        "scale": 0.49,
+        "formation": 1,
+        "presentationScale": 0.46556383491629694,
+        "presentationDetail": 0,
+        "presentationNames": null
+      }
+    },
+    {
+      "id": "formation-2600-final",
+      "round": "R5",
+      "status": "observed",
+      "finding": "真实研究路径与节点正在形成，名称遵循自身时序。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "timeMs": 2600.0,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "image-forming",
+      "screenshot": {
+        "path": "screenshots/formation-2600-final.jpg",
+        "bytes": 58019,
+        "sha256": "ef3821e921a42ebeed7dc56da60a877b4f5adb17f672dcd03a723486b6e6e44f"
+      },
+      "domReport": {
+        "path": "screenshots/formation-2600-final.json",
+        "bytes": 6655,
+        "sha256": "08e70d6e49f526808b1b280a55a3b94b63fc7080f1fb34da0dddccd7ad29bd24"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 0.41176470588235214,
+        "presentationScale": 0.4429826817136657,
+        "presentationDetail": 0,
+        "presentationNames": 0
+      }
+    },
+    {
+      "id": "held-3850-final",
+      "round": "R5",
+      "status": "observed",
+      "finding": "镜头停留；阶段、少量锚点和选中标题成为信息层级。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "timeMs": 3850.0,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "image-held",
+      "screenshot": {
+        "path": "screenshots/held-3850-final.jpg",
+        "bytes": 67345,
+        "sha256": "69eccfa1fc45f558afbeda35d81d2cc2a8796a8e6d2ec10f2848c97c517391a2"
+      },
+      "domReport": {
+        "path": "screenshots/held-3850-final.json",
+        "bytes": 6711,
+        "sha256": "a22c7d4c1e5fffb413de15ebe38ad36f3f1c369e2bb7e3ecc80f11490fa4ff1b"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 1,
+        "presentationScale": 0.4429826817136657,
+        "presentationDetail": 0,
+        "presentationNames": 0
+      }
+    },
+    {
+      "id": "approach-5550-final",
+      "round": "R5",
+      "status": "observed",
+      "finding": "普通名称保持隐藏，已消除 R2 同时刻的半透明字层。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "timeMs": 5550,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "camera-transfer",
+      "screenshot": {
+        "path": "screenshots/approach-5550-final.jpg",
+        "bytes": 71094,
+        "sha256": "dcdf7bd86b57eea74cf474d2aa20ba52ba82c5f7d82b46174b5c2367ba720d4d"
+      },
+      "domReport": {
+        "path": "screenshots/approach-5550-final.json",
+        "bytes": 7011,
+        "sha256": "7e04ae1b43458ea136e99aa10f7fff7e05929c4306da4c6b0de1a07c6253cbff"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 1,
+        "presentationScale": 0.6918277293735643,
+        "presentationDetail": 0.17943045846385705,
+        "presentationNames": 0
+      }
+    },
+    {
+      "id": "approach-6200-final",
+      "round": "R5",
+      "status": "observed",
+      "finding": "普通名称以原生字号清晰揭开，随后进入完整阅读。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "timeMs": 6200,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "camera-transfer",
+      "screenshot": {
+        "path": "screenshots/approach-6200-final.jpg",
+        "bytes": 91199,
+        "sha256": "ceaae310b71abf614ebfff053aa71de6d7d9b88a256f1de2ee3ced02441242f0"
+      },
+      "domReport": {
+        "path": "screenshots/approach-6200-final.json",
+        "bytes": 7031,
+        "sha256": "f438b531b9a5da69559b5a98d051711261acc7bb3dd5d1562469ba1f5df3c551"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 1,
+        "presentationScale": 0.9362483822783073,
+        "presentationDetail": 0.9996374281768738,
+        "presentationNames": 0.9404325094699765
+      }
+    },
+    {
+      "id": "reading-6800-final",
+      "round": "R5",
+      "status": "observed",
+      "finding": "桌面进入稳定阅读状态，完整研究信息恢复。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "timeMs": 6800,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "open",
+      "beat": "open",
+      "screenshot": {
+        "path": "screenshots/reading-6800-final.jpg",
+        "bytes": 99602,
+        "sha256": "e4f255d33b09bb05d464a42b1cc04fac8f3e8b7102a912ef4ef3732860632620"
+      },
+      "domReport": {
+        "path": "screenshots/reading-6800-final.json",
+        "bytes": 7078,
+        "sha256": "48dfdebe7333766dc22c9fe45b0016720ec18c7b27eca92b1bea01b092626b8d"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 1,
+        "presentationScale": 0.9999838929522222,
+        "presentationDetail": 1,
+        "presentationNames": 1
+      }
+    },
+    {
+      "id": "portrait-held-final",
+      "round": "R5",
+      "status": "observed",
+      "finding": "根据可见文字边界选择“保留疑问”和“边界试验”，不再使用被裁切的半名。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "timeMs": 3850.0,
+      "viewport": {
+        "width": 390,
+        "height": 780
+      },
+      "phase": "opening",
+      "beat": "image-held",
+      "screenshot": {
+        "path": "screenshots/portrait-held-final.jpg",
+        "bytes": 61569,
+        "sha256": "0c21c3229e21527b93bb713d04ffe3029cf01e2851e7659465fa528864d8bcb5"
+      },
+      "domReport": {
+        "path": "screenshots/portrait-held-final.json",
+        "bytes": 6675,
+        "sha256": "5916f049aee74b3f181c78bc78d4bd0935b6f5874ed5b6b4b0bd1a63da23a576"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": -432.52,
+        "y": -47.089999999999975,
+        "scale": 0.49,
+        "formation": 1,
+        "presentationScale": 0.46556383491629694,
+        "presentationDetail": 0,
+        "presentationNames": 0
+      }
+    },
+    {
+      "id": "portrait-reading-final",
+      "round": "R5",
+      "status": "failed-baseline-corrected-later",
+      "finding": "R5 窄屏阅读标题末行孤“案”；最终均衡换行已由 resumed-caption-390 重新观察通过。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "timeMs": 6800,
+      "viewport": {
+        "width": 390,
+        "height": 780
+      },
+      "phase": "open",
+      "beat": "open",
+      "screenshot": {
+        "path": "screenshots/portrait-reading-final.jpg",
+        "bytes": 71421,
+        "sha256": "32d4f85abaa01bfac96ded74f426894903a05a8bd4b078cc63173e502d5a7002"
+      },
+      "domReport": {
+        "path": "screenshots/portrait-reading-final.json",
+        "bytes": 7065,
+        "sha256": "23b94aadd7645c56d4b3d5d3778b3ac2285fe54e78b00e94520d0ebea8ba89d5"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": -432.52,
+        "y": -47.089999999999975,
+        "scale": 0.49,
+        "formation": 1,
+        "presentationScale": 0.9999848799161652,
+        "presentationDetail": 1,
+        "presentationNames": 1
+      }
+    },
+    {
+      "id": "dark-held-final",
+      "round": "R5",
+      "status": "observed",
+      "finding": "深色标定中的有限画幅、内容和光源关系可辨；不是实体光束材质验收。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+      "timeMs": 3850.0,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "image-held",
+      "screenshot": {
+        "path": "screenshots/dark-held-final.jpg",
+        "bytes": 71321,
+        "sha256": "5898dd33522d62e9250e82fb96b9be776c18d02fe49374569fea169ba1869a7e"
+      },
+      "domReport": {
+        "path": "screenshots/dark-held-final.json",
+        "bytes": 6711,
+        "sha256": "a22c7d4c1e5fffb413de15ebe38ad36f3f1c369e2bb7e3ecc80f11490fa4ff1b"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 1,
+        "presentationScale": 0.4429826817136657,
+        "presentationDetail": 0,
+        "presentationNames": 0
+      }
+    },
+    {
+      "id": "resumed-caption-390",
+      "round": "final-caption-CSS",
+      "status": "observed",
+      "finding": "390 px 稳定阅读标题均衡为“在新的观察条件 / 下重新检查旧方案”两行，读取动作保留自然宽度。",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6",
+      "timeMs": 6800,
+      "viewport": {
+        "width": 390,
+        "height": 780
+      },
+      "phase": "open",
+      "beat": "open",
+      "screenshot": {
+        "path": "screenshots/resumed-caption-390.jpg",
+        "bytes": 71247,
+        "sha256": "124b7591c1899773174c46e671fd063cffc7bcb38636701afb2b5619bdad44a2"
+      },
+      "domReport": {
+        "path": "screenshots/resumed-caption-390.json",
+        "bytes": 7065,
+        "sha256": "c40c99f17deb5073587a7d5c694b2f4a04f5c5f5430a30ffca2b9a72836ab8e3"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "x": -432.52,
+        "y": -47.089999999999975,
+        "scale": 0.49,
+        "formation": 1,
+        "presentationScale": 0.9999848799161652,
+        "presentationDetail": 1,
+        "presentationNames": 1
+      }
+    },
+    {
+      "id": "resumed-closing",
+      "round": "final-caption-CSS",
+      "status": "observed",
+      "finding": "实际 closing / returning 状态，progress 0.708；同一 trace 保留从 0.816 阶段发起返回的记录。",
+      "captureScope": "production DOM/Canvas2D with labelled synthetic source; screenshot and report sampled sequentially",
+      "sourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6",
+      "elapsedClockMs": 6192.6500000000015,
+      "mode": "return",
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "closing",
+      "beat": "returning",
+      "progress": 0.7080693002150822,
+      "screenshot": {
+        "path": "screenshots/resumed-closing.jpg",
+        "bytes": 69964,
+        "sha256": "1becaa22af16013da729b8c3cd012787bfb7be37e9f668d83fc2d935a4f9ba1b"
+      },
+      "domReport": {
+        "path": "screenshots/resumed-closing.json",
+        "bytes": 7123,
+        "sha256": "3a7b41124790dc9725ffa9bf60101d75fe2ab1d50bdaab143198e7f813d17200"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "selected": "T13",
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 1,
+        "presentationScale": 0.47809951435447884,
+        "presentationDetail": 0,
+        "presentationNames": 0
+      }
+    },
+    {
+      "id": "resumed-reentry",
+      "round": "final-caption-CSS",
+      "status": "observed",
+      "finding": "实际 reopen / opening 状态，progress 0.473、正向速度；延续返回 trace 与选中 T13。",
+      "captureScope": "production DOM/Canvas2D with labelled synthetic source; screenshot and report sampled sequentially",
+      "sourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6",
+      "elapsedClockMs": 7036.699999999997,
+      "mode": "reopen",
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "image-forming",
+      "progress": 0.4729731869546236,
+      "screenshot": {
+        "path": "screenshots/resumed-reentry.jpg",
+        "bytes": 66396,
+        "sha256": "7aa6ebf1447bbaca1a1b53470142bd4168e0e056ca337bf580a85a97ce888407"
+      },
+      "domReport": {
+        "path": "screenshots/resumed-reentry.json",
+        "bytes": 7310,
+        "sha256": "81cdb866e126a1bf78d75f18d370eba4e4248f78102e182bd48298fc70d046b1"
+      },
+      "layoutReportUsable": true,
+      "research": {
+        "selected": "T13",
+        "x": 98.89285714285711,
+        "y": 126,
+        "scale": 0.29081632653061223,
+        "formation": 0.7742456889949649,
+        "presentationScale": 0.442986365438248,
+        "presentationDetail": 0,
+        "presentationNames": 0
+      }
+    },
+    {
+      "id": "published-held-3850",
+      "round": "final-published",
+      "status": "observed",
+      "finding": "Fixed public URL source identity matches the final bundle; held frame remains clear and finite.",
+      "captureScope": "production ResearchProjection DOM/Canvas2D with labelled synthetic source plane; not ArchiveScene",
+      "sourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6",
+      "timeMs": 3849.9999999999873,
+      "viewport": {
+        "width": 1320,
+        "height": 726
+      },
+      "phase": "opening",
+      "beat": "image-held",
+      "screenshot": {
+        "path": "screenshots/published-held-3850.jpg",
+        "bytes": 67352,
+        "sha256": "4480cc0f08874043a471536e7f9b1d9887ad3e5242fc4471fbfcc05d4a41980c"
+      },
+      "domReport": {
+        "path": "screenshots/published-held-3850.json",
+        "bytes": 6711,
+        "sha256": "1afab5a7d600b6d242932236795667c4c107a6b8ee9023a671a0a3c8d74104fb"
+      },
+      "layoutReportUsable": true
+    }
+  ],
+  "continuousSamples": {
+    "sourceDigest": "87a337ae8a5250d11bb0031eaf71979c97836b32c20529809b488fa14b087f5f",
+    "speed": 0.25,
+    "samplesMs": [
+      1261.8339999999953,
+      1325.8339999999953,
+      1389.8339999999953,
+      1410.6839999999938,
+      1431.5089999999982
+    ],
+    "phases": [
+      "beam-forming",
+      "beam-forming",
+      "frame-forming",
+      "frame-forming",
+      "frame-forming"
+    ],
+    "assets": [
+      {
+        "path": "screenshots/continuous-0.jpg",
+        "bytes": 54686,
+        "sha256": "4efe59ac20bafe26b86cdfde0c237ca179a937b0308107bf6835844b71c336ad"
+      },
+      {
+        "path": "screenshots/continuous-4.jpg",
+        "bytes": 54821,
+        "sha256": "318a643ded4d6ae1f401e37faba62f60de778215a578b7276da9f565b66009f5"
+      },
+      {
+        "path": "screenshots/continuous-final.json",
+        "bytes": 35862,
+        "sha256": "2e32cde34ad662cf9cfc02a1b7b1b94ba62c42bd314ff5edd62a491358e99ccf"
+      }
+    ],
+    "scope": "Short actual playback observations across beam arrival / initial frame formation only. First/last screenshots retained; raw JSON includes all five independently sampled reports. Screenshot and report are sequential observations, not same-frame atomic captures or FPS measurements."
+  },
+  "functionalChecks": {
+    "report": "checks/final-verification.json",
+    "scope": "Type, geometry, state, renderer-boundary and whitespace checks; not real scene visual acceptance. Final caption CSS bookkeeping is reconciled separately in the check manifest."
+  },
+  "numericGeometry": {
+    "report": "checks/carrier-flight.json",
+    "productionSceneStages": 22,
+    "reversalCases": 324,
+    "scaledDisplayStageCases": 25,
+    "minimumForwardClearanceWorldUnits": 0.9,
+    "scope": "Numerical tests of production methods and actual GLB aperture; not GPU visual observations."
+  },
+  "entryReadiness": {
+    "report": "checks/ENTRY-READINESS.md",
+    "data": "checks/entry-readiness.json",
+    "scope": "Numerical execution of native equations; not browser latency or device performance."
+  },
+  "nativeShaderDiagnostics": {
+    "report": "shaders/README.md",
+    "compiler": "shaders/pass3-compile-report.json",
+    "productionInputs": "shaders/pass3-production-inputs.json",
+    "programCount": 6,
+    "compiledAndLinked": true,
+    "raster": "shaders/beam-pass3-pixels.json",
+    "dpr2Raster": "shaders/beam-pass3-dpr2-pixels.json",
+    "scope": "Actual native EGL/GLES compile/link and standalone production-beam raster. No complete archive assets, AO/DOF/SMAA composition, DOM, or continuous scene animation."
+  },
+  "remainingBrowserChecks": {
+    "captionBalance": {
+      "status": "passed",
+      "evidence": "resumed-caption-390",
+      "sourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6",
+      "observedBy": "root browser review after workspace recovery",
+      "scope": "Actual 390×780 ResearchProjection reading screenshot; not a full-scene WebGL observation."
+    },
+    "returnAndReentry": {
+      "status": "observed",
+      "evidence": [
+        "resumed-closing",
+        "resumed-reentry"
+      ],
+      "scope": "Actual post-RAF closing and subsequent opening states, preserved selection/trace and sequential screenshots. Immediate post-click stale report was excluded; no same-frame pixel or full-scene continuity claim."
+    },
+    "reducedMotionCloseCleanup": {
+      "status": "passed",
+      "evidence": [
+        "screenshots/resumed-reduced-open.json",
+        "screenshots/resumed-reduced-closed.json"
+      ],
+      "scope": "Actual production ResearchProjection DOM state and cleanup in reduced-motion mode; no Cube WebGL pixel observation."
+    },
+    "finalPublishedOpticalIdentity": {
+      "status": "passed",
+      "sourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6",
+      "timeMs": 3849.9999999999873,
+      "beat": "image-held",
+      "clarity": 1,
+      "mask": "none",
+      "evidence": [
+        "screenshots/published-held-3850.jpg",
+        "screenshots/published-held-3850.json"
+      ]
+    }
+  },
+  "acceptance": {
+    "researchDomCanvasKeyframesObserved": true,
+    "fullArchiveSceneVisual": false,
+    "cubeWebglPixels": false,
+    "privateContentVisual": false,
+    "physicalTouchDevice": false,
+    "frameRate": false
+  },
+  "limitations": [
+    "Cloud Chromium reports GL_VENDOR=Disabled and GL_RENDERER=Disabled, followed by Error creating WebGL context. Full ArchiveScene visual acceptance remains open.",
+    "Native Chromium attempts encountered a certificate interstitial and an organization-blocked file URL. No warning or policy was bypassed.",
+    "The calibration source plane and fallback Canvas beam in browser screenshots do not represent the physical archive port or final world-space beam material.",
+    "R1 DOM reports preceded initial layout RAF and include x=0/y=0/scale=1 values; their layout coordinates are not accepted as measurements.",
+    "Saved *-final filenames are R5 source identity, before the last caption-only CSS; the final bundle has a different source digest.",
+    "A rapid extreme orientation change during held composition can crop the original source card while keeping the original entry world basis.",
+    "No new narrative cold-read or private Cube mathematical verification was performed in this edition."
+  ],
+  "browserLifecycle": {
+    "reducedOpen": {
+      "report": {
+        "path": "screenshots/resumed-reduced-open.json",
+        "bytes": 7464,
+        "sha256": "e969baae2a568e00a272bc69a4e297c4e65bb04aa5e6791f59944ecb196dbed1"
+      },
+      "reduced": true,
+      "phase": "open",
+      "formation": 1,
+      "presentationScale": 1
+    },
+    "reducedClose": {
+      "report": {
+        "path": "screenshots/resumed-reduced-closed.json",
+        "bytes": 7208,
+        "sha256": "540329c83c1c47490d01ad6ee5af49302db6da2ee3dad0fe54bf0f8523e42d0a"
+      },
+      "actualDom": {
+        "shell": {
+          "hidden": true,
+          "state": "closing"
+        },
+        "canvases": 0,
+        "mask": "none"
+      },
+      "scope": "Cleanup supported by actual DOM: shell.hidden=true, zero optical canvases, mask none. Residual diagnostic phase/beat/mask statistics are not cleanup evidence."
+    }
+  },
+  "implementationTree": "3e33118da7f96556804cfab299d82a4ab3c33c6f",
+  "evidenceIdentity": "This report and its referenced local artifacts are recorded together in the containing Git commit; the report does not self-reference its own commit SHA.",
+  "codeReview": {
+    "scope": "Read-only review of projector-beam, shared-depth, Scene, main, carrier-flight and projection-viewer, against installed Three Bokeh/EffectComposer. No new blocking code error identified; not full-scene visual acceptance.",
+    "sourceCommit": "b33b5ec2659ea26942a15f56f2261e5b21577ba0"
+  }
+}

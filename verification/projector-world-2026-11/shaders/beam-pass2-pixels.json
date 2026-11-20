@@ -1,0 +1,117 @@
+{
+  "scope": "Standalone production ProjectorBeam, actual aperture and solved receiver in settled entry camera; no archive meshes, AO/DOF, DOM, or compositor acceptance. Linear RGBA16F normal-alpha blending followed by actual Three OutputShader ACES/sRGB.",
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "pixelRatio": 1.0,
+  "themes": [
+    {
+      "name": "light",
+      "backgroundRGB": [
+        221,
+        220,
+        218
+      ],
+      "maxChannelDifference": 40.0,
+      "maximumBrightening": 15.0,
+      "maximumDarkening": -38.647,
+      "changedPixels": 13224,
+      "pixelsOver8RGB": 6253,
+      "profiles": [
+        {
+          "edge": 0,
+          "centre": [
+            592.9747814161744,
+            189.8094265132865
+          ],
+          "minimumDeltaY": -19.125945181437515,
+          "maximumDeltaY": 9.99088987907703,
+          "widthAboveHalfPeakCssPixels": 1.8999999999999932
+        },
+        {
+          "edge": 1,
+          "centre": [
+            957.2603313244516,
+            203.1996364289408
+          ],
+          "minimumDeltaY": -27.71901152510386,
+          "maximumDeltaY": 8.996821444725526,
+          "widthAboveHalfPeakCssPixels": 1.2999999999999954
+        },
+        {
+          "edge": 2,
+          "centre": [
+            939.1280882499482,
+            416.17251174198043
+          ],
+          "minimumDeltaY": -10.534527234136057,
+          "maximumDeltaY": 3.14252101793272,
+          "widthAboveHalfPeakCssPixels": 3.2999999999999883
+        },
+        {
+          "edge": 3,
+          "centre": [
+            574.7317265136883,
+            397.50475460864527
+          ],
+          "minimumDeltaY": -19.52625990929828,
+          "maximumDeltaY": 8.297930161187166,
+          "widthAboveHalfPeakCssPixels": 1.8999999999999932
+        }
+      ]
+    },
+    {
+      "name": "dark",
+      "backgroundRGB": [
+        3,
+        7,
+        9
+      ],
+      "maxChannelDifference": 51.0,
+      "maximumBrightening": 47.417199999999994,
+      "maximumDarkening": -0.7874,
+      "changedPixels": 10029,
+      "pixelsOver8RGB": 2536,
+      "profiles": [
+        {
+          "edge": 0,
+          "centre": [
+            592.9747814161744,
+            189.8094265132865
+          ],
+          "minimumDeltaY": -0.7874000000000007,
+          "maximumDeltaY": 29.034437639333397,
+          "widthAboveHalfPeakCssPixels": 0.9999999999999964
+        },
+        {
+          "edge": 1,
+          "centre": [
+            957.2603313244516,
+            203.1996364289408
+          ],
+          "minimumDeltaY": -0.07126188123277183,
+          "maximumDeltaY": 25.385723200014453,
+          "widthAboveHalfPeakCssPixels": 0.9999999999999964
+        },
+        {
+          "edge": 2,
+          "centre": [
+            939.1280882499482,
+            416.17251174198043
+          ],
+          "minimumDeltaY": -0.7721889841243417,
+          "maximumDeltaY": 8.879623816747378,
+          "widthAboveHalfPeakCssPixels": 2.3999999999999915
+        },
+        {
+          "edge": 3,
+          "centre": [
+            574.7317265136883,
+            397.50475460864527
+          ],
+          "minimumDeltaY": -0.7874,
+          "maximumDeltaY": 25.095439461374255,
+          "widthAboveHalfPeakCssPixels": 0.9999999999999964
+        }
+      ]
+    }
+  ]
+}

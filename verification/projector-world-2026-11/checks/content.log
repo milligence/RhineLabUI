@@ -1,0 +1,32 @@
+
+> rhine-lab-analysis-os@1.0.0 check:content
+> node --experimental-strip-types --test scripts/check-content.mjs
+
+✔ all forty downloads match the shared content, including the UTF-8 BOM (48.489655ms)
+✔ rejects missing title (1.286281ms)
+✔ rejects blank abstract (0.280211ms)
+✔ rejects duplicate ID (0.248263ms)
+✔ rejects reordered ID (0.57262ms)
+✔ rejects unknown category (0.461694ms)
+✔ rejects unbalanced columns (0.314472ms)
+✔ rejects missing record (0.384027ms)
+✔ rejects null record (0.628985ms)
+✔ rejects empty findings (0.571639ms)
+✔ rejects non-text findings (0.294151ms)
+✔ rejects unsafe URL (0.244818ms)
+✔ rejects invalid URL (0.233871ms)
+✔ rejects duplicate categories (0.165959ms)
+✔ rejects reserved category (0.396785ms)
+✔ rejects mismatched columns (0.17364ms)
+✔ accepts independent filter and column order (0.332819ms)
+✔ accepts a local image and an empty source (0.56608ms)
+✔ rejects unsafe image paths (0.412349ms)
+✔ plain-text punctuation stays literal in HTML and downloadable text (0.53943ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 315.756066

@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "scope": "Production beam geometry, cache, shader extension anchors, resources, and actual standalone Bokeh depth routing at an inert renderer boundary. No GPU compilation or visual acceptance claim.",
+  "triangles": 8,
+  "vertices": 16,
+  "depthFallbackCases": 3,
+  "checks": [
+    "real corner endpoints",
+    "front advance and widening",
+    "bounded buffer and static-frame cache",
+    "independent theme and power",
+    "actual Three shader hook anchors",
+    "real opaque-depth isolation",
+    "invalid-input containment",
+    "exception-safe visibility restoration",
+    "idempotent resource release"
+  ]
+}

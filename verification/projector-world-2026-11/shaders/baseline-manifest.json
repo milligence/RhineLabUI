@@ -1,0 +1,124 @@
+[
+  {
+    "name": "projector-beam-composer",
+    "vertex": "projector-beam-composer.vert",
+    "fragment": "projector-beam-composer.frag",
+    "vertexSha256": "71468c08f851216e186da7090b13dece1d867dffa56a1e1d2361fea033a91448",
+    "fragmentSha256": "952cc95d5fcf3b277c1215c9ed4fddb8566d96b5dfb16133169d38733f539fb2",
+    "material": "MeshBasicMaterial",
+    "shaderID": "basic",
+    "transparent": true,
+    "clearcoat": false,
+    "environment": false,
+    "shadow": false,
+    "numDirLights": 0,
+    "numHemiLights": 0,
+    "toneMapping": 0,
+    "colorSpace": "srgb-linear",
+    "customUniforms": [
+      "uProjectorDark",
+      "uProjectorEdge"
+    ]
+  },
+  {
+    "name": "projector-beam-direct",
+    "vertex": "projector-beam-direct.vert",
+    "fragment": "projector-beam-direct.frag",
+    "vertexSha256": "71468c08f851216e186da7090b13dece1d867dffa56a1e1d2361fea033a91448",
+    "fragmentSha256": "0261f0ac05317cdb18189e796f581a2d800518f388e8e7278a38da6f8f55dea4",
+    "material": "MeshBasicMaterial",
+    "shaderID": "basic",
+    "transparent": true,
+    "clearcoat": false,
+    "environment": false,
+    "shadow": false,
+    "numDirLights": 0,
+    "numHemiLights": 0,
+    "toneMapping": 4,
+    "colorSpace": "srgb",
+    "customUniforms": [
+      "uProjectorDark",
+      "uProjectorEdge"
+    ]
+  },
+  {
+    "name": "cube-ceramic-formation",
+    "vertex": "cube-ceramic-formation.vert",
+    "fragment": "cube-ceramic-formation.frag",
+    "vertexSha256": "d05c00b3f710142dc44fbf26dcf7dcd44ff5a6161dca918e14aecbad7317c4fc",
+    "fragmentSha256": "efeeb873610ca246a675c3ae9249cada49a06b9daae1387129e8bd71d96e8902",
+    "material": "MeshPhysicalMaterial",
+    "shaderID": "physical",
+    "transparent": false,
+    "clearcoat": true,
+    "environment": true,
+    "shadow": true,
+    "numDirLights": 2,
+    "numHemiLights": 1,
+    "toneMapping": 4,
+    "colorSpace": "srgb",
+    "customUniforms": [
+      "projectionSurface",
+      "projectionSize"
+    ]
+  },
+  {
+    "name": "cube-outline-formation",
+    "vertex": "cube-outline-formation.vert",
+    "fragment": "cube-outline-formation.frag",
+    "vertexSha256": "9f42bde902b7294df3fbad25705b5378e07a39c9307322b48c866755cc462a7e",
+    "fragmentSha256": "8d27e8f1e3fcbf3578180cd54b9b242e43e091292cde38fe62d31fc317958fe8",
+    "material": "LineBasicMaterial",
+    "shaderID": "basic",
+    "transparent": true,
+    "clearcoat": false,
+    "environment": false,
+    "shadow": false,
+    "numDirLights": 0,
+    "numHemiLights": 0,
+    "toneMapping": 4,
+    "colorSpace": "srgb",
+    "customUniforms": [
+      "projectionOutline",
+      "projectionSize"
+    ]
+  },
+  {
+    "name": "cube-formation-shadow-depth",
+    "vertex": "cube-formation-shadow-depth.vert",
+    "fragment": "cube-formation-shadow-depth.frag",
+    "vertexSha256": "9b20687bb72c4b3993ca4473e53c2b7f3ae193e07a1b70857e47b8f01d70c934",
+    "fragmentSha256": "df359893edb15fc302cf40cabf8d98515e9ff10d07b283ae7da17cf0b11f979f",
+    "material": "MeshDepthMaterial",
+    "shaderID": "depth",
+    "transparent": false,
+    "clearcoat": false,
+    "environment": false,
+    "shadow": false,
+    "numDirLights": 0,
+    "numHemiLights": 0,
+    "toneMapping": 0,
+    "colorSpace": "srgb-linear",
+    "customUniforms": [
+      "projectionSurface",
+      "projectionSize"
+    ]
+  },
+  {
+    "name": "archive-output",
+    "vertex": "archive-output.vert",
+    "fragment": "archive-output.frag",
+    "vertexSha256": "70b78875a32a3bb608b4ea3beb525ffe7152ff7f89ed63d152e88fb005f7e9e7",
+    "fragmentSha256": "8227603c2fcc4d4f1d59bab92cbd19c7f382f45591d28af2d3ff1335b9fd42e2",
+    "material": "RawShaderMaterial",
+    "transparent": false,
+    "clearcoat": false,
+    "environment": false,
+    "shadow": false,
+    "numDirLights": 0,
+    "numHemiLights": 0,
+    "toneMapping": 4,
+    "colorSpace": "srgb",
+    "customUniforms": []
+  }
+]

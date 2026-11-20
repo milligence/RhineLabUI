@@ -1,0 +1,53 @@
+{
+  "created": "2026-11-20T09:53:47.139Z",
+  "content": "public synthetic fixture only",
+  "reviewKind": "projection-cinematic",
+  "nodes": 36,
+  "edges": 39,
+  "route": 23,
+  "scope": "Production ProjectionViewer and CarrierFlight continuously played or replayed at fixed display steps, with real ResearchProjection and CubeProjection. The labelled synthetic calibration plane uses the same camera projection. No ArchiveScene, GLB, real physical carrier, GPU occlusion or Cube WebGL pixel acceptance.",
+  "sourceDigest": "e8d9c2c05894136cb6755dc86718a6313e612dde8ac2c6183652310c3db0c1a6",
+  "sourceFiles": {
+    "content/fixtures/array-5x10.json": "0f692641a6df58baddf5844caaa6d560a237fe67fb1a6dbd17ee5376f0bd4506",
+    "reference/projection-cinematic-review.css": "d078d2e3f440fac03e16243b2a3da8984062bc9cf15b33b2f9f6d1dd41d75abf",
+    "reference/projection-cinematic-review.ts": "f2b813c8403226583942db7d041d07a1bb410bfd11766119c816ecd2457844e0",
+    "src/archive-entry.css": "0bdafbda0f84aeb7a1a8aefdd8b56a676bff1fce0b9523f59478766c00419e71",
+    "src/archive-template.css": "b0d87885b9f9e484b9decc38fa4fa36243d36f4d956f590022594a37ebd8ab9c",
+    "src/carrier-flight.ts": "24feb315e1c18c46f38ee490270149ca01da0755a6fae03620b19b92c625fd8a",
+    "src/carrier-optics.ts": "579383dec6176cefbe96118fea1a66e57daf572ac27af9728669233516788cd2",
+    "src/cube-optics.css": "f3c3bb9df044693fabc4edd07da8a5a4119c86b1b801067009b77ee5ce3430b4",
+    "src/cube-projection.ts": "6204298ec0f52a53b5d94e97e4179906e6bec492514ffbdcd3f27579c7820169",
+    "src/cube-rotation.ts": "6b8c54a2f5e0f771d425f31464229ad533381fa045a2ac03299afd892dddd972",
+    "src/fonts.css": "63d5271b9154a55e23a26e1a5ec73ffa9e6874d56db4c6a629c88175d50fa975",
+    "src/html.ts": "2ba5ade6bdeef34d5328844bf2b4190c3cefe3d81f90cc78e85ea0abd81d2fad",
+    "src/projection-atmosphere.css": "f2003c281c27be94d5a95fc96fdd2b2628512b8bbf0078adeae163f3adebfe50",
+    "src/projection-types.ts": "0e918dff4806e0c02190b1a9c9ff2701cdcb459d81496c29a9d49fc098336fb6",
+    "src/projection-viewer.ts": "ca06813fb312be1c103653874be2e1e9d974e39472f74e869c71e36945fb113a",
+    "src/projection.css": "03ada7330f551b1d4c62c3b02201dca59c229c8bafadb692def45dd3599cfff1",
+    "src/quality-settings.css": "ef3398d7ee3ce5906cb954a4f6ddc53f0eae2547e5c4daa2249e2c096df1090b",
+    "src/research-optics.css": "692574fc73b0b3167e9bfaf9250aed51c0813ed6426a1de6a95915cc28de5329",
+    "src/research-projection.ts": "b3a42bea2e5ec06f3c1ac9da0025158988bb21562d54795222d840f07a093a8c",
+    "src/research-tree.css": "0dce0d02b747ffae197af24511e12faf0b4a843378f76dc8730f6c3b3551927a",
+    "src/responsive.css": "f384e944084436708228bc54b64c8617e298d48f292a769dfaf018a2807cd844",
+    "src/style.css": "2f08b47140f01a7ad4bdc787672a9c91c6a94d14b1b5ee968f03488a4182b790",
+    "src/theme-ui.ts": "5fb72944e37878926287de5f66589518842559671c63b1d087fb96c108e293fa",
+    "src/theme.css": "fbf9d648be1ac5cf680420db22d19bb5442fb404dbec4ee60df1606dc3942ab1",
+    "package-lock.json": "5aad190f8a7a1687a3f17a67805e019bde3ff705d1a5d31d7f25d19deea4ff53",
+    "reference/projection-cinematic-review.html": "72a25448b903ad630622ab9fca6b2b482ac7d43b0939d6927830e10bece1b286",
+    "scripts/review-projection-cinematic.mjs": "5621f963baa1d7b4b05056809a7234ccb7099a1ff74a8bb32a6912a67a9a444d"
+  },
+  "fonts": {
+    "source": "https://raw.githubusercontent.com/milligence/RhineLabUI/70b614d252a31fbd80efd0d61fe79ba126f2bd85/public/",
+    "faces": 100,
+    "inline": false,
+    "bytes": 0
+  },
+  "bundle": {
+    "file": "projection-cinematic-review.bundle.html",
+    "bytes": 333314,
+    "sha256": "8eed4cf4d1013125ade5c7dabda0ff0fc89d2792d26cad2192876e101b956841",
+    "compressed": true,
+    "frameBytes": 1179516,
+    "frameSha256": "2ab051dab0d2d628fb43765d166778165c1c423bda380596701e21dca15a7652"
+  }
+}

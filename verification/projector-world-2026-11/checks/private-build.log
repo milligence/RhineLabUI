@@ -1,0 +1,34 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> rhine-lab-analysis-os@1.0.0 archive:private
+> node scripts/private-archive.mjs /workspace/scratch/865ea2cc5275/inscriber-cube-archive/site/archives.json
+
+Private archive workspace: /workspace/scratch/865ea2cc5275/RhineLabUI/.private-build/archive-yhFNhI
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> rhine-lab-analysis-os@1.0.0 prebuild
+> node scripts/patch-rolling-number.mjs && node scripts/export-records.mjs && node scripts/prepare-webfonts.mjs
+
+Prepared 2 downloadable archive records.
+
+> rhine-lab-analysis-os@1.0.0 build
+> tsc && vite build && node scripts/build-pwa.mjs
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 120 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        1.10 kB │ gzip:   0.57 kB
+dist/assets/archive-assembly.d411170676f55a32.glb  3,343.74 kB
+dist/assets/archive-cassette.dda42b9b3b471d11.glb  3,565.12 kB
+dist/assets/index-BO8M9h4n.css                       770.03 kB │ gzip: 222.98 kB
+dist/assets/index-Bc-56SKx.js                      1,229.22 kB │ gzip: 363.63 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.84s
+Offline release 426a40604da6f252: 781 files, 34.1 MiB.
+Private archive ready: /workspace/scratch/865ea2cc5275/RhineLabUI/.private-build/archive-yhFNhI/dist

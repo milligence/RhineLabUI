@@ -1,0 +1,136 @@
+{
+  "egl": "1.5",
+  "gl": "OpenGL ES 3.2 Mesa 25.0.7-2+deb13u1",
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "glsl": "OpenGL ES GLSL ES 3.20",
+  "scope": "Actual Three-generated GLSL ES vertex/fragment compilation and program linking; no draw call or application visual acceptance.",
+  "programs": [
+    {
+      "name": "projector-beam-composer",
+      "vertexSha256": "71468c08f851216e186da7090b13dece1d867dffa56a1e1d2361fea033a91448",
+      "fragmentSha256": "24176978a6a7cb2fe23dca4e6b35a93241100eb104be2b56d4b5ff532346d89c",
+      "shaders": [
+        {
+          "kind": "vertex",
+          "compiled": true,
+          "log": "",
+          "bytes": 20439
+        },
+        {
+          "kind": "fragment",
+          "compiled": true,
+          "log": "",
+          "bytes": 18421
+        }
+      ],
+      "linked": true,
+      "log": ""
+    },
+    {
+      "name": "projector-beam-direct",
+      "vertexSha256": "71468c08f851216e186da7090b13dece1d867dffa56a1e1d2361fea033a91448",
+      "fragmentSha256": "531d4ad5ab90b5b6cf1afbb8035a402ed9dbf18ffba86b7f8367e7f8a2ed25c9",
+      "shaders": [
+        {
+          "kind": "vertex",
+          "compiled": true,
+          "log": "",
+          "bytes": 20439
+        },
+        {
+          "kind": "fragment",
+          "compiled": true,
+          "log": "",
+          "bytes": 23746
+        }
+      ],
+      "linked": true,
+      "log": ""
+    },
+    {
+      "name": "cube-ceramic-formation",
+      "vertexSha256": "d05c00b3f710142dc44fbf26dcf7dcd44ff5a6161dca918e14aecbad7317c4fc",
+      "fragmentSha256": "efeeb873610ca246a675c3ae9249cada49a06b9daae1387129e8bd71d96e8902",
+      "shaders": [
+        {
+          "kind": "vertex",
+          "compiled": true,
+          "log": "",
+          "bytes": 22657
+        },
+        {
+          "kind": "fragment",
+          "compiled": true,
+          "log": "",
+          "bytes": 93736
+        }
+      ],
+      "linked": true,
+      "log": ""
+    },
+    {
+      "name": "cube-outline-formation",
+      "vertexSha256": "9f42bde902b7294df3fbad25705b5378e07a39c9307322b48c866755cc462a7e",
+      "fragmentSha256": "8d27e8f1e3fcbf3578180cd54b9b242e43e091292cde38fe62d31fc317958fe8",
+      "shaders": [
+        {
+          "kind": "vertex",
+          "compiled": true,
+          "log": "",
+          "bytes": 20230
+        },
+        {
+          "kind": "fragment",
+          "compiled": true,
+          "log": "",
+          "bytes": 21738
+        }
+      ],
+      "linked": true,
+      "log": ""
+    },
+    {
+      "name": "cube-formation-shadow-depth",
+      "vertexSha256": "9b20687bb72c4b3993ca4473e53c2b7f3ae193e07a1b70857e47b8f01d70c934",
+      "fragmentSha256": "df359893edb15fc302cf40cabf8d98515e9ff10d07b283ae7da17cf0b11f979f",
+      "shaders": [
+        {
+          "kind": "vertex",
+          "compiled": true,
+          "log": "",
+          "bytes": 16862
+        },
+        {
+          "kind": "fragment",
+          "compiled": true,
+          "log": "",
+          "bytes": 15433
+        }
+      ],
+      "linked": true,
+      "log": ""
+    },
+    {
+      "name": "archive-output",
+      "vertexSha256": "70b78875a32a3bb608b4ea3beb525ffe7152ff7f89ed63d152e88fb005f7e9e7",
+      "fragmentSha256": "8227603c2fcc4d4f1d59bab92cbd19c7f382f45591d28af2d3ff1335b9fd42e2",
+      "shaders": [
+        {
+          "kind": "vertex",
+          "compiled": true,
+          "log": "",
+          "bytes": 402
+        },
+        {
+          "kind": "fragment",
+          "compiled": true,
+          "log": "",
+          "bytes": 6872
+        }
+      ],
+      "linked": true,
+      "log": ""
+    }
+  ],
+  "passed": true
+}

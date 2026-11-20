@@ -1,0 +1,1412 @@
+{
+  "generatedAt": "2026-11-20T09:38:09.550Z",
+  "scope": "Numerical native interactive path; stable selected track and shoulder, no remaining selection wave, no idle displacement, centered pointer, no GPU stalls. Production gate method executed directly. Native damp/detail/framing/camera equations used; not visual acceptance.",
+  "rotationNote": "Archive inspection input is clamped to +/-0.8 radians (about45.8deg). Pi is a programmatic stress case, not a reachable native reading drag.",
+  "selectedBase": -2.396285817500283,
+  "neighborTop": 1.2902044957287502,
+  "results": [
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "array",
+      "rotation": 0,
+      "hz": 30,
+      "detailTransition": true,
+      "readyMs": 3366.667,
+      "dominant": [
+        "cameraResidual"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 66.667,
+      "outOfFrameIntervals": [
+        {
+          "from": 233.333,
+          "to": 1033.333
+        }
+      ],
+      "stableThresholdMs": {
+        "cameraResidual": 3366.667,
+        "cameraSpeed": 3333.333,
+        "fovSpeed": 2866.667,
+        "rotation": 33.333,
+        "facing": 33.333,
+        "inFrame": 1033.333,
+        "clearance": 66.667,
+        "lift": 1933.333,
+        "detail": 2433.333
+      },
+      "ready": {
+        "ms": 3366.667,
+        "lift": 4.04996005202536,
+        "detail": 0.9997820000328679,
+        "cameraResidual": 0.003721662529191561,
+        "cameraSpeed": 0.022228183962686787,
+        "fovSpeed": 0.004977263335028681,
+        "rotation": 0,
+        "facing": 0.9390354963798404,
+        "originPx": {
+          "x": 782.002584560155,
+          "y": 272.73802229703165
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 3333.333,
+        "lift": 4.049954473802629,
+        "detail": 0.9997606736156157,
+        "cameraResidual": 0.004085432008352254,
+        "cameraSpeed": 0.024400760865995335,
+        "fovSpeed": 0.005460950346138915,
+        "rotation": 0,
+        "facing": 0.9390258348679872,
+        "originPx": {
+          "x": 782.0211654920862,
+          "y": 272.70170535474585
+        },
+        "failed": [
+          "cameraResidual"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 733.333,
+        "lift": 3.3655747499824327,
+        "detail": 0.6527402821644839,
+        "cameraResidual": 3.6711764853327113,
+        "cameraSpeed": 20.74869072844936,
+        "fovSpeed": 1.7172484419382794,
+        "rotation": 0,
+        "facing": 0.7219776580218998,
+        "originPx": {
+          "x": 880.4217257967732,
+          "y": -58.823174583978584
+        },
+        "failed": [
+          "lift",
+          "detail",
+          "cameraResidual",
+          "cameraSpeed",
+          "fovSpeed",
+          "inFrame"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "array",
+      "rotation": 0,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 3366.667,
+      "dominant": [
+        "cameraResidual"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 66.667,
+      "outOfFrameIntervals": [
+        {
+          "from": 216.667,
+          "to": 1050
+        }
+      ],
+      "stableThresholdMs": {
+        "cameraResidual": 3366.667,
+        "cameraSpeed": 3316.667,
+        "fovSpeed": 2866.667,
+        "rotation": 16.667,
+        "facing": 16.667,
+        "inFrame": 1050,
+        "clearance": 66.667,
+        "lift": 1933.333,
+        "detail": 2450
+      },
+      "ready": {
+        "ms": 3366.667,
+        "lift": 4.04996005202536,
+        "detail": 0.9997769141835905,
+        "cameraResidual": 0.003970210396515619,
+        "cameraSpeed": 0.02168985709352251,
+        "fovSpeed": 0.00485715055962288,
+        "rotation": 0,
+        "facing": 0.9390308722051578,
+        "originPx": {
+          "x": 782.0114665390618,
+          "y": 272.7211139709823
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 3350,
+        "lift": 4.04995735356265,
+        "detail": 0.9997662567733038,
+        "cameraResidual": 0.004159721974956433,
+        "cameraSpeed": 0.022725166812928663,
+        "fovSpeed": 0.005087738855653612,
+        "rotation": 0,
+        "facing": 0.9390259326445488,
+        "originPx": {
+          "x": 782.020964592343,
+          "y": 272.7025682978892
+        },
+        "failed": [
+          "cameraResidual"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 716.667,
+        "lift": 3.3285423438224955,
+        "detail": 0.627662297310169,
+        "cameraResidual": 3.9196709298320567,
+        "cameraSpeed": 20.78107966901682,
+        "fovSpeed": 1.7089517487031536,
+        "rotation": 0,
+        "facing": 0.702797106151024,
+        "originPx": {
+          "x": 879.0245189048485,
+          "y": -73.86760939748075
+        },
+        "failed": [
+          "lift",
+          "detail",
+          "cameraResidual",
+          "cameraSpeed",
+          "fovSpeed",
+          "inFrame"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "array",
+      "rotation": 0,
+      "hz": 144,
+      "detailTransition": true,
+      "readyMs": 3381.944,
+      "dominant": [
+        "cameraResidual"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 69.444,
+      "outOfFrameIntervals": [
+        {
+          "from": 222.222,
+          "to": 1055.556
+        }
+      ],
+      "stableThresholdMs": {
+        "cameraResidual": 3381.944,
+        "cameraSpeed": 3312.5,
+        "fovSpeed": 2854.167,
+        "rotation": 6.944,
+        "facing": 6.944,
+        "inFrame": 1055.556,
+        "clearance": 69.444,
+        "lift": 1937.5,
+        "detail": 2444.444
+      },
+      "ready": {
+        "ms": 3381.944,
+        "lift": 4.04996237605917,
+        "detail": 0.9997833431163444,
+        "cameraResidual": 0.003950735018786672,
+        "cameraSpeed": 0.02049500660205056,
+        "fovSpeed": 0.004590798738021817,
+        "rotation": 0,
+        "facing": 0.9390324911352554,
+        "originPx": {
+          "x": 782.0083461834204,
+          "y": 272.72745738126235
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 3375,
+        "lift": 4.049961336845652,
+        "detail": 0.9997790891193331,
+        "cameraResidual": 0.0040282457658263075,
+        "cameraSpeed": 0.02089710161989278,
+        "fovSpeed": 0.004680409689257203,
+        "rotation": 0,
+        "facing": 0.9390304929898938,
+        "originPx": {
+          "x": 782.0121886555872,
+          "y": 272.71996591214884
+        },
+        "failed": [
+          "cameraResidual"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 715.278,
+        "lift": 3.325377184104662,
+        "detail": 0.6211174325971748,
+        "cameraResidual": 4.0365828793839444,
+        "cameraSpeed": 20.678609624232916,
+        "fovSpeed": 1.712513529660228,
+        "rotation": 0,
+        "facing": 0.6962144984988781,
+        "originPx": {
+          "x": 878.3793575826842,
+          "y": -79.84509454942035
+        },
+        "failed": [
+          "lift",
+          "detail",
+          "cameraResidual",
+          "cameraSpeed",
+          "fovSpeed",
+          "inFrame"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "reading",
+      "rotation": 0,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 16.667,
+      "dominant": [],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "rotation": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667
+      },
+      "ready": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0,
+        "facing": 0.9391340288454871,
+        "originPx": {
+          "x": 781.8126675478163,
+          "y": 273.1023518439656
+        },
+        "failed": []
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0,
+        "facing": 0.9391340288454871,
+        "originPx": {
+          "x": 781.8126675478163,
+          "y": 273.1023518439656
+        },
+        "failed": []
+      }
+    },
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "reading",
+      "rotation": -0.8,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 2150,
+      "dominant": [
+        "rotation"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "rotation": 2150
+      },
+      "ready": {
+        "ms": 2150,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": -0.0019437356760196862,
+        "facing": 0.9396456812313372,
+        "originPx": {
+          "x": 781.8473160670746,
+          "y": 273.20137401813827
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 2133.333,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": -0.0020365931643248104,
+        "facing": 0.9396700360513938,
+        "originPx": {
+          "x": 781.8489492866324,
+          "y": 273.2061051693129
+        },
+        "failed": [
+          "rotation"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": -0.7635243837869173,
+        "facing": 0.8594555325350737,
+        "originPx": {
+          "x": 728.795150996417,
+          "y": 310.05969700822953
+        },
+        "failed": [
+          "rotation"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "reading",
+      "rotation": 0.8,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 2150,
+      "dominant": [
+        "rotation"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "rotation": 2150
+      },
+      "ready": {
+        "ms": 2150,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.0019437356760196862,
+        "facing": 0.9386188541911911,
+        "originPx": {
+          "x": 781.7771388043128,
+          "y": 273.00335370491297
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 2133.333,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.0020365931643248104,
+        "facing": 0.938594154796121,
+        "originPx": {
+          "x": 781.775419474544,
+          "y": 272.9986249050356
+        },
+        "failed": [
+          "rotation"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.7635243837869173,
+        "facing": 0.5002364159396904,
+        "originPx": {
+          "x": 705.3592433305563,
+          "y": 239.54429271638116
+        },
+        "failed": [
+          "rotation"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "reading",
+      "rotation": 3.141592653589793,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 2633.333,
+      "dominant": [
+        "rotation"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 483.333,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "facing": 483.333,
+        "rotation": 2633.333
+      },
+      "ready": {
+        "ms": 2633.333,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.0019722042611046574,
+        "facing": 0.9386112826150903,
+        "originPx": {
+          "x": 781.7766118994435,
+          "y": 273.00190392639706
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 2616.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.002066421770393707,
+        "facing": 0.9385862189060252,
+        "originPx": {
+          "x": 781.7748667481426,
+          "y": 272.99710588472686
+        },
+        "failed": [
+          "rotation"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 2.9983532436770663,
+        "facing": -0.9714419865427605,
+        "originPx": {
+          "x": 314.1258766953957,
+          "y": 275.0048517255189
+        },
+        "failed": [
+          "rotation",
+          "facing"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "array",
+      "rotation": 0,
+      "hz": 60,
+      "detailTransition": false,
+      "readyMs": 350,
+      "dominant": [
+        "cameraSpeed"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [
+        {
+          "from": 33.333,
+          "to": 66.667
+        }
+      ],
+      "stableThresholdMs": {
+        "cameraResidual": 16.667,
+        "cameraSpeed": 350,
+        "fovSpeed": 316.667,
+        "rotation": 16.667,
+        "facing": 16.667,
+        "inFrame": 66.667,
+        "clearance": 16.667,
+        "detail": 216.667,
+        "lift": 233.333
+      },
+      "ready": {
+        "ms": 350,
+        "lift": 4.049768579760123,
+        "detail": 0.9999822491354788,
+        "cameraResidual": 0,
+        "cameraSpeed": 0.021485350219751495,
+        "fovSpeed": 0.004973866103146207,
+        "rotation": 0,
+        "facing": 0.9391303371510376,
+        "originPx": {
+          "x": 781.8197881684,
+          "y": 273.08944027254495
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 333.333,
+        "lift": 4.049603551982153,
+        "detail": 0.999968190418371,
+        "cameraResidual": 0,
+        "cameraSpeed": 0.03854051276636128,
+        "fovSpeed": 0.008912585813316554,
+        "rotation": 0,
+        "facing": 0.9391274131883502,
+        "originPx": {
+          "x": 781.8254275296871,
+          "y": 273.0792152709183
+        },
+        "failed": [
+          "cameraSpeed"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 83.333,
+        "lift": 3.276398617039579,
+        "detail": 0.7992596514907222,
+        "cameraResidual": 0,
+        "cameraSpeed": 276.0774989883102,
+        "fovSpeed": 24.84067439971475,
+        "rotation": 0,
+        "facing": 0.8860090880528884,
+        "originPx": {
+          "x": 845.6513348079745,
+          "y": 157.40430354324593
+        },
+        "failed": [
+          "lift",
+          "detail",
+          "cameraSpeed",
+          "fovSpeed"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "route": "reading",
+      "rotation": 0.8,
+      "hz": 60,
+      "detailTransition": false,
+      "readyMs": 183.333,
+      "dominant": [
+        "rotation"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "rotation": 183.333
+      },
+      "ready": {
+        "ms": 183.333,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.0013072753176450018,
+        "facing": 0.9387879316234681,
+        "originPx": {
+          "x": 781.7888693105072,
+          "y": 273.0357671670439
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 166.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.002342639755854551,
+        "facing": 0.9385126918314707,
+        "originPx": {
+          "x": 781.7697385624734,
+          "y": 272.9830397707599
+        },
+        "failed": [
+          "rotation"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.4464281166160377,
+        "facing": 0.7343307720819301,
+        "originPx": {
+          "x": 751.3461633196757,
+          "y": 251.71729761700826
+        },
+        "failed": [
+          "rotation"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "array",
+      "rotation": 0,
+      "hz": 30,
+      "detailTransition": true,
+      "readyMs": 3100,
+      "dominant": [
+        "fovSpeed"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 66.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "cameraResidual": 3066.667,
+        "cameraSpeed": 3066.667,
+        "fovSpeed": 3100,
+        "rotation": 33.333,
+        "facing": 33.333,
+        "inFrame": 33.333,
+        "clearance": 66.667,
+        "lift": 1933.333,
+        "detail": 2433.333
+      },
+      "ready": {
+        "ms": 3100,
+        "lift": 4.049886622539879,
+        "detail": 0.9995400298579976,
+        "cameraResidual": 0.0035033431856898844,
+        "cameraSpeed": 0.02092372797945663,
+        "fovSpeed": 0.019289275074392265,
+        "rotation": 0,
+        "facing": 0.9365701787744259,
+        "originPx": {
+          "x": 273.8752736301507,
+          "y": 146.8354574029707
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 3066.667,
+        "lift": 4.049870887169044,
+        "detail": 0.9994950320751956,
+        "cameraResidual": 0.0038456415526789763,
+        "cameraSpeed": 0.022967985490332493,
+        "fovSpeed": 0.02115481520492679,
+        "rotation": 0,
+        "facing": 0.9365488976445748,
+        "originPx": {
+          "x": 273.87224060337064,
+          "y": 146.81730411679774
+        },
+        "failed": [
+          "fovSpeed"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 733.333,
+        "lift": 3.3655747499824327,
+        "detail": 0.6527402821644839,
+        "cameraResidual": 1.6292706665582395,
+        "cameraSpeed": 9.217043863505108,
+        "fovSpeed": 3.1803873705457164,
+        "rotation": 0,
+        "facing": 0.7161410624474226,
+        "originPx": {
+          "x": 252.3571704728232,
+          "y": 85.71929096155134
+        },
+        "failed": [
+          "lift",
+          "detail",
+          "cameraResidual",
+          "cameraSpeed",
+          "fovSpeed"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "array",
+      "rotation": 0,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 3083.333,
+      "dominant": [
+        "cameraResidual",
+        "fovSpeed"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 66.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "cameraResidual": 3083.333,
+        "cameraSpeed": 3033.333,
+        "fovSpeed": 3083.333,
+        "rotation": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 66.667,
+        "lift": 1933.333,
+        "detail": 2450
+      },
+      "ready": {
+        "ms": 3083.333,
+        "lift": 4.049879008870399,
+        "detail": 0.9995068122872224,
+        "cameraResidual": 0.003915669136765746,
+        "cameraSpeed": 0.021391604936640277,
+        "fovSpeed": 0.01971548735884454,
+        "rotation": 0,
+        "facing": 0.9365491131411104,
+        "originPx": {
+          "x": 273.87227186251124,
+          "y": 146.8179125148677
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 3066.667,
+        "lift": 4.049870887169045,
+        "detail": 0.999483251381881,
+        "cameraResidual": 0.004102500992293609,
+        "cameraSpeed": 0.02241225210428218,
+        "fovSpeed": 0.0206468786484848,
+        "rotation": 0,
+        "facing": 0.9365377074792514,
+        "originPx": {
+          "x": 273.8706469616912,
+          "y": 146.80819090437592
+        },
+        "failed": [
+          "cameraResidual",
+          "fovSpeed"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 716.667,
+        "lift": 3.3285423438224955,
+        "detail": 0.627662297310169,
+        "cameraResidual": 1.7375074805913655,
+        "cameraSpeed": 9.216187067477913,
+        "fovSpeed": 3.1650836870057297,
+        "rotation": 0,
+        "facing": 0.6967259093366615,
+        "originPx": {
+          "x": 250.74131907692077,
+          "y": 84.25996856953397
+        },
+        "failed": [
+          "lift",
+          "detail",
+          "cameraResidual",
+          "cameraSpeed",
+          "fovSpeed"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "array",
+      "rotation": 0,
+      "hz": 144,
+      "detailTransition": true,
+      "readyMs": 3090.278,
+      "dominant": [
+        "cameraResidual"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 69.444,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "cameraResidual": 3090.278,
+        "cameraSpeed": 3027.778,
+        "fovSpeed": 3076.389,
+        "rotation": 6.944,
+        "facing": 6.944,
+        "inFrame": 6.944,
+        "clearance": 69.444,
+        "lift": 1937.5,
+        "detail": 2444.444
+      },
+      "ready": {
+        "ms": 3090.278,
+        "lift": 4.049882241115185,
+        "detail": 0.999509717582405,
+        "cameraResidual": 0.003988423079980899,
+        "cameraSpeed": 0.020690402604213697,
+        "fovSpeed": 0.019074618662813236,
+        "rotation": 0,
+        "facing": 0.9365473040003033,
+        "originPx": {
+          "x": 273.8720144219702,
+          "y": 146.81662347229624
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 3083.333,
+        "lift": 4.049879008870399,
+        "detail": 0.9995000910249472,
+        "cameraResidual": 0.004066641540104561,
+        "cameraSpeed": 0.021096165116385554,
+        "fovSpeed": 0.01944517281222602,
+        "rotation": 0,
+        "facing": 0.9365425809277024,
+        "originPx": {
+          "x": 273.871341535804,
+          "y": 146.8126046273811
+        },
+        "failed": [
+          "cameraResidual"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 715.278,
+        "lift": 3.325377184104662,
+        "detail": 0.6211174325971748,
+        "cameraResidual": 1.7887744022970482,
+        "cameraSpeed": 9.165346326963006,
+        "fovSpeed": 3.1716516930154626,
+        "rotation": 0,
+        "facing": 0.6900614348507731,
+        "originPx": {
+          "x": 250.19346405553864,
+          "y": 83.47412162852196
+        },
+        "failed": [
+          "lift",
+          "detail",
+          "cameraResidual",
+          "cameraSpeed",
+          "fovSpeed"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "reading",
+      "rotation": 0,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 16.667,
+      "dominant": [],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "rotation": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667
+      },
+      "ready": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0,
+        "facing": 0.9367866632361461,
+        "originPx": {
+          "x": 273.9062199829199,
+          "y": 147.01516684705683
+        },
+        "failed": []
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0,
+        "facing": 0.9367866632361461,
+        "originPx": {
+          "x": 273.9062199829199,
+          "y": 147.01516684705683
+        },
+        "failed": []
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "reading",
+      "rotation": -0.8,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 2150,
+      "dominant": [
+        "rotation"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "rotation": 2150
+      },
+      "ready": {
+        "ms": 2150,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": -0.0019437356760196862,
+        "facing": 0.9373602708744919,
+        "originPx": {
+          "x": 273.92258930223613,
+          "y": 147.04354954263098
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 2133.333,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": -0.0020365931643248104,
+        "facing": 0.9373875858387761,
+        "originPx": {
+          "x": 273.92336388529566,
+          "y": 147.04490563104878
+        },
+        "failed": [
+          "rotation"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": -0.7635243837869173,
+        "facing": 0.8802196928681371,
+        "originPx": {
+          "x": 257.7127199818723,
+          "y": 157.60823941680172
+        },
+        "failed": [
+          "rotation"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "reading",
+      "rotation": 0.8,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 2150,
+      "dominant": [
+        "rotation"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "rotation": 2150
+      },
+      "ready": {
+        "ms": 2150,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.0019437356760196862,
+        "facing": 0.9362095484671062,
+        "originPx": {
+          "x": 273.88955411545453,
+          "y": 146.98679104066187
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 2133.333,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.0020365931643248104,
+        "facing": 0.9361818904086977,
+        "originPx": {
+          "x": 273.88875052180606,
+          "y": 146.98543562619565
+        },
+        "failed": [
+          "rotation"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.7635243837869173,
+        "facing": 0.4768368248912722,
+        "originPx": {
+          "x": 246.4744825027171,
+          "y": 137.39643059697505
+        },
+        "failed": [
+          "rotation"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "reading",
+      "rotation": 3.141592653589793,
+      "hz": 60,
+      "detailTransition": true,
+      "readyMs": 2633.333,
+      "dominant": [
+        "rotation"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 500,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "facing": 500,
+        "rotation": 2633.333
+      },
+      "ready": {
+        "ms": 2633.333,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.0019722042611046574,
+        "facing": 0.9362010698095544,
+        "originPx": {
+          "x": 273.88930781871994,
+          "y": 146.98637549108818
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 2616.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.002066421770393707,
+        "facing": 0.93617300411478,
+        "originPx": {
+          "x": 273.88849223988575,
+          "y": 146.98500022986792
+        },
+        "failed": [
+          "rotation"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 2.9983532436770663,
+        "facing": -0.97473872391237,
+        "originPx": {
+          "x": 115.83167458825088,
+          "y": 147.56047980770512
+        },
+        "failed": [
+          "rotation",
+          "facing"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "array",
+      "rotation": 0,
+      "hz": 60,
+      "detailTransition": false,
+      "readyMs": 333.333,
+      "dominant": [
+        "cameraSpeed",
+        "fovSpeed"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "cameraResidual": 16.667,
+        "cameraSpeed": 333.333,
+        "fovSpeed": 333.333,
+        "rotation": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "detail": 216.667,
+        "lift": 233.333
+      },
+      "ready": {
+        "ms": 333.333,
+        "lift": 4.049603551982153,
+        "detail": 0.999968190418371,
+        "cameraResidual": 0,
+        "cameraSpeed": 0.017164058763470397,
+        "fovSpeed": 0.01646938343782267,
+        "rotation": 0,
+        "facing": 0.9367797960377591,
+        "originPx": {
+          "x": 273.9052356417189,
+          "y": 147.01002725087926
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 316.667,
+        "lift": 4.049322281855887,
+        "detail": 0.9999429971716475,
+        "cameraResidual": 0,
+        "cameraSpeed": 0.030793688441634305,
+        "fovSpeed": 0.029509669638017044,
+        "rotation": 0,
+        "facing": 0.9367743568014062,
+        "originPx": {
+          "x": 273.90445602643115,
+          "y": 147.00595775247697
+        },
+        "failed": [
+          "cameraSpeed",
+          "fovSpeed"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 83.333,
+        "lift": 3.276398617039579,
+        "detail": 0.7992596514907222,
+        "cameraResidual": 0,
+        "cameraSpeed": 123.68280527811389,
+        "fovSpeed": 45.99801090431344,
+        "rotation": 0,
+        "facing": 0.8824496728555293,
+        "originPx": {
+          "x": 267.3032041171685,
+          "y": 125.8228722247716
+        },
+        "failed": [
+          "lift",
+          "detail",
+          "cameraSpeed",
+          "fovSpeed"
+        ]
+      }
+    },
+    {
+      "size": {
+        "width": 390,
+        "height": 780
+      },
+      "route": "reading",
+      "rotation": 0.8,
+      "hz": 60,
+      "detailTransition": false,
+      "readyMs": 183.333,
+      "dominant": [
+        "rotation"
+      ],
+      "initialSourceInFrame": true,
+      "firstClearVisibleMs": 16.667,
+      "outOfFrameIntervals": [],
+      "stableThresholdMs": {
+        "lift": 16.667,
+        "detail": 16.667,
+        "cameraResidual": 16.667,
+        "cameraSpeed": 16.667,
+        "fovSpeed": 16.667,
+        "facing": 16.667,
+        "inFrame": 16.667,
+        "clearance": 16.667,
+        "rotation": 183.333
+      },
+      "ready": {
+        "ms": 183.333,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.0013072753176450018,
+        "facing": 0.9363989060027532,
+        "originPx": {
+          "x": 273.8950438653358,
+          "y": 146.996081701424
+        },
+        "failed": []
+      },
+      "previous": {
+        "ms": 166.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.002342639755854551,
+        "facing": 0.9360906763107331,
+        "originPx": {
+          "x": 273.88609718869594,
+          "y": 146.98096846391275
+        },
+        "failed": [
+          "rotation"
+        ]
+      },
+      "oldEarlyGate": {
+        "ms": 16.667,
+        "lift": 4.05,
+        "detail": 1,
+        "cameraResidual": 0,
+        "cameraSpeed": 0,
+        "fovSpeed": 0,
+        "rotation": 0.4464281166160377,
+        "facing": 0.7185957708113676,
+        "originPx": {
+          "x": 262.5983476820456,
+          "y": 140.88557527798667
+        },
+        "failed": [
+          "rotation"
+        ]
+      }
+    }
+  ]
+}
