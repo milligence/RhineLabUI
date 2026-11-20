@@ -19,6 +19,12 @@ export interface ResearchViewState {
 }
 type Point = { x: number; y: number };
 type Node = ResearchProjectionData["nodes"][number];
+type FormingEdge = { path: SVGPathElement; mask: SVGPathElement; id: string; length: number; start: number; end: number; head?: SVGCircleElement; trace?: SVGPathElement };
+let formationInstance = 0;
+const exposure = (value: number, start: number, end: number) => {
+  const t = Math.max(0, Math.min(1, (value - start) / (end - start)));
+  return t * t * (3 - 2 * t);
+};
 
 /** A complete research field and a carrier-anchored optical reading constellation. */
 export class ResearchProjection {
@@ -60,6 +66,13 @@ export class ResearchProjection {
   private abort = new AbortController();
   private observer: ResizeObserver;
   private resizeFrame = 0;
+  private formation = 1;
+  private formationEdges: FormingEdge[] = [];
+  private formationNodes: { node: HTMLElement; arrival: number }[] = [];
+  private presentationScale = 1;
+  private presentationDetail = 1;
+  private presentationNames = 1;
+  private presentationLabels = new Set<string>();
 
   constructor(private host: HTMLElement, private data: ResearchProjectionData, options: { reducedMotion?: boolean; state?: ResearchViewState } = {}) {
     this.reduced = options.reducedMotion ?? false;
@@ -109,6 +122,7 @@ export class ResearchProjection {
     this.timeline = host.querySelector(".projection-scrubber input")!;
     this.playButton = host.querySelector('[data-research="play"]')!;
     this.nodes = [...host.querySelectorAll<HTMLButtonElement>("[data-node]")];
+    this.prepareFormation();
     this.host.dataset.reduced = String(this.reduced);
     this.bind();
     let previous = { width: this.stage.clientWidth, height: this.body.clientHeight };
@@ -135,15 +149,185 @@ export class ResearchProjection {
     this.observer.observe(this.body);
     void document.fonts.ready.then(() => { if (!this.abort.signal.aborted) { this.labelMetrics.clear(); this.paintMap(); } });
     this.selectNode(Math.max(0, this.ordered.findIndex(n => n.id === data.entryNodeId)), false);
-    requestAnimationFrame(() => {
-      if (this.abort.signal.aborted) return;
-      if (options.state && this.positions.has(options.state.selected)) {
-        this.selected = this.ordered.findIndex(n => n.id === options.state!.selected);
-        this.x = options.state.x; this.y = options.state.y; this.scale = Math.max(.06, Math.min(2.2, options.state.scale));
-        this.selectNode(this.selected, false); this.paintMap();
-        if (options.state.focused) this.enterFocus(false);
-      } else this.fit(false);
+    // The host is already attached and measurable. Establish its real map
+    // layout before the first optical frame, including a synchronous seek.
+    if (options.state && this.positions.has(options.state.selected)) {
+      this.selected = this.ordered.findIndex(n => n.id === options.state!.selected);
+      this.x = options.state.x; this.y = options.state.y; this.scale = Math.max(.06, Math.min(2.2, options.state.scale));
+      this.selectNode(this.selected, false); this.paintMap();
+      if (options.state.focused) this.enterFocus(false);
+    } else this.fit(false);
+  }
+
+  private prepareFormation() {
+    const svg = this.map.querySelector<SVGSVGElement>(".research-links")!;
+    const ns = "http://www.w3.org/2000/svg";
+    const defs = document.createElementNS(ns, "defs");
+    const heads = document.createElementNS(ns, "g");
+    heads.classList.add("research-formation-heads"); heads.style.display = "none";
+    const serial = ++formationInstance;
+    const xs = [...this.positions.values()].map(p => p.x), minX = Math.min(...xs), span = Math.max(1, Math.max(...xs) - minX);
+    const arrivals = new Map<string, number>();
+    this.ordered.forEach(node => {
+      const rank = (this.positions.get(node.id)!.x - minX) / span;
+      // The main lineage writes first. Branches resolve a fraction later, with
+      // the same clock and the same real topology; there is no particle cloud.
+      arrivals.set(node.id, .16 + rank * .41 + (node.role === "branch" ? .045 : 0));
     });
+    this.formationNodes = this.nodes.map(node => ({ node, arrival: arrivals.get(node.dataset.node!) ?? .3 }));
+    const phases = this.data.phases ?? this.phasePositions;
+    const landmarkPhases = phases.length <= 5 ? phases : Array.from({ length: 5 }, (_, i) => phases[Math.round(i * (phases.length - 1) / 4)]);
+    for (const phase of landmarkPhases) {
+      const explicit = "entryNodeId" in phase ? phase.entryNodeId : undefined;
+      const node = this.ordered.find(node => node.id === explicit) ?? this.ordered.find(node => node.phase === phase.id);
+      if (node) this.presentationLabels.add(node.id);
+    }
+    // Outcomes, not an arbitrary sprinkling of names, provide two secondary
+    // landmarks. The selected record already has its own larger caption.
+    for (const status of ["negative", "paused"] as const) {
+      const node = this.ordered.find(node => node.status === status);
+      if (node && this.presentationLabels.size < 7) this.presentationLabels.add(node.id);
+    }
+    for (const index of [this.route[0], this.route.at(-1)]) {
+      if (index !== undefined && this.presentationLabels.size < 6) this.presentationLabels.add(this.ordered[index].id);
+    }
+    [...svg.querySelectorAll<SVGPathElement>("path[data-from]")].forEach((path, index) => {
+      const id = `research-deposit-${serial}-${index}`;
+      const length = Math.max(1, path.getTotalLength());
+      const mask = document.createElementNS(ns, "mask");
+      mask.id = id; mask.setAttribute("maskUnits", "userSpaceOnUse"); mask.setAttribute("maskContentUnits", "userSpaceOnUse");
+      mask.setAttribute("x", "-100"); mask.setAttribute("y", "-100");
+      mask.setAttribute("width", String(this.mapWidth + 200)); mask.setAttribute("height", String(this.mapHeight + 200));
+      const brush = document.createElementNS(ns, "path");
+      brush.setAttribute("d", path.getAttribute("d")!);
+      // A broad mask brush covers the path at every map zoom. Its dash length
+      // stays in user units; non-scaling-stroke would break the measured arc.
+      brush.style.cssText = "fill:none;stroke:white;stroke-width:64;stroke-linecap:butt;stroke-linejoin:round;vector-effect:none;transition:none;opacity:1;";
+      brush.style.strokeDasharray = `${length} ${length + 1}`;
+      brush.style.strokeDashoffset = String(length);
+      mask.append(brush); defs.append(mask);
+      const start = (arrivals.get(path.dataset.from!) ?? .16) + .018;
+      const end = Math.max(start + .085, (arrivals.get(path.dataset.to!) ?? .50) + .015);
+      const edge: FormingEdge = { path, mask: brush, id, length, start, end };
+      if (path.dataset.weight === "primary" || path.dataset.kind === "merge") {
+        const trace = document.createElementNS(ns, "path");
+        trace.setAttribute("d", path.getAttribute("d")!);
+        trace.style.cssText = "fill:none;stroke:var(--optical-accent);stroke-linecap:round;vector-effect:none;transition:none;opacity:0;";
+        const head = document.createElementNS(ns, "circle");
+        head.style.cssText = "fill:var(--optical-accent);stroke:var(--theme-paper);stroke-width:0.7;vector-effect:non-scaling-stroke;opacity:0;";
+        heads.append(trace, head); edge.head = head; edge.trace = trace;
+      }
+      this.formationEdges.push(edge);
+    });
+    svg.prepend(defs); svg.append(heads);
+  }
+
+  /** Pure reversible exposure. Only actual graph strokes, node cores and
+   * labels are generated; the completed document keeps its original styling. */
+  setFormation(value: number, force = false) {
+    const progress = this.reduced ? 1 : Math.max(0, Math.min(1, value));
+    if (this.formation === progress && !force) return;
+    this.formation = progress;
+    const forming = progress < 1;
+    this.body.dataset.forming = String(forming);
+    this.body.style.setProperty("--formation-context", String(exposure(progress, .52, .91)));
+    this.body.style.setProperty("--formation-reading", String(exposure(progress, .51, .97)));
+    this.body.style.setProperty("--formation-field", String(exposure(progress, .18, .68)));
+    const heads = this.map.querySelector<SVGGElement>(".research-formation-heads")!;
+    heads.style.display = forming ? "" : "none";
+    for (const { node, arrival } of this.formationNodes) {
+      node.style.setProperty("--formation-core", String(exposure(progress, arrival - .025, arrival + .060)));
+      const label = exposure(progress, Math.max(.34, arrival + .12), Math.max(.54, arrival + .36));
+      node.style.setProperty("--formation-label-edge", `${(-5 + label * 110).toFixed(4)}%`);
+    }
+    for (const edge of this.formationEdges) {
+      if (!forming) { edge.path.removeAttribute("mask"); continue; }
+      edge.path.setAttribute("mask", `url(#${edge.id})`);
+      // Arc-length growth stays linear so a long branch cannot materialize
+      // instantly in the middle of an eased, already-eased global wipe.
+      const p = Math.max(0, Math.min(1, (progress - edge.start) / (edge.end - edge.start)));
+      edge.mask.style.strokeDashoffset = String(edge.length * (1 - p));
+      if (edge.head && edge.trace) {
+        const light = exposure(p, 0, .10) * (1 - exposure(p, .82, 1));
+        const point = edge.path.getPointAtLength(edge.length * p);
+        edge.head.setAttribute("cx", String(point.x)); edge.head.setAttribute("cy", String(point.y));
+        const pixelScale = Math.max(.06, this.scale * this.presentationScale);
+        edge.head.setAttribute("r", String(1.35 / pixelScale));
+        edge.head.style.opacity = String(light * .90);
+        const tail = Math.min(edge.length * p, 7 / pixelScale);
+        edge.trace.style.strokeDasharray = `0 ${Math.max(0, edge.length * p - tail)} ${tail} ${edge.length + 1}`;
+        edge.trace.style.strokeWidth = String(1.55 / pixelScale);
+        edge.trace.style.opacity = String(light * .50);
+      }
+    }
+  }
+
+  /** Keep the held image optically legible without moving a single graph
+   * anchor. More names become readable as this same plate approaches. */
+  setPresentationScale(value: number, force = false) {
+    const scale = this.reduced ? 1 : Math.max(.15, Math.min(1, value));
+    if (Math.abs(scale - this.presentationScale) < .0001 && !force) return;
+    this.presentationScale = scale;
+    this.presentationDetail = exposure(scale, .60, .94);
+    this.presentationNames = exposure(scale, .80, .96);
+    this.body.dataset.projecting = String(scale < .9999);
+    const style = this.body.style;
+    style.setProperty("--projection-label-size", String(Math.min(2, 1 / scale)));
+    style.setProperty("--projection-caption-size", String(Math.min(1.5, 1 / Math.sqrt(scale))));
+    style.setProperty("--projection-core-main", String(Math.min(1.22, 1 / Math.sqrt(scale))));
+    style.setProperty("--projection-core-selected", String(Math.min(1.65, 1 / Math.sqrt(scale))));
+    style.setProperty("--projection-line-main", String(Math.min(1.9, 1 / scale)));
+    style.setProperty("--projection-line-secondary", String(Math.min(1.6, 1 / scale)));
+    style.setProperty("--projection-detail", String(this.presentationDetail));
+    style.setProperty("--projection-name-clip", `${((1 - this.presentationNames) * 100).toFixed(4)}%`);
+    this.paintPresentationLabels();
+    if (this.formation < 1) this.setFormation(this.formation, true);
+  }
+
+  private paintPresentationLabels() {
+    if (this.presentationScale >= .9999) {
+      this.nodes.forEach(node => { delete node.dataset.projectionLandmark; });
+      return;
+    }
+    let landmarks = this.presentationLabels;
+    if (this.stage.clientWidth < 760 && !this.focused) {
+      const bounds = this.overviewViewport(), width = this.stage.clientWidth;
+      const boost = Math.min(2, 1 / this.presentationScale), textScale = Math.max(this.scale, .92) * boost;
+      const selectedId = this.ordered[this.selected]?.id;
+      const candidates = this.nodes.flatMap(node => {
+        const id = node.dataset.node!;
+        if (id === selectedId) return [];
+        const p = this.positions.get(id)!, metrics = this.labelMetrics.get(id);
+        if (!metrics) return [];
+        const x = this.x + p.x * this.scale, y = this.y + p.y * this.scale;
+        const offset = parseFloat(node.style.getPropertyValue("--label-offset")) * this.scale;
+        const top = y + (Number.isFinite(offset) ? offset : 14);
+        const box = { left: x - metrics.width * textScale / 2, right: x + metrics.width * textScale / 2, top, bottom: top + metrics.height * textScale };
+        // A label counts as visible only when the complete boosted name fits;
+        // a core near the viewport edge cannot justify half a clipped name.
+        if (box.left < 12 || box.right > width - 12 || box.top < bounds.top + 4 || box.bottom > bounds.top + bounds.height - 4) return [];
+        const index = this.ordered.findIndex(n => n.id === id);
+        return [{ id, node, index, box, mainline: this.route.includes(index) }];
+      });
+      const chosen: typeof candidates = [];
+      const add = (candidate: typeof candidates[number] | undefined) => {
+        if (!candidate || chosen.some(n => n.id === candidate.id)) return;
+        if (chosen.some(({ box }) => candidate.box.left < box.right + 7 && candidate.box.right > box.left - 7 && candidate.box.top < box.bottom + 6 && candidate.box.bottom > box.top - 6)) return;
+        chosen.push(candidate);
+      };
+      add(candidates.filter(n => n.mainline && n.index < this.selected).sort((a, b) => b.index - a.index)[0]);
+      add(candidates.filter(n => n.mainline && n.index > this.selected).sort((a, b) => a.index - b.index)[0]);
+      const secondary = candidates.filter(n => !n.mainline).sort((a, b) => {
+        const significance = (n: typeof a) => ["negative", "paused"].includes(n.node.dataset.status ?? "") ? 1 : 0;
+        return significance(b) - significance(a) || Math.abs(a.index - this.selected) - Math.abs(b.index - this.selected);
+      });
+      for (const candidate of secondary) { if (chosen.length >= 3) break; add(candidate); }
+      if (chosen.length < 2) for (const candidate of [...candidates].sort((a, b) => Math.abs(a.index - this.selected) - Math.abs(b.index - this.selected))) {
+        if (chosen.length >= 2) break; add(candidate);
+      }
+      landmarks = new Set(chosen.map(n => n.id));
+    }
+    this.nodes.forEach(node => { node.dataset.projectionLandmark = String(landmarks.has(node.dataset.node!)); });
   }
 
   private layout() {
@@ -310,6 +494,7 @@ export class ResearchProjection {
     this.host.querySelector(".research-zoom")!.textContent = `${Math.round(this.scale * 100)}%`;
     this.body.dataset.density = this.scale < (this.data.layout === "evolution" ? .21 : .3) ? "compact" : "readable";
     this.placeLabels();
+    this.paintPresentationLabels();
     const viewport = this.host.querySelector<SVGRectElement>(".research-navigator-window")!;
     const bounds = this.overviewViewport();
     const clampX = (x: number) => Math.max(0, Math.min(this.mapWidth, x));
@@ -319,6 +504,9 @@ export class ResearchProjection {
     viewport.setAttribute("x", String(left)); viewport.setAttribute("y", String(top));
     viewport.setAttribute("width", String(Math.max(0, right - left)));
     viewport.setAttribute("height", String(Math.max(0, bottom - top)));
+    // A fit, restored snapshot or font/layout change also changes the real
+    // scale of the deposit heads, even when the optical clock is paused.
+    if (this.formation < 1) this.setFormation(this.formation, true);
   }
   private placeLabels() {
     if (this.data.layout !== "evolution" || this.focused) return;
@@ -470,7 +658,7 @@ export class ResearchProjection {
     const node = this.ordered[this.selected];
     this.host.querySelectorAll<HTMLElement>("[data-phase]").forEach(button => { const active = Number(button.dataset.phase) === node.phase; button.classList.toggle("is-active", active); button.setAttribute("aria-pressed", String(active)); });
     this.nodes.forEach((button, i) => { button.classList.toggle("is-selected", i === this.selected); button.setAttribute("aria-pressed", String(i === this.selected)); button.tabIndex = i === this.selected ? 0 : -1; });
-    this.map.querySelectorAll<SVGPathElement>("path").forEach(path => path.classList.toggle("is-active", path.dataset.from === node.id || path.dataset.to === node.id));
+    this.map.querySelectorAll<SVGPathElement>("path[data-from]").forEach(path => path.classList.toggle("is-active", path.dataset.from === node.id || path.dataset.to === node.id));
     this.paintInspector(node);
     const routePosition = this.route.indexOf(this.selected);
     const precedingPosition = this.route.reduce((last, index, position) => index <= this.selected ? position : last, 0);
@@ -558,7 +746,7 @@ export class ResearchProjection {
       if (index !== this.selected) this.selectNode(index, true);
       this.timeline.value = String(position);
       this.nodes.forEach((node, i) => node.classList.toggle("is-future", i > after));
-      this.map.querySelectorAll<SVGPathElement>("path").forEach(path => {
+      this.map.querySelectorAll<SVGPathElement>("path[data-from]").forEach(path => {
         const destination = this.ordered.findIndex(node => node.id === path.dataset.to);
         path.classList.toggle("is-future", destination > after);
         if (!this.reduced && path.dataset.from === this.ordered[index].id && destination === after) {
@@ -573,14 +761,14 @@ export class ResearchProjection {
   private pause() {
     this.playing = false; cancelAnimationFrame(this.playFrame); this.playButton.textContent = this.data.narrativePath ? "主线回放" : "历程回放"; this.playButton.setAttribute("aria-pressed", "false"); delete this.host.dataset.replaying;
     this.nodes.forEach(node => node.classList.remove("is-future"));
-    this.map.querySelectorAll<SVGPathElement>("path").forEach(path => { path.classList.remove("is-future"); path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; });
+    this.map.querySelectorAll<SVGPathElement>("path[data-from]").forEach(path => { path.classList.remove("is-future"); path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; });
   }
   private snapshotState(): ResearchViewState { return { selected: this.ordered[this.selected]?.id ?? "", x: this.x, y: this.y, scale: this.scale, focused: this.focused, reading: Object.fromEntries(this.reading) }; }
   getState(): ResearchViewState { this.captureReadingPosition(); return this.snapshotState(); }
   getStats() {
     const node = this.positions.get(this.ordered[this.selected]?.id);
-    return { ...this.snapshotState(), playing: this.playing, nodeCount: this.ordered.length, narrativeSteps: this.route.length, layout: this.data.layout ?? "catalogue", edgeCount: this.data.edges.length, retrospectiveNode: this.inspector.dataset.nodeId, activeSource: this.body.dataset.source, reducedMotion: this.reduced, settled: this.settled, anchor: node ? { x: this.x + node.x * this.scale, y: this.y + node.y * this.scale } : null, viewport: { width: this.stage.clientWidth, height: this.stage.clientHeight } };
+    return { ...this.snapshotState(), playing: this.playing, nodeCount: this.ordered.length, narrativeSteps: this.route.length, layout: this.data.layout ?? "catalogue", edgeCount: this.data.edges.length, formation: this.formation, presentationScale: this.presentationScale, presentationDetail: this.presentationDetail, presentationNames: this.presentationNames, formedEdges: this.formationEdges.filter(edge => this.formation >= edge.end).length, retrospectiveNode: this.inspector.dataset.nodeId, activeSource: this.body.dataset.source, reducedMotion: this.reduced, settled: this.settled, anchor: node ? { x: this.x + node.x * this.scale, y: this.y + node.y * this.scale } : null, viewport: { width: this.stage.clientWidth, height: this.stage.clientHeight } };
   }
-  setReducedMotion(value: boolean) { this.reduced = value; this.host.dataset.reduced = String(value); if (value && this.flightFrame) this.flyTo(this.target.x, this.target.y, Math.exp(this.target.scale), false); }
+  setReducedMotion(value: boolean) { this.reduced = value; this.host.dataset.reduced = String(value); if (value && this.flightFrame) this.flyTo(this.target.x, this.target.y, Math.exp(this.target.scale), false); if (value && this.formation < 1) this.setFormation(1); if (value && this.presentationScale < 1) this.setPresentationScale(1); }
   dispose() { this.pause(); this.stopFlight(); this.abort.abort(); this.observer.disconnect(); cancelAnimationFrame(this.resizeFrame); this.host.replaceChildren(); }
 }

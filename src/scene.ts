@@ -13,7 +13,6 @@ import { createArchiveLighting, type LightingLook } from "./archive-lighting";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { BokehPass } from "three/addons/postprocessing/BokehPass.js";
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { normalizeQuality, type RenderQuality } from "./render-quality";
 import { applyTextureQuality, resizeQuality } from "./quality-renderer";
@@ -41,8 +40,9 @@ import { ArchiveDrag, ArchivePlaneMomentum, type DragAxis, type DragProjection, 
 import { assetUrl as publicAsset } from "./asset-url";
 import { fullMotion, reducedMotion, type MotionPreferences } from "./motion-preferences";
 import { ARRAY_REVEAL_START } from "./boot-motion";
-import { carrierCamera, carrierCameraProgress, carrierChannels, carrierInertiaOffset, type CarrierCameraSample, type CarrierSample, type OpticalVector } from "./carrier-flight";
+import { carrierCamera, carrierCameraProgress, carrierChannels, carrierPlaneCorners, carrierReceiverPlane, type CarrierCameraSample, type CarrierPlane, type CarrierSample, type OpticalVector } from "./carrier-flight";
 import { installProjectorAperture, setProjectorAperturePower, PROJECTOR_APERTURE } from "./projector-aperture";
+import { ProjectorBeam, ProjectorBeamPass } from "./projector-beam";
 import {
   archiveWave,
   extraction,
@@ -90,6 +90,7 @@ export class ArchiveScene {
   dispose() {
     this.inputEvents.abort();
     this.cancelPointer();
+    this.projectorBeam.dispose();
     disposeThreeTree(this.scene);
     this.appearance.disposeSources();
     this.model.clear();
@@ -174,13 +175,15 @@ export class ArchiveScene {
   }
   readonly renderer: THREE.WebGLRenderer;
   readonly scene = new THREE.Scene();
+  private projectorBeam = new ProjectorBeam(this.scene);
   // The reference uses a long lens 72–140 units from the cassette. A 0.1 near
   // plane quantizes adjacent optical layers to the same depth (visible shimmer).
   // All visible foreground geometry is beyond 5; retain the framing and lens.
   readonly camera = new THREE.PerspectiveCamera(34, 16 / 9, 5, 300);
   private composer: EffectComposer;
   private ao: SharedDepthAO;
-  private bokeh: BokehPass;
+  private bokeh: SharedDepthBokeh;
+  private projectorBeamPass: ProjectorBeamPass;
   private instances: THREE.InstancedMesh[] = [];
   private matrixUpdates?: InstanceUpdates;
   private themeUpdates?: InstanceUpdates;
@@ -201,6 +204,7 @@ export class ArchiveScene {
   private documentArrival = new ArchiveDocumentArrival();
   private carrierReady = false;
   private projectionCarrierReady = false;
+  private projectorPixelRatio = 1;
   private cameraResidual = 1;
   private cursor = new THREE.Vector2();
   private raycaster = new THREE.Raycaster();
@@ -231,6 +235,7 @@ export class ArchiveScene {
   private projectionPhase?: number;
   private projectionTravelled = false;
   private projectionEnding = false;
+  private projectionPreparation?: { rotation: number };
   private projectionPresented?: CarrierCameraSample;
   private projectorPresented?: CarrierSample;
   private presentedCamera?: {
@@ -243,11 +248,67 @@ export class ArchiveScene {
     position: THREE.Vector3; aim: THREE.Vector3; up: THREE.Vector3;
     right: THREE.Vector3; vertical: THREE.Vector3; backward: THREE.Vector3;
     span: number; perspective: number; fov: number; age: number;
-    velocity: OpticalVector; acceleration: OpticalVector;
-    aimVelocity: OpticalVector; aimAcceleration: OpticalVector;
-    fovVelocity: number; fovAcceleration: number;
+    width: number; height: number;
+    plane: CarrierPlane;
+    receiver: [THREE.Vector3, THREE.Vector3, THREE.Vector3, THREE.Vector3];
     ordinaryPosition: THREE.Vector3; ordinaryAim: THREE.Vector3; ordinaryFov: number;
   };
+
+  /** Inspection may have turned the port away. Keep the current pose, then
+   * let the same native rotation damper present its front before light-up. */
+  prepareProjection() {
+    if (!this.projectionPreparation) this.projectionPreparation = { rotation: this.targetRotation };
+    this.cancelPointer();
+    this.targetRotation = 0;
+    this.projectionCarrierReady = false;
+  }
+  cancelProjectionPreparation(restore = true) {
+    if (restore && this.projectionPreparation && this.targetDetail) this.targetRotation = this.projectionPreparation.rotation;
+    this.projectionPreparation = undefined;
+  }
+
+  private physicalProjector() {
+    this.model.updateMatrixWorld(true);
+    const point = (p: OpticalVector) => this.model.localToWorld(new THREE.Vector3(p.x, p.y, p.z));
+    return {
+      centre: point(PROJECTOR_APERTURE.center),
+      corners: PROJECTOR_APERTURE.corners.map(point) as [THREE.Vector3, THREE.Vector3, THREE.Vector3, THREE.Vector3],
+      normal: new THREE.Vector3(PROJECTOR_APERTURE.normal.x, PROJECTOR_APERTURE.normal.y, PROJECTOR_APERTURE.normal.z).transformDirection(this.model.matrixWorld),
+    };
+  }
+
+  private projectionEntryReady(span: number, neighborTop: number, cinematic: boolean,
+    aperture: ReturnType<ArchiveScene["physicalProjector"]>) {
+    const facing = aperture.normal.dot(this.camera.position.clone().sub(aperture.centre).normalize());
+    const inFrame = aperture.corners.every(corner => {
+      const point = corner.clone().project(this.camera);
+      return Math.abs(point.x) < .94 && Math.abs(point.y) < .94 && point.z > -1 && point.z < 1;
+    });
+    const displayedMotion = this.presentedCamera ? Math.max(this.presentedCamera.velocity.length(), this.presentedCamera.aimVelocity.length()) / span : Infinity;
+    return !cinematic && Boolean(this.targetDetail) && this.returnY === null &&
+      this.lift.value >= INSPECTION_LIFT - .01 && this.detail > .997 && this.cameraResidual < .004 &&
+      displayedMotion < .025 && Math.abs(this.presentedCamera?.fovVelocity ?? Infinity) < .02 &&
+      Math.abs(this.rotation) < .002 && facing > .45 && inFrame && aperture.centre.y > neighborTop + .25;
+  }
+
+  private fitProjectionPlane(base: { aim: THREE.Vector3; right: THREE.Vector3; vertical: THREE.Vector3; backward: THREE.Vector3; span: number; perspective: number },
+    viewport: { width: number; height: number }) {
+    const { aim, right, vertical, backward, span, perspective } = base;
+    const localPoint = (value: THREE.Vector3): OpticalVector => {
+      const relative = value.clone().sub(aim);
+      return { x: relative.dot(right) / span, y: relative.dot(vertical) / span, z: relative.dot(backward) / span };
+    };
+    const aperture = this.physicalProjector();
+    const plane = carrierReceiverPlane(viewport, perspective, {
+      corners: aperture.corners.map(localPoint),
+      normal: { x: aperture.normal.dot(right), y: aperture.normal.dot(vertical), z: aperture.normal.dot(backward) },
+      clearance: .9 / span,
+    });
+    const worldPoint = (value: OpticalVector) => aim.clone().addScaledVector(right, value.x * span)
+      .addScaledVector(vertical, value.y * span).addScaledVector(backward, value.z * span);
+    const receiver = carrierPlaneCorners(plane, viewport).map(worldPoint) as [THREE.Vector3, THREE.Vector3, THREE.Vector3, THREE.Vector3];
+    return { plane, receiver };
+  }
   private projectionRelease?: {
     position: THREE.Vector3; aim: THREE.Vector3; up: THREE.Vector3; fov: number; age: number;
     ordinaryPosition: THREE.Vector3; ordinaryAim: THREE.Vector3; ordinaryFov: number;
@@ -268,18 +329,13 @@ export class ArchiveScene {
     const vertical = new THREE.Vector3().crossVectors(backward, right);
     const perspective = 1 / (2 * Math.tan(THREE.MathUtils.degToRad(fov) / 2));
     const span = position.distanceTo(aim) / perspective;
-    const derivative = (value?: THREE.Vector3): OpticalVector => ({
-      x: (value?.dot(right) ?? 0) / span,
-      y: (value?.dot(vertical) ?? 0) / span,
-      z: (value?.dot(backward) ?? 0) / span,
-    });
-    const last = this.motion.surfaceTransitions ? this.presentedCamera : undefined;
+    const viewport = { width: this.container.clientWidth, height: this.container.clientHeight };
+    const { plane, receiver } = this.fitProjectionPlane({ aim, right, vertical, backward, span, perspective }, viewport);
     this.projectionCamera = {
       position: position.clone(), aim: aim.clone(), up: up.clone(),
       right, vertical, backward, span, perspective, fov, age: 0,
-      velocity: derivative(last?.velocity), acceleration: derivative(last?.acceleration),
-      aimVelocity: derivative(last?.aimVelocity), aimAcceleration: derivative(last?.aimAcceleration),
-      fovVelocity: last?.fovVelocity ?? 0, fovAcceleration: last?.fovAcceleration ?? 0,
+      width: viewport.width, height: viewport.height,
+      plane, receiver,
       ordinaryPosition: position.clone(), ordinaryAim: aim.clone(), ordinaryFov: fov,
     };
     this.projectionRelease = undefined;
@@ -287,7 +343,7 @@ export class ArchiveScene {
     this.projectionPhase = 0;
     this.projectionTravelled = false;
     this.projectionEnding = false;
-    this.projectionPresented = { perspective, progress: 0, phase: 0,
+    this.projectionPresented = { perspective, progress: 0, phase: 0, plane,
       frameId: this.renderedFrames + this.reusedFrames,
       position: { x: 0, y: 0, z: perspective }, aim: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 1, z: 0 } };
   }
@@ -327,6 +383,7 @@ export class ArchiveScene {
     this.projectionFocus = 0;
     this.projectionPhase = 0;
     this.projectionEnding = Boolean(this.projectionCamera);
+    this.cancelProjectionPreparation();
   }
 
   private outgoing: {
@@ -458,6 +515,10 @@ export class ArchiveScene {
       maxblur: 0.011,
     }, () => this.ao);
     this.composer.addPass(this.bokeh);
+    // The receiving light stays crisp while the archive retains its original
+    // depth of field. This pass uses that same frame's packed physical depth.
+    this.projectorBeamPass = new ProjectorBeamPass(this.scene, this.camera, this.projectorBeam, () => this.bokeh.lastDepthTexture);
+    this.composer.addPass(this.projectorBeamPass);
     this.smaa.enabled = false;
     this.composer.addPass(this.smaa);
     this.composer.addPass(new OutputPass());
@@ -727,6 +788,7 @@ export class ArchiveScene {
   setMode(mode: "hidden" | "archive" | "detail") {
     this.cancelPointer();
     this.setHover(null);
+    if (mode !== "detail") this.cancelProjectionPreparation(false);
     if (mode === "detail") {
       if (!this.targetDetail) {
         this.documentArrival.reset();
@@ -1004,7 +1066,8 @@ export class ArchiveScene {
     const w = this.container.clientWidth,
       h = this.container.clientHeight;
     const kind = this.container.closest<HTMLElement>("[data-layout]")?.dataset.layout ?? "";
-    const displayHeight = this.container.getBoundingClientRect().height;
+    const bounds = this.container.getBoundingClientRect();
+    const displayHeight = bounds.height;
     if (this.layoutKind === "cinematic" && kind !== "cinematic" && this.displayHeight > 0) {
       // Removing letterboxing starts from the same apparent model size. The
       // existing camera interpolation then carries it to the responsive anchor.
@@ -1021,6 +1084,7 @@ export class ArchiveScene {
       this.quality,
       this.superPerformance,
     );
+    this.projectorPixelRatio = this.renderer.getPixelRatio() / Math.max(1e-6, bounds.width / Math.max(1, w));
     this.ao.setSize(
       Math.max(1, Math.floor(dimensions.width * this.quality.aoResolution)),
       Math.max(1, Math.floor(dimensions.height * this.quality.aoResolution)),
@@ -1049,6 +1113,12 @@ export class ArchiveScene {
       this.loaded &&
       !this.container.closest("[inert]")
     );
+  }
+
+  private updateProjectorPass() {
+    const postProcessing = this.bokeh.enabled && !this.superPerformance;
+    this.projectorBeam.setPostProcessingEnabled(postProcessing);
+    this.projectorBeamPass.enabled = postProcessing;
   }
   private setHover(cell: ArchiveCell | null) {
     if (
@@ -1885,33 +1955,37 @@ export class ArchiveScene {
     const opticalBase = this.projectionCamera;
     let opticalSample: CarrierCameraSample | undefined;
     if (opticalBase && !cinematic) {
+      const viewport = { width: this.container.clientWidth, height: this.container.clientHeight };
+      if (viewport.width !== opticalBase.width || viewport.height !== opticalBase.height) {
+        // A viewport change is one shared re-composition. Rebuild both the
+        // physical light endpoint and DOM plane together, preserving the
+        // presentation phase and testing the new corners against the glass.
+        Object.assign(opticalBase, this.fitProjectionPlane(opticalBase, viewport), viewport);
+      }
       // Continue an ordinary return target independently. These values do not
       // change the frozen world basis or receiving plane.
       opticalBase.ordinaryPosition.lerp(cameraPosition, cameraBlend);
       opticalBase.ordinaryAim.lerp(cameraAim, cameraBlend);
       opticalBase.ordinaryFov = THREE.MathUtils.lerp(opticalBase.ordinaryFov, ordinaryFov, cameraBlend);
       opticalBase.age += dt;
-      const optical = carrierCamera(this.projectionFocus, { width: this.container.clientWidth, height: this.container.clientHeight }, opticalBase.perspective);
-      const inertia = carrierInertiaOffset(opticalBase.age, opticalBase.velocity, opticalBase.acceleration);
-      const aimInertia = carrierInertiaOffset(opticalBase.age, opticalBase.aimVelocity, opticalBase.aimAcceleration);
-      const fovInertia = carrierInertiaOffset(opticalBase.age,
-        { x: opticalBase.fovVelocity, y: 0, z: 0 }, { x: opticalBase.fovAcceleration, y: 0, z: 0 }).x;
-      const position = { x: optical.position.x + inertia.x, y: optical.position.y + inertia.y, z: optical.position.z + inertia.z };
-      const aim = { x: optical.aim.x + aimInertia.x, y: optical.aim.y + aimInertia.y, z: optical.aim.z + aimInertia.z };
+      const optical = carrierCamera(this.projectionFocus, viewport, opticalBase.perspective, { plane: opticalBase.plane });
+      const { position, aim } = optical;
       const point = (v: OpticalVector) => opticalBase.aim.clone()
         .addScaledVector(opticalBase.right, v.x * opticalBase.span)
         .addScaledVector(opticalBase.vertical, v.y * opticalBase.span)
         .addScaledVector(opticalBase.backward, v.z * opticalBase.span);
       this.camera.position.copy(point(position));
       this.cameraAim.copy(point(aim));
-      this.camera.up.copy(opticalBase.vertical);
-      this.camera.fov = opticalBase.fov + fovInertia;
+      this.camera.up.copy(opticalBase.right).multiplyScalar(optical.up.x)
+        .addScaledVector(opticalBase.vertical, optical.up.y).addScaledVector(opticalBase.backward, optical.up.z).normalize();
+      this.camera.fov = opticalBase.fov;
       opticalSample = {
         perspective: 1 / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2)),
         progress: this.projectionFocus, phase: this.projectionPhase,
-        position, aim, up: { x: 0, y: 1, z: 0 },
+        position, aim, up: optical.up, plane: opticalBase.plane,
       };
-      if (this.projectionFocus === 0 && (this.projectionTravelled || this.projectionEnding)) {
+      if (this.projectionFocus === 0 && (this.projectionEnding ||
+        this.projectionTravelled && (this.projectionPhase === undefined || this.projectionPhase === 0))) {
         // Hand the stationary optical endpoint back with a C2 envelope. The
         // ordinary target may have continued settling since the early entry.
         this.projectionRelease = this.motion.surfaceTransitions ? {
@@ -2033,15 +2107,29 @@ export class ArchiveScene {
       Boolean(this.targetDetail) &&
       detail > 0.9 &&
       this.pulseGain < 0.01 &&
-      this.clearance > 0.3;
+      this.clearance > 0.3 && !this.projectionPreparation;
     this.carrierReady = !cinematic && Boolean(this.targetDetail) &&
       this.lift.value >= INSPECTION_LIFT - .07 && detail > .97 &&
       this.returnY === null && this.clearance > .3 && this.cameraResidual < .025;
-    // Projection needs a clear physical outlet, not the completed reading shot.
-    // The remaining vertical extraction continues through the first light beat.
-    const outlet = this.model.localToWorld(new THREE.Vector3(PROJECTOR_APERTURE.center.x, PROJECTOR_APERTURE.center.y, PROJECTOR_APERTURE.center.z));
-    this.projectionCarrierReady = !cinematic && Boolean(this.targetDetail) && this.returnY === null &&
-      this.lift.value > 3.25 && detail > .62 && outlet.y > neighborTop + .25;
+    const aperture = this.physicalProjector();
+    const sourceFacing = aperture.normal.dot(this.camera.position.clone().sub(aperture.centre).normalize());
+    // At the former lift-only gate the real aperture was above the viewport.
+    // The original extraction and detail camera now complete their own shot;
+    // only a settled, clearly front-facing physical port can start the ritual.
+    this.projectionCarrierReady = this.projectionEntryReady(framing.span, neighborTop, Boolean(cinematic), aperture);
+    const opticalChannels = carrierChannels(this.projectionPhase ?? 0, this.projectionFocus);
+    const receiving = this.projectionCamera?.receiver;
+    this.updateProjectorPass();
+    this.projectorBeam.update({
+      source: aperture.corners,
+      receiver: receiving ?? aperture.corners,
+      reach: opticalChannels.beamReach,
+      spread: opticalChannels.beamSpread,
+      power: opticalChannels.beamPower,
+      visible: Boolean(receiving) && this.projectionPhase !== undefined && sourceFacing > 0,
+      dark: this.themeAmount,
+      pixelRatio: this.projectorPixelRatio,
+    });
     const documentClear = ((this.decryption.frame.phase === "revealing" || this.decryption.frame.phase === "clear") &&
       this.decryption.frame.clarity > .025) ||
       (!this.motion.modelDecryption && !this.motion.documentReveal);
@@ -2082,6 +2170,7 @@ export class ArchiveScene {
       state.invalidate();
     } else {
       state.begin();
+      state.add(this.projectorBeam.revision);
       state.floats(...this.camera.projectionMatrix.elements, ...this.camera.matrixWorldInverse.elements,
         ...this.camera.position.toArray(),
         fog.near, fog.far, this.themeAmount, this.subduedIndex.value,
@@ -2148,7 +2237,11 @@ export class ArchiveScene {
       return { x: (world.x + 1) * this.container.clientWidth / 2, y: (1 - world.y) * this.container.clientHeight / 2 };
     };
     const corners = PROJECTOR_APERTURE.corners.map(point) as NonNullable<CarrierSample["corners"]>;
+    const aperture = this.physicalProjector();
+    const visible = aperture.normal.dot(this.camera.position.clone().sub(aperture.centre)) > 0 &&
+      aperture.corners.some(corner => { const projected = corner.clone().project(this.camera); return Math.abs(projected.x) < 1 && Math.abs(projected.y) < 1 && Math.abs(projected.z) < 1; });
     this.projectorPresented = { origin: point(PROJECTOR_APERTURE.center), corners,
+      physicalSource: true, sceneBeam: true, visible,
       edge: [corners[0], corners[1]],
       outline: [{ x: -2.5, y: 3.7, z: .255 }, { x: 2.5, y: 3.7, z: .255 },
         { x: 2.5, y: 0, z: .255 }, { x: -2.5, y: 0, z: .255 }].map(point) };
@@ -2202,6 +2295,8 @@ export class ArchiveScene {
       projectionPresented: this.projectionPresented,
       projector: this.projectorPresented,
       projectionReady: this.projectionReady,
+      projectionPreparing: Boolean(this.projectionPreparation),
+      projectorBeam: this.projectorBeam.getStats(),
       openingHandoff: this.openingHandoff ? { sourceTime: this.openingHandoff.shot, progress: ease((this.clock - this.openingHandoff.start) / 0.95) } : null,
       loaded: this.loaded,
       drawCalls: this.renderer.info.render.calls,

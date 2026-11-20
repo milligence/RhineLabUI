@@ -66,6 +66,9 @@ export class SharedDepthAO extends SSAOPass {
 }
 
 export class SharedDepthBokeh extends BokehPass {
+  /** Exact packed depth used by the latest completed DOF draw. Owned by the
+   * original AO/Bokeh targets; later optical draws may sample but not dispose. */
+  lastDepthTexture: THREE.Texture | null = null;
   private width = 1;
   private height = 1;
   private quad: FullScreenQuad;
@@ -73,12 +76,24 @@ export class SharedDepthBokeh extends BokehPass {
     super(scene, camera, params);
     this.quad = new FullScreenQuad(this.materialBokeh);
   }
-  setSize(width: number, height: number) { super.setSize(width, height); this.width = width; this.height = height; }
+  setSize(width: number, height: number) { super.setSize(width, height); this.width = width; this.height = height; this.lastDepthTexture = null; }
   render(renderer: THREE.WebGLRenderer, write: THREE.WebGLRenderTarget, read: THREE.WebGLRenderTarget, delta: number, mask: boolean) {
     const ao = this.source(), uniforms = this.uniforms as Record<string, {value: any}>;
+    this.lastDepthTexture = null;
     // Lower resolution AO must retain the original full resolution depth pass.
     if (!ao.enabled || ao.width !== this.width || ao.height !== this.height) {
-      return super.render(renderer, write, read, delta, mask);
+      // Bokeh's overrideMaterial ignores a transparent object's depthWrite.
+      // Keep optical scattering out of this depth path just as in shared AO
+      // depth; otherwise lowering AO quality makes the light volume solid.
+      const hidden: THREE.Object3D[] = [];
+      this.scene.traverseVisible(object => { if (object.userData.excludeFromDepth) hidden.push(object); });
+      for (const object of hidden) object.visible = false;
+      try {
+        super.render(renderer, write, read, delta, mask);
+        this.lastDepthTexture = uniforms.tDepth.value;
+      }
+      finally { for (const object of hidden) object.visible = true; }
+      return;
     }
     const originalDepth = uniforms.tDepth.value;
     uniforms.tDepth.value = ao.normalRenderTarget.textures[1];
@@ -89,8 +104,11 @@ export class SharedDepthBokeh extends BokehPass {
     renderer.autoClear = false;
     renderer.setRenderTarget(this.renderToScreen ? null : write);
     if (!this.renderToScreen) renderer.clear();
-    try { this.quad.render(renderer); }
+    try {
+      this.quad.render(renderer);
+      this.lastDepthTexture = ao.normalRenderTarget.textures[1];
+    }
     finally { uniforms.tDepth.value = originalDepth; renderer.autoClear = autoClear; }
   }
-  dispose() { super.dispose(); this.quad.dispose(); }
+  dispose() { this.lastDepthTexture = null; super.dispose(); this.quad.dispose(); }
 }

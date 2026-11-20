@@ -53,6 +53,7 @@ Object.assign(research, {
   ordered: [{ id: "T13" }], selected: 0, route: [0],
   positions: new Map([["T13", { x: 120, y: 555 }]]),
   x: 0, y: 0, scale: 1, focused: true, settled: true, playing: false, reduced: false,
+  formation: 1, formationEdges: [], formationNodes: [], presentationScale: 1, presentationDetail: 1,
   data: { layout: "evolution", edges: [] }, reading: new Map(),
   body: { dataset: {}, scrollTop: 0 }, stage: { clientWidth: 1200, clientHeight: 600 },
   inspector: { dataset: { nodeId: "T13" }, querySelector: selector => panes[selector] },
@@ -83,17 +84,20 @@ function cubeHarness(input) {
   const nodes = new Map(), readouts = {};
   const cube = Object.create(CubeProjection.prototype);
   Object.assign(cube, {
-    state: parseCubeExperiment(input), root: { dataset: {} }, options: {},
+    state: parseCubeExperiment(input), root: { dataset: {}, style: { setProperty() {} } }, options: {},
     archiveContext: { title: "", description: "" }, archiveBaseline: null, archiveModified: false,
     disposed: false, task: "inspect", tool: "inspect", throughObserver: false, showMarkers: false,
     undoStack: [], redoStack: [], pointers: new Map(), ball: new CubeArcball(),
     camera: new PerspectiveCamera(), target: new Vector3(),
     cancelObserverGesture() {}, countSize: { width: 0, height: 0 }, apparatus: { visible: false }, selected: null, hover: null,
     axis: "z", layer: 1, paint: "#c79845", erase: false, distance: 9, wheelHistoryAt: 12, rangeHistorySaved: true,
+    formation: 1, formationUniforms: { surface: { value: 1 }, outline: { value: 1 }, size: { value: 3 } },
+    floorOpacity: .24, floor: { material: { uniforms: { shadowOpacity: { value: .24 } } } },
+    lineMaterial: { opacity: .16 }, selection: { visible: false }, countRevision: 0,
     query(selector) { if (!nodes.has(selector)) nodes.set(selector, {}); return nodes.get(selector); },
     readout(name, text) { readouts[name] = text; },
     buildGeometry() {}, syncUI() { this.syncContext(); this.syncHistory(); },
-    updateMathCamera() {}, syncObserver() {}, scheduleCount() {}, requestFrame() {},
+    updateMathCamera() {}, updateSelection() {}, updateSightline() {}, syncObserver() {}, scheduleCount() {}, requestFrame() {},
     resetInspection() {}, restoreVisibleFocus() {}, announce(text) { readouts.status = text; },
   });
   return { cube, readouts, nodes };
@@ -152,12 +156,81 @@ assert.equal(cube.state.n, 4);
 cube.setArchiveContext("独立实验", "无历史基线");
 assert.equal(cube.getStats().archiveModified, false);
 
+// Optical exposure changes material uniforms, never the experimental state,
+// observation camera, ID estimate or history. Reverse visits are exact.
+const preserved = () => JSON.stringify({ state: cube.getState(), view: cube.getInspectionState(),
+  undo: cube.undoStack, redo: cube.redoStack, countRevision: cube.countRevision });
+const beforeFormation = preserved();
+const materialFrames = [];
+for (const phase of [0, .2, .4, .6, .85, 1]) {
+  cube.setFormation(phase);
+  materialFrames.push([cube.formationUniforms.outline.value, cube.formationUniforms.surface.value]);
+  assert.equal(preserved(), beforeFormation);
+}
+for (let i = 1; i < materialFrames.length; i++) materialFrames[i].forEach((value, axis) => assert(value >= materialFrames[i - 1][axis]));
+assert(materialFrames[2][0] > materialFrames[2][1], "The actual contour forms ahead of the actual material");
+cube.setFormation(.4); assert.deepEqual([cube.formationUniforms.outline.value, cube.formationUniforms.surface.value], materialFrames[2]);
+cube.reduced = true; cube.setFormation(.1);
+assert.equal(cube.formation, 1); assert.equal(cube.formationUniforms.surface.value, 1);
+assert.equal(cube.lineMaterial.opacity, .16, "Completed projection restores the original line material");
+
+const styleBoundary = () => ({ setProperty(key, value) { this[key] = value; }, getPropertyValue(key) { return this[key] ?? ""; } });
+const formingGraph = Object.create(ResearchProjection.prototype);
+const attributes = new Map(), graphPath = { setAttribute: (key, value) => attributes.set(key, value), removeAttribute: key => attributes.delete(key) };
+const nodeStyle = styleBoundary(), maskStyle = {}, heads = { style: {} };
+Object.assign(formingGraph, { formation: 1, reduced: false, scale: 1,
+  body: { dataset: {}, style: styleBoundary() }, map: { querySelector: () => heads },
+  formationNodes: [{ node: { style: nodeStyle }, arrival: .32 }],
+  formationEdges: [{ path: graphPath, mask: { style: maskStyle }, id: "actual-edge", length: 240, start: .20, end: .45 }],
+});
+formingGraph.setFormation(0); assert.equal(maskStyle.strokeDashoffset, "240");
+formingGraph.setFormation(.3); const formedAtThirty = { offset: maskStyle.strokeDashoffset, label: nodeStyle["--formation-label-edge"] };
+assert(Number(maskStyle.strokeDashoffset) > 0 && Number(maskStyle.strokeDashoffset) < 240);
+formingGraph.setFormation(1); assert.equal(attributes.has("mask"), false, "Resolved graph uses its original stroke and dash semantics");
+formingGraph.setFormation(.3); assert.deepEqual({ offset: maskStyle.strokeDashoffset, label: nodeStyle["--formation-label-edge"] }, formedAtThirty);
+assert.equal(attributes.get("mask"), "url(#actual-edge)", "Reverse travel reattaches the same measured path mask");
+formingGraph.reduced = true; formingGraph.setFormation(.1); assert.equal(attributes.has("mask"), false);
+
+const landmark = { dataset: { node: "landmark" }, style: styleBoundary() };
+const ordinary = { dataset: { node: "ordinary" }, style: styleBoundary() };
+Object.assign(formingGraph, { reduced: false, presentationScale: 1, presentationDetail: 1,
+  nodes: [landmark, ordinary], presentationLabels: new Set(["landmark"]), stage: { clientWidth: 1200 }, x: 120, y: 86, scale: .32 });
+const anchorsBefore = [formingGraph.x, formingGraph.y, formingGraph.scale];
+formingGraph.setPresentationScale(.44);
+const heldInk = { ...formingGraph.body.style };
+assert.equal(landmark.dataset.projectionLandmark, "true");
+assert.equal(ordinary.dataset.projectionLandmark, "false");
+assert.equal(formingGraph.body.style["--projection-name-clip"], "100.0000%");
+formingGraph.setPresentationScale(.78);
+assert.equal(formingGraph.body.style["--projection-name-clip"], "100.0000%", "Ordinary names stay absent while the plate is too small to read");
+formingGraph.setPresentationScale(.88);
+assert(Math.abs(parseFloat(formingGraph.body.style["--projection-name-clip"]) - 50) < .001);
+formingGraph.setPresentationScale(.96); assert.equal(formingGraph.body.style["--projection-name-clip"], "0.0000%");
+formingGraph.setPresentationScale(1); assert.equal(formingGraph.body.dataset.projecting, "false");
+formingGraph.setPresentationScale(.44); assert.deepEqual({ ...formingGraph.body.style }, heldInk);
+assert.deepEqual([formingGraph.x, formingGraph.y, formingGraph.scale], anchorsBefore, "Optical readability compensation cannot move graph anchors or its camera");
+formingGraph.reduced = true; formingGraph.setPresentationScale(.44); assert.equal(formingGraph.body.dataset.projecting, "false");
+
+const mobileNodes = ["outside", "before", "selected", "after", "edge"].map(id => ({ dataset: { node: id }, style: styleBoundary() }));
+Object.assign(formingGraph, { reduced: false, focused: false, presentationScale: 1,
+  stage: { clientWidth: 358, clientHeight: 539 }, data: { layout: "evolution" }, x: 0, y: 0, scale: 1,
+  ordered: mobileNodes.map(node => ({ id: node.dataset.node })), selected: 2, route: [0, 1, 2, 3, 4], nodes: mobileNodes,
+  positions: new Map(mobileNodes.map((node, i) => [node.dataset.node, { x: [-12, 85, 179, 270, 348][i], y: 220 }])),
+  labelMetrics: new Map(mobileNodes.map(node => [node.dataset.node, { width: 40, height: 14 }])),
+});
+formingGraph.setPresentationScale(.46);
+assert.deepEqual(mobileNodes.filter(node => node.dataset.projectionLandmark === "true").map(node => node.dataset.node), ["before", "after"]);
+assert.equal(mobileNodes[2].dataset.projectionLandmark, "false", "The selected mobile record keeps one caption rather than a duplicate title");
+formingGraph.stage.clientWidth = 250; formingGraph.setPresentationScale(.46, true);
+assert.equal(mobileNodes[3].dataset.projectionLandmark, "false", "Resizing a held plate reevaluates complete label bounds");
+formingGraph.setPresentationScale(1); assert(mobileNodes.every(node => node.dataset.projectionLandmark === undefined), "Reading arrival removes transient landmark selection");
+
 console.log(JSON.stringify({
   passed: true, executed: new Date().toISOString(), node: process.version,
   scope: "Production state methods with inert UI/rendering effects; no browser layout or WebGL acceptance.",
   sourceDigest: sha256(JSON.stringify(sourceFiles)), sourceFiles,
   checks: {
-    research: ["transfer snapshot protection", "synchronous reading restoration", "diagnostic read purity"],
-    cube: ["normalized baseline", "free camera isolation", "geometry and face provenance", "observer provenance", "undo and redo provenance", "preset history isolation", "gesture grouping reset", "undoable file import", "invalid-load preservation"],
+    research: ["transfer snapshot protection", "synchronous reading restoration", "diagnostic read purity", "reversible measured-path exposure", "complete and reduced-motion mask removal", "selective held labels and continuous restoration", "screen compensation leaves graph anchors unchanged", "mobile landmarks use complete visible bounds and refresh on resize"],
+    cube: ["normalized baseline", "free camera isolation", "geometry and face provenance", "observer provenance", "undo and redo provenance", "preset history isolation", "gesture grouping reset", "undoable file import", "invalid-load preservation", "contour before material", "reversible formation preserves experiment, camera, counting and history"],
   },
 }, null, 2));

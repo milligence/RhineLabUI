@@ -109,6 +109,7 @@ const viewer = new ProjectionViewer(stage);
 let active: "research" | "cube" = "research";
 let elapsedMs = 0, cameraProgress = 0, running = false, reduced = false, speed = 1;
 let raf = 0, previousRaf = 0, lastReport = 0;
+let reportRaf = 0;
 let mode: "entrance" | "return" | "reopen" = "entrance";
 let intents: { at: number; action: "return" | "reopen" }[] = [];
 const record = () => active === "research" ? researchRecord : cubeRecord;
@@ -160,9 +161,16 @@ function sampleCalibration(): CarrierSample {
 }
 
 function report() {
-  window.parent.postMessage({ scope, event: "state", width: innerWidth, height: innerHeight,
-    elapsedMs, running, reduced, speed, mode, entranceMs: CARRIER_ENTRANCE_MS, returnMs: CARRIER_RETURN_MS,
-    source: "labelled synthetic calibration plane; no archive GLB", stats: viewer.getStats() }, "*");
+  // A seek can submit 200 optical steps in one task. Report only after the
+  // frame's layout/formation work and any queued specimen draw have run, so
+  // the controller never labels fitted pixels with constructor-default stats.
+  if (reportRaf) return;
+  reportRaf = requestAnimationFrame(() => {
+    reportRaf = 0;
+    window.parent.postMessage({ scope, event: "state", width: innerWidth, height: innerHeight,
+      elapsedMs, running, reduced, speed, mode, entranceMs: CARRIER_ENTRANCE_MS, returnMs: CARRIER_RETURN_MS,
+      source: "labelled synthetic calibration plane; no archive GLB", stats: viewer.getStats() }, "*");
+  });
 }
 
 function stop() { running = false; cancelAnimationFrame(raf); raf = 0; previousRaf = 0; }

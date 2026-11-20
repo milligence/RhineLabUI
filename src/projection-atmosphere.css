@@ -60,6 +60,15 @@
 .projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-identity h1 {
   transform: scale(var(--carrier-title-size, 1)); transform-origin: left bottom;
 }
+.projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-identity {
+  opacity: var(--carrier-identity-opacity, 0);
+  mask-image: linear-gradient(90deg, #000 calc(var(--carrier-identity-edge, -5%) - 3%), transparent var(--carrier-identity-edge, -5%));
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--carrier-identity-edge, -5%) - 3%), transparent var(--carrier-identity-edge, -5%));
+  mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+}
+.projection-shell:is([data-state="opening"], [data-state="closing"]) .projection-header {
+  border-bottom-color: color-mix(in srgb, var(--optical-line) calc(var(--carrier-rule, 0) * 100%), transparent);
+}
 
 /* Notes open beside the construction without changing its canvas geometry. */
 .projection-shell[data-kind="cube"] .projection-content { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px; overflow: visible; }

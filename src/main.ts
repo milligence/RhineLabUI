@@ -711,6 +711,7 @@ function openFile() {
   closeModal(() => {
     if ($("#stage").dataset.projectionPending === "true") {
       projectionRequest++;
+      scene?.cancelProjectionPreparation();
       delete $("#stage").dataset.projectionPending;
       delete $("#stage").dataset.projectionPhase;
       pendingDetailFocus = true;
@@ -736,11 +737,12 @@ function openProjection(trigger?: HTMLElement) {
   if (fromArchive) {
     setMode("detail");
   }
+  scene?.prepareProjection();
   pendingDetailFocus = false;
   $("#detail-content").inert = true;
   const enter = () => {
     if (request !== projectionRequest || selected !== records.indexOf(record) || mode !== "detail") return;
-    if (scene && !scene.projectionReady && motionActive("detailTransition") && motionActive("surfaceTransitions")) {
+    if (scene && !scene.projectionReady && motionActive("surfaceTransitions")) {
       requestAnimationFrame(enter); return;
     }
     markProjectionEntry("carrier-ready");
@@ -759,6 +761,7 @@ function openProjection(trigger?: HTMLElement) {
       const origin = point(projected.origin);
       if (!Number.isFinite(origin.x) || !Number.isFinite(origin.y)) return undefined;
       return { origin,
+        physicalSource: projected.physicalSource, sceneBeam: projected.sceneBeam, visible: projected.visible,
         edge: projected.edge?.map(point) as typeof projected.edge,
         corners: projected.corners?.map(point) as typeof projected.corners,
         outline: projected.outline?.map(point) };
@@ -898,6 +901,7 @@ function notify(message: string) {
 
 function cancelProjectionEntry(restoreFocus = false) {
   if ($("#stage").dataset.projectionPending !== "true" || projectionViewer.isOpen) return false;
+  scene?.cancelProjectionPreparation();
   if (projectionFromArchive) {
     setMode("archive");
     if (restoreFocus) $(".archive-project-file").focus({ preventScroll: true });

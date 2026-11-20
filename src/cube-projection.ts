@@ -1,8 +1,8 @@
 import {
   ACESFilmicToneMapping, AmbientLight, Box3, BoxGeometry, BufferGeometry, Color, DirectionalLight,
   EdgesGeometry, Float32BufferAttribute, Group, HemisphereLight, LineBasicMaterial,
-  LineSegments, MathUtils, Matrix4, Mesh, MeshBasicMaterial, MeshPhysicalMaterial,
-  NoBlending, NoColorSpace, OrthographicCamera, PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Quaternion,
+  LineSegments, MathUtils, Matrix4, Mesh, MeshBasicMaterial, MeshDepthMaterial, MeshPhysicalMaterial,
+  NoBlending, NoColorSpace, OrthographicCamera, PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Quaternion, RGBADepthPacking,
   Raycaster, Scene, ShaderMaterial, SphereGeometry, SRGBColorSpace, Vector2,
   Vector3, WebGLRenderer, WebGLRenderTarget,
 } from "three";
@@ -174,6 +174,7 @@ export class CubeProjection {
   private showMarkers = false;
   private environmentTargets: WebGLRenderTarget[] = [];
   private bodyMaterial = new MeshPhysicalMaterial({ vertexColors: true, roughness: .38, metalness: .035, clearcoat: .24, clearcoatRoughness: .3, specularIntensity: .9, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  private formationDepthMaterial = new MeshDepthMaterial({ depthPacking: RGBADepthPacking });
   private lineMaterial = new LineBasicMaterial({ color: 0x77756e, transparent: true, opacity: .16, depthWrite: false });
   private apparatusMaterial = new LineBasicMaterial({ color: 0x9f7a32, transparent: true, opacity: .58 });
   private frustumMaterial = new LineBasicMaterial({ color: 0x9f7a32, transparent: true, opacity: .24, depthWrite: false });
@@ -238,6 +239,9 @@ export class CubeProjection {
   private archiveContext = { title: "", description: "" };
   private archiveBaseline: CubeExperiment | null = null;
   private archiveModified = false;
+  private formation = 1;
+  private formationUniforms = { surface: { value: 1 }, outline: { value: 1 }, size: { value: 3 } };
+  private floorOpacity = .24;
 
   constructor(host: HTMLElement, options: CubeProjectionOptions = {}) {
     this.options = options;
@@ -306,13 +310,18 @@ export class CubeProjection {
     // Only the lighting normal is rounded at a seam. The opaque silhouette,
     // ray picking and ID pass all retain the exact, gapless lattice geometry.
     this.bodyMaterial.onBeforeCompile = shader => {
+      shader.uniforms.projectionSurface = this.formationUniforms.surface;
+      shader.uniforms.projectionSize = this.formationUniforms.size;
       shader.vertexShader = shader.vertexShader.replace("#include <common>", `#include <common>
         attribute vec2 cubeUV; attribute vec3 cubeTangentU; attribute vec3 cubeTangentV; attribute float cubeAO;
-        varying vec2 vCubeUV; varying vec3 vCubeU; varying vec3 vCubeV; varying float vCubeAO;`)
+        varying vec2 vCubeUV; varying vec3 vCubeU; varying vec3 vCubeV; varying float vCubeAO;
+        varying vec3 vProjectionLocal;`)
         .replace("#include <beginnormal_vertex>", `#include <beginnormal_vertex>
-          vCubeUV = cubeUV; vCubeU = normalize(normalMatrix * cubeTangentU); vCubeV = normalize(normalMatrix * cubeTangentV); vCubeAO = cubeAO;`);
+          vCubeUV = cubeUV; vCubeU = normalize(normalMatrix * cubeTangentU); vCubeV = normalize(normalMatrix * cubeTangentV); vCubeAO = cubeAO;
+          vProjectionLocal = position;`);
       shader.fragmentShader = shader.fragmentShader.replace("#include <common>", `#include <common>
-        varying vec2 vCubeUV; varying vec3 vCubeU; varying vec3 vCubeV; varying float vCubeAO;`)
+        varying vec2 vCubeUV; varying vec3 vCubeU; varying vec3 vCubeV; varying float vCubeAO;
+        varying vec3 vProjectionLocal; uniform float projectionSurface; uniform float projectionSize;`)
         .replace("#include <normal_fragment_begin>", `#include <normal_fragment_begin>
           vec2 cubeEdges = min(vCubeUV, vec2(1.0) - vCubeUV);
           vec2 cubeBevel = (vec2(1.0) - smoothstep(vec2(0.0), vec2(0.06), cubeEdges)) * sign(vCubeUV - vec2(0.5));
@@ -322,12 +331,64 @@ export class CubeProjection {
           float cubeEdgeDistance = min(min(vCubeUV.x, 1.0-vCubeUV.x), min(vCubeUV.y, 1.0-vCubeUV.y));
           float cubeEdgeAA = max(fwidth(cubeEdgeDistance), 0.0001);
           float cubeSeam = 1.0 - smoothstep(0.0015, 0.0015 + cubeEdgeAA, cubeEdgeDistance);
-          diffuseColor.rgb *= 1.0 - 0.12 * cubeSeam;`)
+          diffuseColor.rgb *= 1.0 - 0.12 * cubeSeam;
+          if (projectionSurface < 0.99999) {
+            if (projectionSurface <= 0.0) discard;
+            vec3 depositedPosition = vProjectionLocal / projectionSize + 0.5;
+            float deposit = dot(depositedPosition, vec3(0.22, 0.62, 0.16));
+            // Stable material-space grain exists only in a narrow advancing
+            // seam. It is not transparent fog over an already-complete cube.
+            vec3 grainCell = floor(depositedPosition * 224.0);
+            float grain = fract(sin(dot(grainCell, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+            float coverage = smoothstep(deposit - 0.018, deposit + 0.018, projectionSurface);
+            if (coverage < grain) discard;
+            float depositLip = (1.0 - smoothstep(0.0, 0.045, abs(deposit - projectionSurface))) * (1.0 - smoothstep(0.92, 1.0, projectionSurface));
+            diffuseColor.rgb += vec3(0.13, 0.105, 0.055) * depositLip;
+          }`)
         .replace("#include <aomap_fragment>", `#include <aomap_fragment>
           reflectedLight.indirectDiffuse *= vCubeAO * vCubeAO;
           reflectedLight.indirectSpecular *= mix(0.25, 1.0, vCubeAO);`);
     };
-    this.bodyMaterial.customProgramCacheKey = () => "rhine-cube-ceramic-v2";
+    this.bodyMaterial.customProgramCacheKey = () => "rhine-cube-ceramic-formation-v3";
+    this.lineMaterial.onBeforeCompile = shader => {
+      shader.uniforms.projectionOutline = this.formationUniforms.outline;
+      shader.uniforms.projectionSize = this.formationUniforms.size;
+      shader.vertexShader = shader.vertexShader.replace("#include <common>", `#include <common>
+        varying vec3 vProjectionLocal;`)
+        .replace("#include <begin_vertex>", `#include <begin_vertex>
+          vProjectionLocal = position;`);
+      shader.fragmentShader = shader.fragmentShader.replace("#include <common>", `#include <common>
+        varying vec3 vProjectionLocal; uniform float projectionOutline; uniform float projectionSize;`)
+        .replace("#include <color_fragment>", `#include <color_fragment>
+          if (projectionOutline < 0.99999) {
+            float deposit = dot(vProjectionLocal / projectionSize + 0.5, vec3(0.22, 0.62, 0.16));
+            if (projectionOutline <= 0.0 || deposit > projectionOutline) discard;
+            float lip = 1.0 - smoothstep(0.0, 0.045, abs(deposit - projectionOutline));
+            diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.90, 0.80, 0.58), lip * 0.60);
+          }`);
+    };
+    this.lineMaterial.customProgramCacheKey = () => "rhine-cube-outline-formation-v1";
+    this.formationDepthMaterial.onBeforeCompile = shader => {
+      shader.uniforms.projectionSurface = this.formationUniforms.surface;
+      shader.uniforms.projectionSize = this.formationUniforms.size;
+      shader.vertexShader = shader.vertexShader.replace("#include <common>", `#include <common>
+        varying vec3 vProjectionLocal;`)
+        .replace("#include <begin_vertex>", `#include <begin_vertex>
+          vProjectionLocal = position;`);
+      shader.fragmentShader = shader.fragmentShader.replace("#include <common>", `#include <common>
+        varying vec3 vProjectionLocal; uniform float projectionSurface; uniform float projectionSize;`)
+        .replace("#include <clipping_planes_fragment>", `#include <clipping_planes_fragment>
+          if (projectionSurface < 0.99999) {
+            if (projectionSurface <= 0.0) discard;
+            vec3 depositedPosition = vProjectionLocal / projectionSize + 0.5;
+            float deposit = dot(depositedPosition, vec3(0.22, 0.62, 0.16));
+            vec3 grainCell = floor(depositedPosition * 224.0);
+            float grain = fract(sin(dot(grainCell, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+            if (smoothstep(deposit - 0.018, deposit + 0.018, projectionSurface) < grain) discard;
+          }`);
+    };
+    this.formationDepthMaterial.customProgramCacheKey = () => "rhine-cube-formation-depth-v1";
+    this.body.customDepthMaterial = this.eyeBody.customDepthMaterial = this.formationDepthMaterial;
     for (const scene of [this.scene, this.eyeScene]) {
       scene.add(new AmbientLight(0xffffff, .04), new HemisphereLight(0xf4f4ee, 0x737772, .28));
       const light = new DirectionalLight(0xfffaed, 2.6); light.position.set(-4, 7, 5); light.castShadow = true;
@@ -384,6 +445,7 @@ export class CubeProjection {
 
   private buildGeometry() {
     const { n, present, colors } = this.state;
+    this.formationUniforms.size.value = n;
     const positions: number[] = [], normals: number[] = [], shades: number[] = [], ids: number[] = [], edgePositions: number[] = [];
     const uv: number[] = [], tangentsU: number[] = [], tangentsV: number[] = [], occlusions: number[] = [];
     const edges = new Set<string>(); this.owners = [];
@@ -456,7 +518,8 @@ export class CubeProjection {
     const darkAmount = 1 - MathUtils.smoothstep(luminance, .025, .22);
     this.baseColor.set("#e3e2da").lerp(new Color("#c1c5bf"), darkAmount * .42);
     this.lineMaterial.color.copy(ink).lerp(new Color("#6c706b"), .65);
-    this.floor.material.uniforms.shadowOpacity.value = .21 + darkAmount * .18;
+    this.floorOpacity = .21 + darkAmount * .18;
+    this.floor.material.uniforms.shadowOpacity.value = this.floorOpacity * MathUtils.smoothstep(this.formation, .62, .96);
     const accent = read("--theme-accent", "#9b7247");
     this.markerMaterial.color.set(accent); this.selectionMaterial.color.set(accent); this.apparatusMaterial.color.set(accent); this.frustumMaterial.color.set(accent);
     this.buildGeometry(); this.dirty = true; this.eyeDirty = true; this.requestFrame();
@@ -1079,7 +1142,26 @@ export class CubeProjection {
   setReducedMotion(value: boolean) {
     this.reduced = value; this.root.dataset.reduced = String(value);
     if (value) { if (!this.ball.dragging) this.ball.cancel(); this.distance = this.targetDistance; }
+    if (value && this.formation < 1) this.setFormation(1);
     this.dirty = true; this.requestFrame();
+  }
+  /** Build the existing specimen in its own coordinates. No geometry, face
+   * identity, observation camera or counting target changes during exposure. */
+  setFormation(value: number) {
+    const progress = this.reduced ? 1 : MathUtils.clamp(value, 0, 1);
+    if (progress === this.formation || this.disposed) return;
+    const wasForming = this.formation < 1;
+    this.formation = progress;
+    this.formationUniforms.outline.value = MathUtils.clamp((progress - .14) / .47, 0, 1);
+    this.formationUniforms.surface.value = MathUtils.clamp((progress - .31) / .51, 0, 1);
+    this.lineMaterial.opacity = .16 + .32 * (1 - MathUtils.smoothstep(progress, .45, .85));
+    this.floor.material.uniforms.shadowOpacity.value = this.floorOpacity * MathUtils.smoothstep(progress, .62, .96);
+    this.root.dataset.forming = String(progress < 1);
+    this.root.style.setProperty("--cube-formation-field", String(MathUtils.smoothstep(progress, .40, .88)));
+    if (progress < 1) { this.selection.visible = false; this.apparatus.visible = false; }
+    else if (wasForming) { this.updateSelection(); this.updateSightline(); }
+    this.dirty = this.eyeDirty = true;
+    this.requestFrame();
   }
   getState(): CubeExperiment { return clone(this.state); }
   getInspectionState(): CubeInspectionState {
@@ -1099,7 +1181,7 @@ export class CubeProjection {
     this.dirty = true; this.requestFrame();
   }
   getStats() {
-    return { ready: !!this.renderer && !!this.eyeRenderer, n: this.state.n, present: this.state.present.reduce((sum, value) => sum + value, 0), task: this.task, archiveModified: this.archiveModified, throughObserver: this.throughObserver, showFrustum: this.showFrustum, showMarkers: this.markersVisible(), apparatusVisible: this.apparatus.visible, tool: this.tool, selected: this.selected ? { ...this.selected } : null, inspectionQuaternion: this.ball.orientation.toArray(), inspectionEye: this.camera.position.toArray(), inspectionDistance: this.distance, angularSpeed: this.ball.angularSpeed, observer: clone(this.state.observer), eyeOccupied: cubeEyeOccupancy(this.state), visibleCount: this.count, countPending: this.countPending, countPasses: this.countPasses, countRevision: this.countRevision, sampleSize: { ...this.countSize }, undo: this.undoStack.length, redo: this.redoStack.length, reducedMotion: this.reduced, error: this.lastCountError };
+    return { ready: !!this.renderer && !!this.eyeRenderer, n: this.state.n, present: this.state.present.reduce((sum, value) => sum + value, 0), task: this.task, formation: this.formation, materialFormation: this.formationUniforms.surface.value, outlineFormation: this.formationUniforms.outline.value, archiveModified: this.archiveModified, throughObserver: this.throughObserver, showFrustum: this.showFrustum, showMarkers: this.markersVisible(), apparatusVisible: this.apparatus.visible, tool: this.tool, selected: this.selected ? { ...this.selected } : null, inspectionQuaternion: this.ball.orientation.toArray(), inspectionEye: this.camera.position.toArray(), inspectionDistance: this.distance, angularSpeed: this.ball.angularSpeed, observer: clone(this.state.observer), eyeOccupied: cubeEyeOccupancy(this.state), visibleCount: this.count, countPending: this.countPending, countPasses: this.countPasses, countRevision: this.countRevision, sampleSize: { ...this.countSize }, undo: this.undoStack.length, redo: this.redoStack.length, reducedMotion: this.reduced, error: this.lastCountError };
   }
   dispose() {
     if (this.disposed) return;
@@ -1107,7 +1189,7 @@ export class CubeProjection {
     this.geometry.dispose(); this.lineGeometry.dispose(); this.aim.geometry.dispose(); this.frustum.geometry.dispose(); this.marker.geometry.dispose(); this.selection.geometry.dispose(); this.floor.geometry.dispose(); this.floor.material.dispose();
     for (const light of this.keyLights) light.shadow.dispose();
     for (const target of this.environmentTargets) target.dispose();
-    for (const material of [this.bodyMaterial, this.lineMaterial, this.apparatusMaterial, this.frustumMaterial, this.markerMaterial, this.selectionMaterial, this.idMaterial]) material.dispose();
+    for (const material of [this.bodyMaterial, this.formationDepthMaterial, this.lineMaterial, this.apparatusMaterial, this.frustumMaterial, this.markerMaterial, this.selectionMaterial, this.idMaterial]) material.dispose();
     this.countTarget?.dispose(); this.renderer?.dispose(); this.eyeRenderer?.dispose(); this.renderer?.forceContextLoss(); this.eyeRenderer?.forceContextLoss(); this.root.remove();
   }
 }

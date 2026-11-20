@@ -158,7 +158,8 @@ export class ProjectionViewer {
     const now = options.manualClock ? 0 : performance.now();
     if (!resume) { this.clock.reset(now); this.flightStarted = now; }
     else if (!options.manualClock) this.clock.step(now, !document.hidden);
-    this.flight.move(1, this.clock.value, resume ? Math.max(900, (1 - this.flight.value) * CARRIER_ENTRANCE_MS) : CARRIER_ENTRANCE_MS);
+    if (resume) this.flight.move(1, this.clock.value, Math.max(900, (1 - this.flight.value) * CARRIER_ENTRANCE_MS));
+    else this.flight.startPresentation(this.clock.value, CARRIER_ENTRANCE_MS);
     this.paintFlight();
     if (!options.manualClock) this.flightRaf = requestAnimationFrame(this.advanceFlight);
   }
@@ -195,6 +196,23 @@ export class ProjectionViewer {
     this.plane.style.clipPath = "none";
     this.root.style.setProperty("--carrier-interface", String(f.interface));
     this.root.style.setProperty("--carrier-light", String(f.light));
+    const formation = this.options.reducedMotion ? 1 : f.contentResolve;
+    const exposure = (a: number, b: number) => {
+      const t = Math.max(0, Math.min(1, (formation - a) / (b - a)));
+      return t * t * (3 - 2 * t);
+    };
+    // The phase is linear over 1700ms. These short local exposures are allowed
+    // to ease; another global ease would compress formation into a flash.
+    this.root.style.setProperty("--carrier-identity-edge", `${(-5 + exposure(0, .235) * 110).toFixed(4)}%`);
+    this.root.style.setProperty("--carrier-identity-opacity", String(exposure(0, .045)));
+    this.root.style.setProperty("--carrier-rule", String(exposure(.50, .83)));
+    const corners = f.corners;
+    const edgeLength = (a: number, b: number) => Math.hypot(corners[a].x - corners[b].x, corners[a].y - corners[b].y);
+    const plateScale = Math.sqrt((edgeLength(0, 1) + edgeLength(3, 2)) / (2 * Math.max(1, this.imageBox.width))
+      * (edgeLength(0, 3) + edgeLength(1, 2)) / (2 * Math.max(1, this.imageBox.height)));
+    this.research?.setPresentationScale(this.options.reducedMotion ? 1 : plateScale);
+    this.research?.setFormation(formation);
+    this.cube?.setFormation(formation);
     // Keep the archive identity legible while the plate is suspended. Its
     // typographic scale settles continuously as the same image fills the view.
     const titleArrival = Math.max(0, Math.min(1, (f.camera - .12) / .68));
@@ -209,6 +227,7 @@ export class ProjectionViewer {
     const outline = sample?.outline?.map(point => carrierLocalPoint(point, rect, surface));
     const optics = this.optics?.render({
       frame: f, origin, edge: localEdge, aperture, outline, width: surface.width, height: surface.height,
+      physicalSource: sample?.physicalSource, sceneBeam: sample?.sceneBeam, structuredFormation: true,
       planeWidth: this.imageBox.width, planeHeight: this.imageBox.height,
       elapsed: this.clock.value,
       dark: this.root.closest<HTMLElement>("[data-dark-surface]")?.dataset.darkSurface === "true",
@@ -220,8 +239,8 @@ export class ProjectionViewer {
       this.plane.style.setProperty("-webkit-mask-image", mask);
       this.opticalMask = mask;
     }
-    // Deposited image regions are sharp immediately. The single exposure mask
-    // creates the image; camera distance never gates the identity or labels.
+    // The semantic components own formation. Sharp deposited letters and
+    // completed paths are never covered by a full-page bitmap or blur pass.
     this.opticalClarity = optics?.clarity ?? f.contentResolve;
     this.root.style.setProperty("--carrier-detail", String(this.opticalClarity));
     this.setBeat(this.closing ? "returning" : f.beat);
@@ -259,6 +278,10 @@ export class ProjectionViewer {
     this.root.style.setProperty("--carrier-detail", "1");
     this.root.style.setProperty("--carrier-interface", "1");
     this.root.style.setProperty("--carrier-title-size", "1");
+    this.root.style.setProperty("--carrier-identity-edge", "105%");
+    this.root.style.setProperty("--carrier-identity-opacity", "1");
+    this.root.style.setProperty("--carrier-rule", "1");
+    this.research?.setFormation(1); this.research?.setPresentationScale(1); this.cube?.setFormation(1);
     this.host.inert = false;
     this.root.dataset.state = "open";
     this.root.querySelector<HTMLElement>(".projection-ignition")!.style.opacity = "0";

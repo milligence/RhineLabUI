@@ -18,8 +18,14 @@ export type CarrierOpticsInput = {
   /** Model-local TL, TR, BR, BL projected by the already-drawn camera.
    * Preserve their order; a screen-space x/y sort destroys the aperture. */
   aperture?: Quad;
-  /** Physical carrier silhouette. Only the light volume is occluded by it. */
+  /** Retained for older callers. Screen silhouettes cannot express depth and
+   * are never subtracted from the physical light field. */
   outline?: readonly Point[];
+  /** The scene owns the glass aperture / depth-tested frustum respectively. */
+  physicalSource?: boolean;
+  sceneBeam?: boolean;
+  /** The real graph or specimen builds itself; no whole-page wipe is applied. */
+  structuredFormation?: boolean;
   /** Legacy slit sampling, used only when a physical aperture is unavailable. */
   edge?: readonly [Point, Point];
   width: number;
@@ -45,7 +51,7 @@ const range = (v: number, a: number, b: number) => smooth((v - a) / (b - a));
 const mix = (a: Point, b: Point, t: number): Point => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
 const distance = (a: Point, b: Point) => Math.hypot(b.x - a.x, b.y - a.y);
 const rgba = (rgb: readonly number[], alpha: number) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${clamp(alpha)})`;
-const CLEAR_MASK = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'1\' height=\'1\'%3E%3C/svg%3E")';
+const CLEAR_MASK = "linear-gradient(transparent,transparent)";
 // The frustum has a finite optical skin: a narrow reflective inner lip beside
 // a wider absorbing shoulder. These are pixel-distance profiles, not rays.
 const BEAM_SKIN = new Float32Array(256 * 2);
@@ -119,18 +125,15 @@ function quadProjector([a, b, c, d]: Quad) {
 
 type Grain = { u: number; v: number; seed: number; size: number; field: number };
 
-/** A transient optical coating for the real projection. It does not draw a
- * replacement UI, capture the page, own a clock, or move the physical carrier.
- * The caller applies the returned alpha mask to its existing DOM plane.
- *
- * The light field is Canvas2D so it remains available independently of the
- * scene's WebGL context. Its geometry still comes from the same drawn camera.
+/** The real receiver's transient cut edges, sampled from the drawn camera.
+ * The scene owns the physical aperture and depth-tested light; research and
+ * Cube own their actual content formation. No replacement UI or clock lives
+ * here. A native mask and receiver-excluding 2D beam remain for legacy callers
+ * that do not supply those production capabilities.
  */
 export class CarrierOptics {
   readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D | null;
-  private readonly maskCanvas: HTMLCanvasElement;
-  private readonly maskContext: CanvasRenderingContext2D | null;
   private readonly beamCanvas: HTMLCanvasElement;
   private readonly beamContext: CanvasRenderingContext2D | null;
   private beamPixels?: ImageData;
@@ -140,18 +143,12 @@ export class CarrierOptics {
   private beamX = new Float64Array(0);
   private beamEdgeY = new Float64Array(0);
   private beamSkinRanges = new Int32Array(0);
-  private maskPixels?: ImageData;
-  private maskThresholds = new Float32Array(0);
-  private readonly masks = new Map<number, string>();
   private readonly grains: Grain[] = [];
-  private maskWidth = 0;
-  private maskHeight = 0;
   private pixelRatio = 1;
   private width = 0;
   private height = 0;
   private empty = true;
   private renderedFrames = 0;
-  private generatedMasks = 0;
 
   constructor(container: HTMLElement) {
     this.canvas = document.createElement("canvas");
@@ -159,8 +156,6 @@ export class CarrierOptics {
     this.canvas.setAttribute("aria-hidden", "true");
     this.canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;visibility:hidden;";
     this.context = this.canvas.getContext("2d", { alpha: true });
-    this.maskCanvas = document.createElement("canvas");
-    this.maskContext = this.maskCanvas.getContext("2d", { alpha: true, willReadFrequently: true });
     this.beamCanvas = document.createElement("canvas");
     this.beamContext = this.beamCanvas.getContext("2d", { alpha: true, willReadFrequently: true });
     container.append(this.canvas);
@@ -170,7 +165,7 @@ export class CarrierOptics {
       const seed = noise(x, y, 73991);
       const u = (x + .12 + noise(x, y, 21917) * .76) / 32;
       const v = (y + .12 + noise(x, y, 91277) * .76) / 18;
-      this.grains.push({ u, v, seed, size: .35 + seed * .7, field: depositField(u, v, seed) });
+      this.grains.push({ u, v, seed, size: .65 + seed * .55, field: depositField(u, v, seed) });
     }
   }
 
@@ -178,8 +173,8 @@ export class CarrierOptics {
     const { frame } = input;
     const channels = frame as OpticalFrame & OpticalChannels;
     const reveal = clamp(channels.contentResolve ?? frame.reveal);
-    const clarity = input.reduced ? 1 : range(reveal, .015, .16);
-    const maskImage = input.reduced ? "none" : this.mask(reveal, input.planeWidth ?? input.width, input.planeHeight ?? input.height);
+    const clarity = input.reduced ? 1 : reveal;
+    const maskImage = input.reduced || input.structuredFormation ? "none" : this.mask(reveal);
     const sourcePower = clamp(channels.sourcePower ?? frame.charge * frame.emitter * frame.light);
     const beamPower = clamp(channels.beamPower ?? frame.light);
     const platePresence = clamp(channels.platePresence ?? frame.frame * range(frame.image, 0, .18));
@@ -213,10 +208,12 @@ export class CarrierOptics {
     const rim: Quad = [project(-outU, -outV), project(1 + outU, -outV),
       project(1 + outU, 1 + outV), project(-outU, 1 + outV)];
 
-    this.volume(ctx, aperture, quad, frame.beamReach, beamPower, dark, input.outline);
-    this.plate(ctx, project, quad, rim, source, frameBuild, platePresence, edgePresence, dark);
-    this.deposition(ctx, project, reveal, platePresence, dark);
-    this.aperture(ctx, aperture, sourcePower, dark);
+    // Depth belongs to the scene. A second screen-space beam would wash over
+    // the formed image and paint in front of the physical glass housing.
+    if (!input.sceneBeam) this.volume(ctx, aperture, quad, frame.beamReach, beamPower, dark);
+    this.plate(ctx, project, quad, rim, source, frameBuild, input.structuredFormation ? 0 : platePresence, edgePresence, dark);
+    if (!input.structuredFormation) this.deposition(ctx, project, reveal, platePresence, dark);
+    if (!input.physicalSource) this.aperture(ctx, aperture, sourcePower, dark);
     return result;
   }
 
@@ -242,18 +239,18 @@ export class CarrierOptics {
       { x: b.x + nx, y: b.y + ny }, { x: a.x + nx, y: a.y + ny }];
   }
 
-  private volume(ctx: CanvasRenderingContext2D, aperture: Quad, quad: Quad, reach: number, power: number, dark: boolean, outline?: readonly Point[]) {
+  private volume(ctx: CanvasRenderingContext2D, aperture: Quad, quad: Quad, reach: number, power: number, dark: boolean) {
     if (power < .001 || reach < .001) return;
     // Every aperture corner has a corresponding receiver corner. The expanding
     // section is a real rectangle in projection, never a point-source triangle.
     const end = aperture.map((p, i) => mix(p, quad[i], clamp(reach)));
-    this.finiteVolume(ctx, aperture, end, power, dark, outline);
+    this.finiteVolume(ctx, aperture, end, quad, power, dark);
   }
 
   /** Rasterize the projected frustum's finite silhouette, not an unbounded
    * Gaussian. A 2–4px density shoulder softens its edges without losing the
    * geometry. The working bitmap is reused and never encoded as a data URL. */
-  private finiteVolume(ctx: CanvasRenderingContext2D, aperture: Quad, end: readonly Point[], power: number, dark: boolean, outline?: readonly Point[]) {
+  private finiteVolume(ctx: CanvasRenderingContext2D, aperture: Quad, end: readonly Point[], receiver: Quad, power: number, dark: boolean) {
     if (!this.beamContext) return;
     const hull = convexHull([...aperture, ...end]);
     if (hull.length < 3) return;
@@ -272,7 +269,7 @@ export class CarrierOptics {
     const width = right - left, height = bottom - top;
     const tw = Math.ceil(clamp(width * .72, 96, 480) / 16) * 16;
     const th = Math.ceil(clamp(tw * height / width, 48, 256) / 16) * 16;
-    const identity = [...aperture, ...end, ...(outline ?? [])].flatMap(p => [p.x, p.y])
+    const identity = [...aperture, ...end, ...receiver].flatMap(p => [p.x, p.y])
       .concat([left, top, width, height, Number(dark)]).map(v => v.toFixed(2)).join("/");
     if (identity !== this.beamIdentity) {
       this.beamIdentity = identity;
@@ -292,15 +289,18 @@ export class CarrierOptics {
         return [{ edge, from, tx: (to.x - from.x) / length, ty: (to.y - from.y) / length,
           length, weight: facing > 0 ? 1 : .56 }];
       });
-      const occlusion = outline && outline.length > 2 ? boundaryEquations(convexHull(outline)) : [];
+      // The optional 2D fallback has no depth buffer. It must never contaminate
+      // a resolved receiver pixel, and must not invent an archive-sized hole.
+      const occlusion = boundaryEquations(receiver);
       const profile = this.beamProfile(dark), pixels = this.beamPixels.data;
       const baseColors = this.beamBaseColors.get(dark)!;
       const skinWarm = dark ? [171, 157, 127] : [126, 112, 88];
       const skinWhite = dark ? [248, 242, 220] : [255, 254, 243];
-      const occlusionLeft = outline ? Math.min(...outline.map(p => p.x)) - 2 : Infinity;
-      const occlusionRight = outline ? Math.max(...outline.map(p => p.x)) + 2 : -Infinity;
-      const occlusionTop = outline ? Math.min(...outline.map(p => p.y)) - 2 : Infinity;
-      const occlusionBottom = outline ? Math.max(...outline.map(p => p.y)) + 2 : -Infinity;
+      const receiverMargin = Math.max(width / tw, height / th) * 1.5;
+      const occlusionLeft = Math.min(...receiver.map(p => p.x)) - receiverMargin;
+      const occlusionRight = Math.max(...receiver.map(p => p.x)) + receiverMargin;
+      const occlusionTop = Math.min(...receiver.map(p => p.y)) - receiverMargin;
+      const occlusionBottom = Math.max(...receiver.map(p => p.y)) + receiverMargin;
       if (this.beamX.length !== tw) this.beamX = new Float64Array(tw);
       for (let x = 0; x < tw; x++) this.beamX[x] = left + (x + .5) / tw * width;
       if (this.beamEdgeY.length !== edges.length) this.beamEdgeY = new Float64Array(edges.length);
@@ -361,7 +361,7 @@ export class CarrierOptics {
         let covered = occlusion.length > 0 && sx >= occlusionLeft && sx <= occlusionRight && sy >= occlusionTop && sy <= occlusionBottom;
         if (covered) for (let i = 0; i < occlusion.length; i++) {
           const edge = occlusion[i];
-          if (edge[0] * sx + edge[1] * sy + edge[2] < -.4) { covered = false; break; }
+          if (edge[0] * sx + edge[1] * sy + edge[2] < -receiverMargin) { covered = false; break; }
         }
         if (covered) { pixels[j + 3] = 0; continue; }
         const dx = sx - source.x, dy = sy - source.y;
@@ -574,47 +574,14 @@ export class CarrierOptics {
     this.path(ctx, [d, c], false); ctx.stroke();
   }
 
-  private mask(reveal: number, planeWidth: number, planeHeight: number) {
+  private mask(reveal: number) {
     if (reveal >= .999) return "none";
     if (reveal <= .0001) return CLEAR_MASK;
-    if (!this.maskContext) {
-      // Canvas is optional. The fallback still has a softened physical front,
-      // while the actual semantic content remains owned by the existing DOM.
-      const edge = clamp(reveal * 112 - 6, 0, 100);
-      return `linear-gradient(25deg,#000 ${edge}%,transparent ${edge + 12}%)`;
-    }
-    const aspect = Math.max(.25, planeWidth / Math.max(1, planeHeight));
-    const width = Math.round(clamp(416 * Math.sqrt(aspect / 1.8), 256, 512) / 16) * 16;
-    const height = Math.round(clamp(width / aspect, 144, 384) / 16) * 16;
-    if (this.maskWidth !== width || this.maskHeight !== height) {
-      this.maskWidth = this.maskCanvas.width = width;
-      this.maskHeight = this.maskCanvas.height = height;
-      this.maskPixels = this.maskContext.createImageData(width, height);
-      this.maskThresholds = new Float32Array(width * height);
-      for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
-        this.maskThresholds[y * width + x] = depositField(x / Math.max(1, width - 1), y / Math.max(1, height - 1), noise(x, y, 11897));
-      }
-      this.masks.clear();
-    }
-    const bucket = Math.round(reveal * 160);
-    const existing = this.masks.get(bucket);
-    if (existing) { this.masks.delete(bucket); this.masks.set(bucket, existing); return existing; }
-    const pixels = this.maskPixels!.data;
-    const phase = bucket / 160;
-    for (let i = 0; i < this.maskThresholds.length; i++) {
-      const a = smooth((phase - this.maskThresholds[i] + .018) / .036);
-      const j = i * 4;
-      pixels[j] = pixels[j + 1] = pixels[j + 2] = 255;
-      pixels[j + 3] = Math.round(255 * a);
-    }
-    this.maskContext.putImageData(this.maskPixels!, 0, 0);
-    const image = `url("${this.maskCanvas.toDataURL("image/png")}")`;
-    this.generatedMasks++;
-    this.masks.set(bucket, image);
-    // Bounded cache is enough for interruption/reversal; no full-window bitmap
-    // is serialized. Stable/open frames bypass the mask canvas entirely.
-    while (this.masks.size > 24) this.masks.delete(this.masks.keys().next().value!);
-    return image;
+    // A native gradient is only for unknown legacy content. Actual research
+    // and Cube projections expose their paths, nodes and material directly.
+    // No synchronous PNG encoding, image decode or bitmap cache per frame.
+    const edge = reveal * 106 - 3;
+    return `linear-gradient(115deg,#000 ${edge.toFixed(4)}%,transparent ${(edge + 3).toFixed(4)}%)`;
   }
 
   private clear() {
@@ -627,13 +594,11 @@ export class CarrierOptics {
   }
 
   getStats() {
-    return { renderedFrames: this.renderedFrames, generatedMasks: this.generatedMasks, maskSize: [this.maskWidth, this.maskHeight], maskCacheEntries: this.masks.size, canvasSize: [this.canvas.width, this.canvas.height], active: !this.empty };
+    return { renderedFrames: this.renderedFrames, generatedMasks: 0, maskSize: [0, 0], maskCacheEntries: 0, canvasSize: [this.canvas.width, this.canvas.height], active: !this.empty };
   }
 
   dispose() {
-    this.clear(); this.canvas.remove(); this.masks.clear();
-    this.maskThresholds = new Float32Array(0); this.maskPixels = undefined;
-    this.maskCanvas.width = this.maskCanvas.height = 0;
+    this.clear(); this.canvas.remove();
     this.beamCanvas.width = this.beamCanvas.height = 0;
     this.beamPixels = undefined; this.beamIdentity = ""; this.beamProfiles.clear(); this.beamBaseColors.clear();
     this.beamX = new Float64Array(0);

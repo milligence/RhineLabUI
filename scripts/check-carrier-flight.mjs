@@ -6,19 +6,20 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { installProjectorAperture, setProjectorAperturePower, PROJECTOR_APERTURE } from "../src/projector-aperture.ts";
 import { themeMaterial } from "../src/theme-material.ts";
-import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierCameraProgress, carrierCamera, carrierFrame, carrierLocalPoint, projectOpticalPoint, carrierCue, carrierInertiaOffset } from "../src/carrier-flight.ts";
+import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierCameraProgress, carrierCamera, carrierFrame, carrierLocalPoint, projectOpticalPoint, carrierCue, carrierChannels, carrierReceiverPlane, carrierPlaneCorners } from "../src/carrier-flight.ts";
 import { archiveFraming, viewportLayout } from "../src/viewport-layout.ts";
+import { INSPECTION_LIFT, smooth as nativeEase } from "../src/motion.ts";
 
 const close = (a, b, message, epsilon = 1e-7) => assert(Math.abs(a - b) < epsilon, message + ": " + a + " / " + b);
 const viewport = { width: 1440, height: 960 };
 const box = { left: 46, top: 98, width: 1348, height: 824 };
 const flight = new CarrierFlight();
-flight.move(1, 0, CARRIER_ENTRANCE_MS);
+flight.startPresentation(0);
 const sample = time => carrierFrame(flight.step(time), viewport, box);
-const ignition = sample(600), beam = sample(700), beamArrived = sample(1100), frameClosed = sample(1750), forming = sample(2300), held = sample(3300), transfer = sample(4800), arrived = sample(CARRIER_ENTRANCE_MS);
+const ignition = sample(550), beam = sample(700), beamArrived = sample(1350), frameClosed = sample(1850), forming = sample(2750), held = sample(3900), transfer = sample(6000), arrived = sample(CARRIER_ENTRANCE_MS);
 assert.equal(ignition.image, 0, "The physical source lights before any image appears");
 assert(ignition.sourcePower > .9 && ignition.environment === 0);
-assert(ignition.camera > 0 && ignition.camera < .01, "Ignition has a quiet drift rather than another stationary camera start");
+assert.equal(ignition.camera, 0, "The original settled shot establishes the port and formation without residual camera bounce");
 assert(beam.beamReach > 0 && beam.beamReach < .5 && beam.reveal === 0, "The beam grows before the image forms");
 close(beamArrived.beamReach, 1, "The beam reaches the receiver before the finite frame begins", 1e-12);
 assert.equal(beamArrived.frameBuild, 0);
@@ -29,10 +30,11 @@ assert.equal(forming.image, 1, "Spatial exposure owns image formation without a 
 assert(forming.reveal > .1 && forming.reveal < .7, "The image is spatially revealed over time");
 assert.equal(held.image, 1); assert.equal(held.reveal, 1); assert.equal(held.contentResolve, 1);
 assert.equal(held.environment, 0); assert.equal(held.beat, "image-held");
-const coexistStart = carrierFrame(carrierCue(3000), viewport, box), coexistEnd = carrierFrame(carrierCue(3650), viewport, box);
+const coexistStart = carrierFrame(carrierCue(3600), viewport, box), coexistEnd = carrierFrame(carrierCue(4200), viewport, box);
 assert.equal(coexistStart.contentResolve, 1); assert.equal(coexistEnd.contentResolve, 1);
-assert(coexistEnd.camera > coexistStart.camera, "The 650ms coexistence keeps a continuous low-speed drift");
-assert.deepEqual(coexistStart.rig.centre, coexistEnd.rig.centre, "The receiving plane stays fixed while the camera drifts");
+assert.equal(coexistStart.camera, 0); assert.equal(coexistEnd.camera, 0);
+assert.deepEqual(coexistStart.matrix, coexistEnd.matrix, "The completed image and real carrier coexist for 600ms before camera departure");
+assert.deepEqual(coexistStart.rig.centre, coexistEnd.rig.centre, "The receiving plane stays fixed throughout the shot");
 assert.deepEqual(coexistStart.rig.normal, coexistEnd.rig.normal);
 assert(transfer.camera > .7 && transfer.camera < .9);
 assert.equal(transfer.beamPower, 0);
@@ -50,17 +52,15 @@ assert.equal(waitingForCamera.progress, oldPhase, "A drawn phase controls the en
 assert.equal(waitingForCamera.image, 0, "A delayed scene cannot be overpainted by an advanced image");
 assert.equal(waitingForCamera.reveal, 0);
 
-// Finite entry inertia retains the displayed camera's first two derivatives,
-// then rejoins the fixed plane path without translating that plane.
-const velocity = {x:.12,y:-.07,z:.2}, acceleration = {x:-.03,y:.04,z:-.09};
-const h=1e-5, q0=carrierInertiaOffset(0,velocity,acceleration), q1=carrierInertiaOffset(h,velocity,acceleration), q2=carrierInertiaOffset(2*h,velocity,acceleration);
-for (const axis of ["x","y","z"]) {
-  close(q0[axis],0,"Entry inertia starts at the displayed position");
-  close((q1[axis]-q0[axis])/h,velocity[axis],"Entry camera velocity continues",1e-5);
-  close((q2[axis]-2*q1[axis]+q0[axis])/(h*h),acceleration[axis],"Entry camera acceleration continues",1e-3);
-}
-assert.deepEqual(carrierInertiaOffset(.8,velocity,acceleration),{x:0,y:0,z:0});
-assert.deepEqual(carrierInertiaOffset(1.2,velocity,acceleration),{x:0,y:0,z:0});
+// Formation has one uniform presentation clock. Its structural channels may
+// ease locally; the whole image cannot be accelerated by an outer quintic.
+for (let time=1900;time<=3600;time+=100)
+  close(carrierChannels(carrierCue(time)).contentResolve,(time-1900)/1700,"Formation retains the full 1700ms local interval",1e-12);
+const departure=carrierCue(4200), h=.1/CARRIER_ENTRANCE_MS;
+close(carrierCameraProgress(departure),0,"Camera departure starts at rest");
+assert(carrierCameraProgress(departure+h)/h<1e-4,"Camera departure has zero first derivative");
+assert((carrierCameraProgress(departure+2*h)-2*carrierCameraProgress(departure+h))/(h*h)<.02,"Camera departure has zero second derivative");
+assert((1-carrierCameraProgress(1-h))/h<1e-4,"Camera arrival has zero first derivative");
 
 const clock = new CarrierPresentationClock(); clock.reset(100);
 clock.step(116); close(clock.value,16,"Normal frame time is preserved");
@@ -102,7 +102,7 @@ for (const hz of [30,60,144]) cadence(hz).forEach((v,i) => close(v, reference[i]
 // camera to halt before restarting. Exercise early/late reversals as well.
 let reversalCases = 0;
 for (let closing=100;closing<CARRIER_ENTRANCE_MS;closing+=250) for (let reopening=50;reopening<CARRIER_RETURN_MS;reopening+=200) {
-  const run = new CarrierFlight(); run.move(1,0,CARRIER_ENTRANCE_MS); run.step(closing);
+  const run = new CarrierFlight(); run.startPresentation(0); run.step(closing);
   run.move(0,closing,Math.max(850,run.value*CARRIER_RETURN_MS)); run.step(closing+reopening);
   run.move(1,closing+reopening,Math.max(900,(1-run.value)*CARRIER_ENTRANCE_MS));
   for (let time=closing+reopening;time<closing+reopening+CARRIER_ENTRANCE_MS+300;time+=10) {
@@ -112,8 +112,8 @@ for (let closing=100;closing<CARRIER_ENTRANCE_MS;closing+=250) for (let reopenin
   reversalCases++;
 }
 
-const dimensions = [{width:390,height:844},{width:960,height:540},{width:844,height:390},viewport,{width:1920,height:1080},{width:2560,height:1080}];
-let maxProjectionError = 0, maxExposedOverlap = 0;
+const dimensions = [{width:390,height:780},{width:390,height:844},{width:960,height:540},{width:844,height:390},viewport,{width:1920,height:1080},{width:2560,height:1080}];
+let maxProjectionError = 0, maxExposedOverlap = 0, minimumPhysicalClearance=Infinity;
 const bounds = points => ({ left: Math.min(...points.map(p=>p.x)), right: Math.max(...points.map(p=>p.x)), top: Math.min(...points.map(p=>p.y)), bottom: Math.max(...points.map(p=>p.y)) });
 const intersection = (a,b) => Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left)) * Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
 const baselineBack = new THREE.Vector3(-.277,.238,.931).normalize();
@@ -123,31 +123,56 @@ for (const size of dimensions) {
   const b = { left: 14, top: 100, width: size.width-28, height: size.height-120 };
   const framing = archiveFraming(size.width,size.height,7.33,1,size.width<1100);
   const perspective = 72/framing.span;
-  const first = carrierCamera(0,size,perspective), last = carrierCamera(1,size,perspective);
+  const physicalAim = new THREE.Vector3(0,1.85,0)
+    .addScaledVector(baselineRight,(.5-framing.detailX)*size.width/size.height*framing.span)
+    .addScaledVector(baselineUp,(framing.detailY-.5)*framing.span);
+  const physicalPoint = point => {
+    const relative = new THREE.Vector3(point.x,point.y,point.z).sub(physicalAim);
+    return {x:relative.dot(baselineRight)/framing.span,y:relative.dot(baselineUp)/framing.span,z:relative.dot(baselineBack)/framing.span};
+  };
+  const physicalSource=PROJECTOR_APERTURE.corners.map(physicalPoint);
+  const physicalNormal={x:baselineRight.z,y:baselineUp.z,z:baselineBack.z};
+  const plane=carrierReceiverPlane(size,perspective,{corners:physicalSource,normal:physicalNormal,clearance:.9/framing.span});
+  const receiver=carrierPlaneCorners(plane,size);
+  const first = carrierCamera(0,size,perspective,{plane}), last = carrierCamera(1,size,perspective,{plane});
   assert.deepEqual(first.position,{x:0,y:0,z:perspective});
   assert.deepEqual(first.aim,{x:0,y:0,z:0});
-  assert(last.backward.x > .05, "The camera actually orbits towards the image");
+  assert(framing.portrait ? last.backward.y > .25 : last.backward.x < -.25, "The camera orbits from the real carrier side, carrying it out of view");
   assert(Math.abs(last.backward.y) > .04, "Focal transfer also changes elevation");
   close(last.perspective,first.perspective,"Dolly must not be cancelled by changing the lens");
   const lastDistance = Math.hypot(last.position.x-last.aim.x,last.position.y-last.aim.y,last.position.z-last.aim.z);
   assert(lastDistance < perspective*.51, "The camera approaches the optical plane in depth");
 
-  const physical = [0,.8,-.8].map(rotation => {
+  const entrySource=physicalSource.map(point=>projectOpticalPoint(point,first,size));
+  assert(entrySource.every(point=>point.x>size.width*.03&&point.x<size.width*.97&&point.y>size.height*.03&&point.y<size.height*.97),"The real four-corner aperture is visibly inside the native settled shot");
+  const receivingBounds=bounds(receiver.map(point=>projectOpticalPoint(point,first,size)));
+  assert(receivingBounds.left>size.width*.02&&receivingBounds.right<size.width*.981&&receivingBounds.top>size.height*.02&&receivingBounds.bottom<size.height*.97,"The entire held receiving frame remains inside the safe view");
+  if(!framing.portrait)close((receivingBounds.right-receivingBounds.left)/size.width,.45,"The landscape receiver occupies 45% of the actual frame",1e-7);
+  else assert(receivingBounds.top>size.height*.5,"Portrait formation lives below its physical archive");
+  for(const target of receiver)for(const aperture of physicalSource){
+    const forward=((target.x-aperture.x)*physicalNormal.x+(target.y-aperture.y)*physicalNormal.y+(target.z-aperture.z)*physicalNormal.z)*framing.span;
+    minimumPhysicalClearance=Math.min(minimumPhysicalClearance,forward);
+    assert(forward>=.9-1e-8,"Every real aperture-to-receiver ray stays in front of the glass and cannot cross its cover");
+  }
+
+  const physical = [0].map(rotation => {
     const points = [];
-    // Public model dimensions and allowed inspection limits, not a fabricated
-    // mesh. This conservative box catches collision with the reading surface.
+    // The native physical dimensions after the preparation has restored a
+    // frontal outlet. Rotated entry is tested through the Scene methods below.
     for (const x of [-2.5,2.5]) for (const y of [-1.85,1.85]) for (const z of [-.155,.155]) {
       const q = new THREE.Vector3(x,y,z).applyAxisAngle(new THREE.Vector3(0,1,0),rotation).divideScalar(framing.span);
       points.push({x:(framing.detailX-.5)*size.width/size.height+q.dot(baselineRight),y:.5-framing.detailY+q.dot(baselineUp),z:q.dot(baselineBack)});
     }
     return points;
   });
+  let previousRadius=Infinity;
   for (let step=0;step<=200;step++) {
     const p=step/200, progress=carrierCameraProgress(p);
-    const pose=carrierCamera(progress,size,perspective);
-    const presented={perspective,progress,phase:p};
-    // The entry camera may still carry finite inertia. Exercise its real
-    // normalized pose override, including a noncanonical up vector.
+    const pose=carrierCamera(progress,size,perspective,{plane});
+    const presented={perspective,progress,phase:p,plane};
+    const radius=Math.hypot(pose.position.x-plane.centre.x,pose.position.y-plane.centre.y,pose.position.z-plane.centre.z);
+    assert(radius<=previousRadius+1e-10,"The camera never advances and retreats during the same entrance");previousRadius=radius;
+    // Drawn camera samples also preserve a noncanonical up vector.
     if (step===24) Object.assign(presented,{
       position:{x:pose.position.x+.012,y:pose.position.y-.006,z:pose.position.z+.009},
       aim:{x:pose.aim.x+.003,y:pose.aim.y+.004,z:pose.aim.z},up:{x:.012,y:1,z:.006},
@@ -262,7 +287,7 @@ const settled=Object.assign(Object.create(painterContext.exports.ProjectionViewe
   host:{inert:true,replaceChildren:()=>{clearedHost++;}},
   root:{style:{setProperty:(key,value)=>settledProperties.set(key,value)},dataset:{state:"opening"},querySelector:()=>settledIgnition,hidden:false},
   flight:new CarrierFlight(),setBeat:()=>{},opticalMask:"formation",opticalClarity:.4,
-  optics:{dispose:()=>{disposedOptics++;}},research:{dispose:()=>{disposedContent++;}},
+  optics:{dispose:()=>{disposedOptics++;}},research:{setFormation:()=>{},setPresentationScale:()=>{},dispose:()=>{disposedContent++;}},
   siblings:[{node:sibling,inert:false}],opener:{isConnected:true,focus:()=>{restoredFocus++;}},
   options:{onCameraProgress:value=>{lastCamera=value;},onClose:()=>{closedCallbacks++;}},
   isOpen:true,closing:false,
@@ -339,8 +364,112 @@ backgroundPorts.forEach((inst,i)=>materialEndpoint(inst.material,returningPort.c
 const glass=portMeshes.find(mesh=>mesh.userData.projectorRole==="glass");glass.geometry.computeBoundingBox();
 close(glass.geometry.boundingBox.max.z,PROJECTOR_APERTURE.center.z,"Sampled aperture is the actual front glass face",1e-6);
 for(const corner of PROJECTOR_APERTURE.corners)close(corner.z,glass.geometry.boundingBox.max.z,"Every aperture corner belongs to the real surface",1e-6);
+
+// Execute the actual Scene entry/basis/camera methods against the installed
+// GLB-derived aperture. A screen-space calibration alone missed both the
+// off-screen early gate and rays travelling backwards through the cover.
+const methodNames=["physicalProjector","projectionEntryReady","fitProjectionPlane","prepareProjection","cancelProjectionPreparation","beginProjection","setProjectionPresentation","setProjectionFocus","endProjection","rememberPresentedFrame"];
+const sceneMethods=methodNames.map(name=>sceneClass.members.find(node=>node.name?.getText(sceneAst)===name));
+assert(sceneMethods.every(Boolean));
+const updateText=sceneClass.members.find(node=>node.name?.getText(sceneAst)==="update").getText(sceneAst);
+const cameraStart=updateText.indexOf("const opticalBase = this.projectionCamera;"),cameraEnd=updateText.indexOf("const ordinaryPosition = this.projectionCamera?.ordinaryPosition");
+assert(cameraStart>0&&cameraEnd>cameraStart);
+const actualCameraBlock=updateText.slice(cameraStart,cameraEnd);
+const opticalContext={exports:{},THREE,carrierCamera,carrierCameraProgress,carrierReceiverPlane,carrierPlaneCorners,PROJECTOR_APERTURE,INSPECTION_LIFT,ease:nativeEase};
+vm.runInNewContext(ts.transpileModule(`export class OpticalHarness {
+  ${sceneMethods.map(method=>method.getText(sceneAst)).join("\n")}
+  advance(cameraPosition,cameraAim,ordinaryFov,cameraBlend,dt,cinematic=false) {
+    ${actualCameraBlock}
+    this.camera.updateProjectionMatrix(); this.camera.updateMatrixWorld();
+    return opticalSample;
+  }
+}`,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,opticalContext);
+
+let actualSceneCases=0,oldBackwardsRayCases=0;
+const realCoverBounds=new THREE.Box3();
+gltf.scene.traverse(object=>{if(object instanceof THREE.Mesh&&!Array.isArray(object.material)&&object.material.name.startsWith("Frosted_Polymer"))realCoverBounds.union(new THREE.Box3().setFromObject(object));});
+assert(!realCoverBounds.isEmpty());
+for(const size of [{width:1920,height:1080},{width:390,height:780}]) {
+  const framing=archiveFraming(size.width,size.height,7.33,1,false),fov=THREE.MathUtils.radToDeg(2*Math.atan(framing.span/144));
+  const model=selectedPort.clone(true);model.position.set(0,INSPECTION_LIFT,0);model.updateMatrixWorld(true);
+  const aim=model.position.clone().add(new THREE.Vector3(0,1.85,0))
+    .addScaledVector(baselineRight,(.5-framing.detailX)*size.width/size.height*framing.span)
+    .addScaledVector(baselineUp,(framing.detailY-.5)*framing.span);
+  const camera=new THREE.PerspectiveCamera(fov,size.width/size.height,5,300);camera.position.copy(aim).addScaledVector(baselineBack,72);camera.lookAt(aim);camera.updateMatrixWorld();
+  const displayed={time:0,position:camera.position.clone(),aim:aim.clone(),up:camera.up.clone(),fov,
+    velocity:new THREE.Vector3(),acceleration:new THREE.Vector3(),aimVelocity:new THREE.Vector3(),aimAcceleration:new THREE.Vector3(),fovVelocity:0,fovAcceleration:0};
+  const actual=Object.assign(Object.create(opticalContext.exports.OpticalHarness.prototype),{
+    model,camera,cameraAim:aim.clone(),presentedCamera:displayed,
+    container:{clientWidth:size.width,clientHeight:size.height},motion:{surfaceTransitions:true},renderedFrames:0,reusedFrames:0,
+    targetDetail:1,detail:1,lift:{value:INSPECTION_LIFT,velocity:0},returnY:null,rotation:0,targetRotation:0,cameraResidual:0,cancelPointer:()=>{},
+  });
+  const neighborTop=3.76;
+  assert(actual.projectionEntryReady(framing.span,neighborTop,false,actual.physicalProjector()),"The true settled native detail shot is accepted");
+  actual.presentedCamera.velocity.set(0,0,-7);assert(!actual.projectionEntryReady(framing.span,neighborTop,false,actual.physicalProjector()),"A moving ordinary camera cannot be frozen then sent backwards by a transient offset");actual.presentedCamera.velocity.set(0,0,0);
+  const originalPosition=camera.position.clone(),originalAim=actual.cameraAim.clone();
+  camera.position.addScaledVector(baselineUp,-framing.span);actual.cameraAim.addScaledVector(baselineUp,-framing.span);camera.lookAt(actual.cameraAim);camera.updateMatrixWorld();
+  const offscreen=actual.physicalProjector();
+  assert(offscreen.corners.every(corner=>corner.clone().project(camera).y>1),"A physically clear raised aperture can still be above the viewport");
+  assert(!actual.projectionEntryReady(framing.span,neighborTop,false,offscreen),"Screen visibility is an independent entry condition");
+  camera.position.copy(originalPosition);actual.cameraAim.copy(originalAim);camera.lookAt(actual.cameraAim);camera.updateMatrixWorld();
+  model.rotation.y=Math.PI;model.updateMatrixWorld(true);
+  assert(!actual.projectionEntryReady(framing.span,neighborTop,false,actual.physicalProjector()),"A back-facing real port cannot be substituted by a painted source");
+  model.rotation.y=0;model.updateMatrixWorld(true);
+  for(const rotation of [-.8,.8]) {
+    actual.rotation=actual.targetRotation=rotation;model.rotation.y=rotation;
+    actual.prepareProjection();
+    assert.equal(actual.rotation,rotation,"Preparation never snaps the currently displayed archive");assert.equal(actual.targetRotation,0);
+    actual.cancelProjectionPreparation();assert.equal(actual.targetRotation,rotation,"Cancellation restores the observer's rotation target");
+    actual.prepareProjection();
+    for(let frame=0;frame<160;frame++)actual.rotation=THREE.MathUtils.lerp(actual.rotation,actual.targetRotation,1-Math.exp(-1/60*2.8));
+    model.rotation.y=actual.rotation;model.updateMatrixWorld(true);
+    assert(actual.projectionEntryReady(framing.span,neighborTop,false,actual.physicalProjector()),"Native smooth preparation makes a rotated reading entry physically ready");
+    actual.cancelProjectionPreparation();assert.equal(actual.targetRotation,rotation);
+  }
+  actual.rotation=actual.targetRotation=0;model.rotation.y=0;model.updateMatrixWorld(true);
+  actual.prepareProjection();actual.beginProjection();
+  const initial=actual.projectionCamera,heldPlane=initial.plane,heldReceiver=initial.receiver.map(point=>point.clone());
+  assert(heldPlane&&heldReceiver.length===4);
+  let distance=Infinity;
+  for(const ms of [0,550,1350,1850,2750,3600,3900,4200,5000,6000,6800]) {
+    actual.setProjectionPresentation(carrierCue(ms));
+    const sample=actual.advance(originalPosition,originalAim,fov,.1,1/60);
+    assert(actual.projectionCamera,"A zero camera-progress hold does not release a still-running presentation");
+    assert.equal(actual.projectionCamera.plane,heldPlane,"The physical receiving plane stays frozen throughout an unchanged viewport");
+    heldReceiver.forEach((point,index)=>close(point.distanceTo(actual.projectionCamera.receiver[index]),0,"Receiver world corners do not follow the camera"));
+    close(camera.fov,fov,"No finite FOV offset can advance then undo the native camera");
+    if(ms<=4200)close(camera.position.distanceTo(originalPosition),0,"The actual Scene camera holds the completed native shot",1e-10);
+    const centre=initial.aim.clone().addScaledVector(initial.right,heldPlane.centre.x*initial.span).addScaledVector(initial.vertical,heldPlane.centre.y*initial.span).addScaledVector(initial.backward,heldPlane.centre.z*initial.span);
+    const nextDistance=camera.position.distanceTo(centre);assert(nextDistance<=distance+1e-9,"Actual Scene approach is one-way in world space");distance=nextDistance;
+    const frame=carrierFrame(carrierCue(ms),size,{left:0,top:0,width:size.width,height:size.height},sample);
+    initial.receiver.forEach((point,index)=>{const screen=point.clone().project(camera);close(frame.corners[index].x,(screen.x+1)*size.width/2,"Actual Scene beam and DOM share receiver X",1e-6);close(frame.corners[index].y,(1-screen.y)*size.height/2,"Actual Scene beam and DOM share receiver Y",1e-6);});
+    actual.rememberPresentedFrame(ms/1000,sample);
+    assert.equal(actual.projectorPresented.physicalSource,true);assert.equal(actual.projectorPresented.sceneBeam,true);
+    actualSceneCases++;
+  }
+  // Recreate the previous camera-only plane with the same actual entry basis.
+  // These rays really enter the original GLB cover almost immediately.
+  const portrait=size.width/size.height<1.05,normal=new THREE.Vector3(portrait?.09:.18,portrait?-.12:.055,1).normalize();
+  const right=new THREE.Vector3(0,1,0).cross(normal).normalize(),up=normal.clone().cross(right);
+  const old={centre:{x:size.width/size.height*(portrait?.025:.255),y:portrait?-.245:.035,z:-.52},normal,right,up,scale:portrait?.49:.46};
+  const oldReceiver=carrierPlaneCorners(old,size).map(point=>initial.aim.clone().addScaledVector(initial.right,point.x*initial.span).addScaledVector(initial.vertical,point.y*initial.span).addScaledVector(initial.backward,point.z*initial.span));
+  const aperture=actual.physicalProjector(),coverZ=realCoverBounds.max.z+model.position.z;
+  oldReceiver.forEach((target,index)=>{
+    const source=aperture.corners[index],ray=target.clone().sub(source);
+    assert(ray.dot(aperture.normal)<0,"The fixture detects the previous receiver behind the real glass");
+    const fraction=(coverZ-source.z)/ray.z,hit=source.clone().addScaledVector(ray,fraction).sub(model.position);
+    assert(fraction>0&&fraction<.06&&hit.x>realCoverBounds.min.x&&hit.x<realCoverBounds.max.x&&hit.y>realCoverBounds.min.y&&hit.y<realCoverBounds.max.y,"The old ray crosses the actual GLB cover in its first 6%");oldBackwardsRayCases++;
+  });
+  // A mid-flight orientation change rebuilds both optical layers atomically.
+  const resized={width:size.height,height:size.width};actual.container.clientWidth=resized.width;actual.container.clientHeight=resized.height;camera.aspect=resized.width/resized.height;
+  actual.setProjectionPresentation(carrierCue(5000));const resizedSample=actual.advance(originalPosition,originalAim,fov,.1,1/60);
+  const resizedFrame=carrierFrame(carrierCue(5000),resized,{left:0,top:0,width:resized.width,height:resized.height},resizedSample);
+  actual.projectionCamera.receiver.forEach((point,index)=>{const screen=point.clone().project(camera);close(resizedFrame.corners[index].x,(screen.x+1)*resized.width/2,"Resize keeps actual beam and DOM receiver X together",1e-6);close(resizedFrame.corners[index].y,(1-screen.y)*resized.height/2,"Resize keeps actual beam and DOM receiver Y together",1e-6);for(const source of aperture.corners)assert(point.clone().sub(source).dot(aperture.normal)>=.9-1e-8,"Responsive reconstruction preserves physical forward clearance");});
+  actual.setProjectionPresentation(0);actual.advance(originalPosition,originalAim,fov,.1,1/60);
+  assert.equal(actual.projectionCamera,undefined,"Only the completed return releases the fixed rig");actual.endProjection();assert.equal(actual.projectionPreparation,undefined);
+}
 appearance.dispose(selectedPort);appearance.dispose(returningPort);appearance.disposeSources();
 for(const inst of backgroundPorts){inst.material.dispose();inst.dispose();}
 for(const geometry of new Set(portMeshes.map(mesh=>mesh.geometry)))geometry.dispose();
 
-console.log(JSON.stringify({checks:"Readable ignition, geometric beam growth, closed-frame-first image reveal and continuous coexistence drift, stall-safe presentation time, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization, finite entry inertia, complete drawn-phase synchronization, scaled-stage production painting and rectangular optical-source alignment, settled mask removal and resource/input cleanup",reversalCases,scaledPainterCases,opticalLifecycleCases:2,projectorBackgroundGroups:backgroundPorts.length,maxProjectionErrorPx:maxProjectionError,maxExposedOverlap},null,2));
+console.log(JSON.stringify({checks:"Uniform presentation time, source/beam/frame/image causal timing, 600ms completed-image hold, C2 one-way camera approach, stall-safe time, exact landing and bounded reversals; actual Scene methods with GLB-derived front glass, on-screen/front-facing/stable-camera gating, smooth rotated-entry preparation/cancellation, positive forward rays against the original cover, fixed world plane, physical beam/DOM agreement through resize, scaled-stage synchronization and complete optical cleanup",reversalCases,actualSceneCases,oldBackwardsRayCases,scaledPainterCases,opticalLifecycleCases:2,projectorBackgroundGroups:backgroundPorts.length,minimumPhysicalClearance,maxProjectionErrorPx:maxProjectionError,maxExposedOverlap},null,2));

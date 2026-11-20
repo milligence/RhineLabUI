@@ -86,7 +86,14 @@ function integrate(seconds) {
     if (viewer.isOpen) { flightElapsed += 1000/60; viewer.advancePresentation(flightElapsed); }
     scene.update(time, cinematic(), false);
     paintPaper();
-    if (pendingProjection && !viewer.isOpen && scene.projectionReady) startProjection();
+    if (pendingProjection && !viewer.isOpen && scene.projectionReady) {
+      // A manual multi-second seek integrates without drawing intermediate
+      // frames. Present the ready native camera before freezing its world
+      // basis, just as the production RAF does; never inherit an old array
+      // screenshot as the optical entry pose.
+      scene.update(time, cinematic(), true);
+      startProjection();
+    }
   }
 }
 function draw() {
@@ -118,7 +125,7 @@ function open() {
 }
 function close() {
   if (viewer.isOpen) { viewer.close(); return; }
-  pendingProjection = false; delete stage.dataset.projectionPending;
+  pendingProjection = false; scene.cancelProjectionPreparation(); delete stage.dataset.projectionPending;
   delete stage.dataset.projectionRoute;
   mode = "archive"; stage.dataset.mode = mode; scene.setMode("archive"); stamp("close");
 }
@@ -127,7 +134,7 @@ function source() {
   const aperture = scene.projectProjector();
   if (!aperture) return undefined;
   const point = p => ({x:b.left+p.x*b.width/host.clientWidth,y:b.top+p.y*b.height/host.clientHeight});
-  return {origin:point(aperture.origin),edge:aperture.edge?.map(point),corners:aperture.corners?.map(point),outline:aperture.outline?.map(point)};
+  return {...aperture,origin:point(aperture.origin),edge:aperture.edge?.map(point),corners:aperture.corners?.map(point),outline:aperture.outline?.map(point)};
 }
 function startProjection() {
   pendingProjection = false; flightElapsed = 0;
@@ -146,6 +153,7 @@ function project() {
   stage.dataset.projectionRoute = projectionFromArchive ? "array" : "reading";
   stage.dataset.projectionPending = "true";
   if (mode !== "detail") open();
+  scene.prepareProjection();
   pendingProjection = true;
   if (scene.projectionReady) startProjection();
 }

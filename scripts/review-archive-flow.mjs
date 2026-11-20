@@ -9,19 +9,58 @@ import { build } from "esbuild";
 // public five-by-ten fixture may enter this portable review, never private data.
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const destination = path.resolve(process.argv[2] ?? ".tools/archive-flow-review");
+const offline = process.argv.includes("--offline");
 const publicBase = "https://raw.githubusercontent.com/milligence/RhineLabUI/2a68fb4137e52b0f836f7e6b726186b647c875bb/public/";
 const hash = bytes => createHash("sha256").update(bytes).digest("hex");
+const embeddedFiles = {};
+const embeddedAssets = {};
+if (offline) {
+  for (const name of ["assets/archive-cassette.glb", "assets/archive-assembly.glb"]) {
+    const bytes = await fs.readFile(path.join(root, "public", name));
+    embeddedAssets[name] = `data:model/gltf-binary;base64,${bytes.toString("base64")}`;
+    embeddedFiles[`public/${name}`] = hash(bytes);
+  }
+}
+async function reviewFonts() {
+  const fonts = await fs.readFile(path.join(root, "src/fonts.css"), "utf8");
+  if (!offline) return fonts.replaceAll('url("/', `url("${publicBase}`);
+  // Keep the exact vendored subsets used by public source/fixture characters.
+  // No private text and no separately licensed Novecento kit enters this file.
+  const sources = (await fs.readdir(path.join(root, "src"))).filter(name => /\.(ts|css)$/.test(name));
+  const text = (await Promise.all(sources.map(name => fs.readFile(path.join(root, "src", name), "utf8")))).join("") +
+    await fs.readFile(path.join(root, "content/fixtures/array-5x10.json"), "utf8") +
+    await fs.readFile(path.join(root, "reference/archive-flow-review.html"), "utf8");
+  const characters = [...new Set([...text].map(character => character.codePointAt(0)))];
+  const rules = [];
+  for (const face of fonts.matchAll(/@font-face\{[^}]+\}/g)) {
+    const rule = face[0], ranges = rule.match(/unicode-range:([^}]+)/)?.[1] ?? "";
+    const used = ranges.split(",").some(range => {
+      const [low, high = low] = range.trim().replace(/^U\+/i, "").split("-").map(value => parseInt(value, 16));
+      return characters.some(code => code >= low && code <= high);
+    });
+    if (!used) continue;
+    const resource = rule.match(/url\("\/([^\"]+)"\)/)?.[1];
+    if (!resource) throw new Error("Unexpected vendored font URL");
+    const bytes = await fs.readFile(path.join(root, "public", resource));
+    embeddedFiles[`public/${resource}`] = hash(bytes);
+    rules.push(rule.replace(`url("/${resource}")`, `url("data:font/woff2;base64,${bytes.toString("base64")}")`));
+  }
+  return rules.join("\n");
+}
 const result = await build({
   absWorkingDir: root, entryPoints: ["reference/archive-flow-review.js"],
   outdir: path.join(destination, "compiled"), bundle: true, minify: true,
   format: "esm", target: "es2022", write: false, metafile: true,
   define: { "import.meta.env.PROD": "false", "import.meta.env.BASE_URL": JSON.stringify(publicBase), __RHINE_MODELS__: "{}" },
   plugins: [{ name: "public-scene-review", setup(plugin) {
+    if (offline) plugin.onLoad({ filter: /[/\\]src[/\\]asset-url\.ts$/ }, () => ({
+      contents: `const assets=${JSON.stringify(embeddedAssets)};export const assetUrl=(path)=>{const key=path.replace(/^\\//,"");if(!assets[key])throw new Error("Offline review asset missing: "+key);return assets[key]};`, loader: "ts",
+    }));
     plugin.onLoad({ filter: /[/\\]content[/\\]archives\.json$/ }, async () => ({
       contents: await fs.readFile(path.join(root, "content/fixtures/array-5x10.json"), "utf8"), loader: "json",
     }));
     plugin.onLoad({ filter: /[/\\]src[/\\]fonts\.css$/ }, async () => ({
-      contents: (await fs.readFile(path.join(root, "src/fonts.css"), "utf8")).replaceAll('url("/', `url("${publicBase}`), loader: "css",
+      contents: await reviewFonts(), loader: "css",
     }));
   } }],
 });
@@ -37,6 +76,7 @@ for (const file of Object.keys(result.metafile.inputs).sort()) {
   }
 }
 const identity = { content: "public synthetic fixture only", reviewKind: "archive-flow", sourceDigest: hash(JSON.stringify(sourceFiles)), sourceFiles,
+  assetMode: offline ? "embedded original public GLBs and exact vendored MiSans subsets" : "fixed public repository URLs", embeddedFiles,
   scope: "Actual ArchiveScene, original public GLBs, production ProjectionViewer, camera, aperture and optical field. Requires WebGL2. Public five-by-ten fixture only." };
 const template = await fs.readFile(path.join(root, "reference/archive-flow-review.html"), "utf8");
 const frameHTML = template.replace("</head>", () => `<meta name="rhine-review-source" content="${identity.sourceDigest}"><style>${css}</style></head>`)
