@@ -13,6 +13,7 @@
     "check:optical": "node --test scripts/check-optical-content.mjs && node --experimental-strip-types scripts/check-cube-projection.mjs",
     "check:projection": "node --experimental-strip-types scripts/check-carrier-flight.mjs && node --experimental-strip-types scripts/check-entry-routing.mjs && node --experimental-strip-types scripts/check-archive-arrival.mjs && node --experimental-strip-types scripts/check-research-schema.mjs",
     "check:projection-ui-state": "node --experimental-strip-types scripts/check-projection-ui-state.mjs",
+    "check:carrier-optics": "node --experimental-strip-types scripts/check-carrier-optics.mjs",
     "check:viewport": "node --experimental-strip-types scripts/check-viewport.mjs",
     "review:mobile": "node scripts/serve-mobile-review.mjs",
     "review:collection": "node --experimental-strip-types scripts/make-review-collection.mjs && node scripts/private-archive.mjs content/fixtures/array-5x10.json --review",

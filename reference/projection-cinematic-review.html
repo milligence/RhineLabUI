@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rhine · optical projection review</title><style>/*__REVIEW_CSS__*/</style></head>
+<body class="cinematic-review-page">
+  <section class="cinematic-review-toolbar" aria-label="公开投影动态验收工具">
+    <header><strong>RHINE / OPTICAL PROJECTION</strong><small>真实生产投影 · 公开合成样本 · 标定平面不代表档案实体</small></header>
+    <div class="cinematic-controls">
+      <button data-command="restart" data-value="research">重播研究投影</button><button data-command="restart" data-value="cube">重播 Cube 投影</button>
+      <button data-command="play" id="cinematic-play" aria-pressed="false">播放 / 暂停</button><button data-command="pause">暂停</button>
+      <button data-command="return">返回</button><button data-command="reopen">中途重新接入</button>
+      <button data-command="step" data-value="-1">−1 帧</button><button data-command="step" data-value="1">＋1 帧</button>
+      <label>速度<select id="cinematic-speed" aria-label="播放速度"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+    </div>
+    <div class="cinematic-controls">
+      <span>入场定位</span><button data-fraction="0.115">蓄光</button><button data-fraction="0.21">束场</button><button data-fraction="0.35">成像</button><button data-fraction="0.46">悬停</button><button data-fraction="0.67">接近</button><button data-fraction="1">阅读</button>
+      <input id="cinematic-timeline" type="range" min="0" max="5200" step="1" value="0" aria-label="入场时间轴">
+      <label>毫秒<input id="cinematic-time" type="number" min="0" max="5200" step="50" value="0" aria-label="入场时间（毫秒）"></label><button id="cinematic-seek">应用时间</button><button data-command="focus">聚焦长记录</button>
+    </div>
+    <div class="cinematic-controls">
+      <label>视口<select id="cinematic-size" aria-label="视口"><option value="auto">跟随窗口</option><option value="1280x800">1280 × 800</option><option value="1440x900">1440 × 900</option><option value="900x614">900 × 614</option><option value="390x780">390 × 780</option></select></label>
+      <label><input type="checkbox" id="cinematic-dark">暗色</label><label><input type="checkbox" id="cinematic-reduced">减少动态</label>
+      <button id="cinematic-hide">隐藏验收栏</button><label>载入公开本地预览<input type="file" id="cinematic-local" accept=".html,text/html" aria-label="载入公开本地预览文件"></label>
+    </div>
+    <output id="cinematic-status" class="cinematic-review-status">正在载入生产组件…</output><output id="cinematic-errors" class="cinematic-review-errors" role="alert"></output>
+  </section>
+  <main class="cinematic-review-stage"><iframe id="cinematic-frame" title="生产投影演出与光源标定" sandbox="allow-scripts allow-same-origin allow-downloads allow-popups"></iframe></main>
+  <details class="cinematic-review-report"><summary>当前时间、真实组件状态与构建身份</summary><pre id="cinematic-report"></pre></details>
+  <button id="cinematic-restore" hidden>验收工具</button>
+  <script>
+    const scope = "rhine-projection-cinematic-review";
+    const frame = document.getElementById("cinematic-frame"), stage = document.querySelector(".cinematic-review-stage"), toolbar = document.querySelector(".cinematic-review-toolbar");
+    const size = document.getElementById("cinematic-size"), status = document.getElementById("cinematic-status"), errors = document.getElementById("cinematic-errors");
+    const timeline = document.getElementById("cinematic-timeline"), time = document.getElementById("cinematic-time");
+    let identity = /*__REVIEW_IDENTITY__*/;
+    const framePayload = /*__FRAME_PAYLOAD__*/;
+    let duration = 5200;
+    function send(command, value) { frame.contentWindow.postMessage({ scope, command, value }, "*"); }
+    function layout() {
+      const hidden = document.body.classList.contains("cinematic-review-hidden"), style = getComputedStyle(stage);
+      const horizontal = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight), vertical = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+      const dimensions = size.value === "auto" ? [Math.max(1, Math.floor(stage.clientWidth - horizontal)), Math.max(400, innerHeight - (hidden ? 0 : toolbar.offsetHeight) - vertical)] : size.value.split("x").map(Number);
+      frame.style.width = dimensions[0] + "px"; frame.style.height = dimensions[1] + "px";
+    }
+    document.querySelectorAll("[data-command]").forEach(button => button.addEventListener("click", () => send(button.dataset.command, button.dataset.value)));
+    document.querySelectorAll("[data-fraction]").forEach(button => button.addEventListener("click", () => send("seek", Number(button.dataset.fraction) * duration)));
+    document.getElementById("cinematic-seek").addEventListener("click", () => send("seek", Number(time.value)));
+    time.addEventListener("keydown", event => { if (event.key === "Enter") send("seek", Number(time.value)); });
+    timeline.addEventListener("input", () => { time.value = timeline.value; });
+    timeline.addEventListener("change", () => send("seek", Number(timeline.value)));
+    document.getElementById("cinematic-speed").addEventListener("change", event => send("speed", event.target.value));
+    document.getElementById("cinematic-dark").addEventListener("change", event => send("theme", event.target.checked));
+    document.getElementById("cinematic-reduced").addEventListener("change", event => send("reduced", event.target.checked));
+    size.addEventListener("change", layout); window.addEventListener("resize", layout);
+    const observer = new ResizeObserver(() => requestAnimationFrame(layout)); observer.observe(stage); observer.observe(toolbar);
+    document.getElementById("cinematic-hide").addEventListener("click", () => { document.body.classList.add("cinematic-review-hidden"); document.getElementById("cinematic-restore").hidden = false; layout(); });
+    document.getElementById("cinematic-restore").addEventListener("click", () => { document.body.classList.remove("cinematic-review-hidden"); document.getElementById("cinematic-restore").hidden = true; layout(); });
+    window.addEventListener("message", event => {
+      if (event.source !== frame.contentWindow || event.data?.scope !== scope) return;
+      if (event.data.event === "error") { errors.textContent += event.data.message + "\n"; return; }
+      const data = event.data, stats = data.stats;
+      duration = data.entranceMs; time.max = timeline.max = String(duration);
+      document.getElementById("cinematic-play").setAttribute("aria-pressed", String(data.running));
+      if (data.mode === "entrance") {
+        const value = String(Math.min(duration, Math.round(data.elapsedMs)));
+        if (document.activeElement !== time) time.value = value;
+        if (document.activeElement !== timeline) timeline.value = value;
+      }
+      status.textContent = data.width + " × " + data.height + " · " + (stats.kind || "closed") + " · " + (stats.phase || "closed") + " / " + (stats.beat || "—") + " · t " + (data.elapsedMs / 1000).toFixed(3) + " s · phase " + ((stats.flight.progress || 0) * 100).toFixed(1) + "% · " + (data.running ? "播放中" : "已暂停") + " · source " + identity.sourceDigest.slice(0, 12);
+      document.getElementById("cinematic-report").textContent = JSON.stringify({ identity, current: data }, null, 2);
+    });
+    async function loadFrame(payload = framePayload) {
+      let documentHTML = payload.data;
+      if (payload.encoding === "gzip-base64") {
+        if (typeof DecompressionStream !== "function") throw new Error("当前浏览器不支持 gzip 解压，请使用未压缩验收包。");
+        const bytes = Uint8Array.from(atob(payload.data), character => character.charCodeAt(0));
+        documentHTML = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+      }
+      frame.srcdoc = documentHTML;
+    }
+    // Local file reading only. No file body is posted or uploaded to a server.
+    document.getElementById("cinematic-local").addEventListener("change", async event => {
+      const file = event.target.files?.[0]; if (!file) return;
+      errors.textContent = "";
+      try {
+        const text = await file.text();
+        const payloadMatch = text.match(/const framePayload = ([^\n]+);\r?\n/), identityMatch = text.match(/(?:const|let) identity = ([^\n]+);\r?\n/);
+        if (!payloadMatch || !identityMatch) throw new Error("文件不是动态验收生成器的公开 bundle。");
+        const next = JSON.parse(identityMatch[1]);
+        if (next.content !== "public synthetic fixture only" || next.reviewKind !== "projection-cinematic") throw new Error("此入口只接受公开投影动态验收包。");
+        identity = next; await loadFrame(JSON.parse(payloadMatch[1]));
+        document.getElementById("cinematic-dark").checked = false; document.getElementById("cinematic-reduced").checked = false; document.getElementById("cinematic-speed").value = "1";
+      } catch (error) { errors.textContent = String(error); }
+      event.target.value = "";
+    });
+    layout(); loadFrame().catch(error => { errors.textContent = String(error); });
+  </script>
+</body>
+</html>

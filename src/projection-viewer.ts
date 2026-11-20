@@ -4,6 +4,7 @@ import { ResearchProjection, sourceMarkup, type ResearchViewState } from "./rese
 import { CubeProjection } from "./cube-projection";
 import type { CubeProjectionData } from "./projection-types";
 import { CarrierFlight, CarrierPresentationClock, CARRIER_ENTRANCE_MS, CARRIER_RETURN_MS, carrierFrame, carrierCameraProgress, carrierLocalPoint, type CarrierCameraSample, type CarrierSample, type FlightBox } from "./carrier-flight";
+import { CarrierOptics } from "./carrier-optics";
 import "./projection-atmosphere.css";
 import "./cube-optics.css";
 
@@ -42,6 +43,9 @@ export class ProjectionViewer {
   private beatTrace: { beat: string; elapsed: number; progress: number }[] = [];
   private flightStarted = 0;
   private frameState?: ReturnType<typeof carrierFrame>;
+  private optics?: CarrierOptics;
+  private opticalMask = "";
+  private opticalClarity = 1;
   private options: ProjectionOptions = { reducedMotion: false, onClose: () => {} };
   isOpen = false;
 
@@ -108,6 +112,10 @@ export class ProjectionViewer {
       // no full-sized work surface may appear before its light has formed.
       this.host.style.opacity = "0";
       this.host.style.clipPath = "inset(100% 0 0 0)";
+      this.host.style.maskImage = "none";
+      this.host.style.setProperty("-webkit-mask-image", "none");
+      this.opticalMask = "";
+      this.root.style.setProperty("--carrier-detail", "0");
       this.root.querySelector<HTMLElement>(".projection-header")!.style.opacity = "0";
       this.root.querySelector<HTMLElement>(".projection-environment")!.style.opacity = "0";
     }
@@ -132,15 +140,10 @@ export class ProjectionViewer {
   private enterFromCarrier(options: ProjectionOptions, resume: boolean) {
     const ignition = this.root.querySelector<HTMLElement>(".projection-ignition")!;
     this.imageBox = { left: this.host.offsetLeft, top: this.host.offsetTop, width: this.host.offsetWidth, height: this.host.offsetHeight };
-    if (!resume || !ignition.firstChild) {
-      ignition.innerHTML = `<svg preserveAspectRatio="none"><defs>
-        <linearGradient id="carrier-light" x1="0" y1="1" x2=".6" y2="0"><stop stop-color="var(--optical-accent)" stop-opacity=".32"/><stop offset=".42" stop-color="var(--optical-accent)" stop-opacity=".075"/><stop offset="1" stop-color="white" stop-opacity=".16"/></linearGradient>
-        <radialGradient id="carrier-aperture"><stop stop-color="white" stop-opacity="1"/><stop offset=".12" stop-color="var(--optical-accent)" stop-opacity=".8"/><stop offset="1" stop-color="var(--optical-accent)" stop-opacity="0"/></radialGradient>
-        </defs><path class="carrier-volume" fill="url(#carrier-light)"/><path class="carrier-inner-volume" fill="url(#carrier-light)"/>
-        <path class="carrier-rays"/><path class="carrier-cross-sections"/><path class="carrier-image-outline" pathLength="1"/><path class="carrier-image-scan"/>
-        <g class="carrier-source"><ellipse class="carrier-emitter" rx="12" ry="6" fill="url(#carrier-aperture)"/><path class="carrier-aperture-edge"/><ellipse class="carrier-aperture-ring" rx="8" ry="4"/><circle r="3.2" fill="var(--optical-accent)"/></g>
-        </svg><div class="carrier-channel"><span class="carrier-channel-id"></span><span class="carrier-channel-state">投影开启</span><i><b></b></i></div>`;
-      ignition.querySelector(".carrier-channel-id")!.textContent = this.record!.id;
+    if (!resume || !this.optics) {
+      this.optics?.dispose();
+      ignition.replaceChildren();
+      this.optics = new CarrierOptics(ignition);
     }
     this.host.inert = true;
     if (options.reducedMotion) {
@@ -184,53 +187,32 @@ export class ProjectionViewer {
     header.style.transform = "translateY(" + ((1-f.header)*8).toFixed(2) + "px)";
     this.host.style.opacity = String(f.image);
     this.host.style.transform = f.transform;
-    this.host.style.clipPath = `inset(${((1 - f.reveal) * 100).toFixed(3)}% 0 0 0)`;
-    this.host.style.setProperty("--carrier-plane-frame", String(f.frame));
+    this.host.style.clipPath = "none";
     this.root.style.setProperty("--carrier-interface", String(f.interface));
     this.root.style.setProperty("--carrier-light", String(f.light));
-    ignition.style.opacity = String(f.light);
-    const svg = ignition.querySelector("svg");
-    if (svg) {
-      svg.setAttribute("viewBox", "0 0 " + surface.width + " " + surface.height);
-      const [a,b,c,d] = f.corners;
-      const point = (v: { x: number; y: number }) => v.x.toFixed(2) + "," + v.y.toFixed(2);
-      const originText = x.toFixed(2) + "," + y.toFixed(2);
-      const lerp = (from: { x: number; y: number }, to: { x: number; y: number }, t: number) => ({ x: from.x + (to.x - from.x) * t, y: from.y + (to.y - from.y) * t });
-      const centre = { x: (a.x + b.x + c.x + d.x) / 4, y: (a.y + b.y + c.y + d.y) / 4 };
-      const sourcePoint = { x, y }, tip = lerp(sourcePoint, centre, f.beamReach);
-      const ends = f.corners.map(corner => ({ x: tip.x + (corner.x - centre.x) * f.beamReach * f.beamSpread, y: tip.y + (corner.y - centre.y) * f.beamReach * f.beamSpread }));
-      const [la,lb,lc,ld] = ends;
-      // Extend the actual light volume from the source before widening its
-      // aperture. Opacity alone would make a complete triangle simply pop in.
-      ignition.querySelector(".carrier-volume")!.setAttribute("d", "M" + originText + " L" + point(la) + " L" + point(lb) + " Z");
-      ignition.querySelector(".carrier-inner-volume")!.setAttribute("d", "M" + originText + " L" + point(ld) + " L" + point(lc) + " Z");
-      ignition.querySelector(".carrier-rays")!.setAttribute("d", "M" + point(la) + " L" + originText + " L" + point(lb) + " M" + point(ld) + " L" + originText + " L" + point(lc));
-      const sections = [.34,.61,.83].map(distance => "M" + point(lerp(sourcePoint,la,distance)) + " L" + point(lerp(sourcePoint,lb,distance)) + " M" + point(lerp(sourcePoint,ld,distance)) + " L" + point(lerp(sourcePoint,lc,distance))).join(" ");
-      ignition.querySelector(".carrier-cross-sections")!.setAttribute("d", sections);
-      const rim = ignition.querySelector(".carrier-image-outline") as SVGElement;
-      rim.setAttribute("d", "M" + point(la) + " L" + point(lb) + " L" + point(lc) + " L" + point(ld) + " Z");
-      rim.style.opacity = String(f.frame * .7);
-      rim.style.strokeDashoffset = String(1 - f.frame);
-      const scan = ignition.querySelector(".carrier-image-scan") as SVGElement;
-      scan.setAttribute("d", "M" + point(f.scanLine[0]) + " L" + point(f.scanLine[1]));
-      scan.style.opacity = String(Math.sin(Math.PI * f.reveal) * .8);
-      const source = ignition.querySelector(".carrier-source") as SVGGElement;
-      source.setAttribute("transform", "translate(" + x + "," + y + ")");
-      source.style.opacity = String(f.emitter);
-      const halo = ignition.querySelector(".carrier-emitter")!;
-      halo.setAttribute("rx", String(12 + 43 * f.charge)); halo.setAttribute("ry", String(6 + 19 * f.charge));
-      const ring = ignition.querySelector(".carrier-aperture-ring")!;
-      ring.setAttribute("rx", String(8 + 16 * f.charge)); ring.setAttribute("ry", String(4 + 6 * f.charge));
-      const edge = sample?.edge?.map(p => carrierLocalPoint(p, rect, surface));
-      const edgePoints = edge ? edge.map(p => ({ x: (p.x - origin.x) * f.charge, y: (p.y - origin.y) * f.charge })) : [{ x: -30*f.charge, y: 0 }, { x: 30*f.charge, y: 0 }];
-      ignition.querySelector(".carrier-aperture-edge")!.setAttribute("d", "M" + point(edgePoints[0]) + " L" + point(edgePoints[1]));
-      const channel = ignition.querySelector<HTMLElement>(".carrier-channel")!;
-      channel.style.left = (x + 26) + "px";
-      channel.style.top = (y + 28) + "px";
-      channel.style.opacity = String(f.emitter);
-      channel.querySelector(".carrier-channel-state")!.textContent = this.closing ? "投影收束" : f.beat === "ignition" ? "投影开启" : f.beat === "beam-forming" ? "光场展开" : f.beat === "image-forming" ? "影像形成" : "投影已建立";
-      channel.querySelector<HTMLElement>("b")!.style.transform = `scaleX(${Math.min(1, this.flight.value / .38)})`;
+    ignition.style.opacity = "1";
+    const localEdge = sample?.edge ? [
+      carrierLocalPoint(sample.edge[0], rect, surface),
+      carrierLocalPoint(sample.edge[1], rect, surface),
+    ] as [{ x: number; y: number }, { x: number; y: number }] : undefined;
+    const optics = this.optics?.render({
+      frame: f, origin, edge: localEdge, width: surface.width, height: surface.height,
+      planeWidth: this.imageBox.width, planeHeight: this.imageBox.height,
+      elapsed: this.clock.value,
+      dark: this.root.closest<HTMLElement>("[data-dark-surface]")?.dataset.darkSurface === "true",
+      reduced: this.options.reducedMotion,
+    });
+    const mask = optics?.maskImage ?? "none";
+    if (mask !== this.opticalMask) {
+      this.host.style.maskImage = mask;
+      this.host.style.setProperty("-webkit-mask-image", mask);
+      this.opticalMask = mask;
     }
+    // Structure resolves while suspended; fine labels become readable as the
+    // same lens approaches. The settled document never retains optical blur.
+    const near = Math.max(0, Math.min(1, (f.camera - .24) / .64));
+    this.opticalClarity = Math.min(optics?.clarity ?? 1, near * near * (3 - 2 * near));
+    this.root.style.setProperty("--carrier-detail", String(this.opticalClarity));
     this.setBeat(this.closing ? "returning" : f.beat);
   }
 
@@ -259,6 +241,11 @@ export class ProjectionViewer {
     this.host.style.transform = "none";
     this.host.style.opacity = "1";
     this.host.style.clipPath = "none";
+    this.host.style.maskImage = "none";
+    this.host.style.setProperty("-webkit-mask-image", "none");
+    this.opticalMask = "none";
+    this.opticalClarity = 1;
+    this.root.style.setProperty("--carrier-detail", "1");
     this.root.style.setProperty("--carrier-interface", "1");
     this.host.inert = false;
     this.root.dataset.state = "open";
@@ -327,6 +314,7 @@ export class ProjectionViewer {
     this.flight.jump(0);
     this.options.onCameraProgress?.(0);
     this.research?.dispose(); this.cube?.dispose(); this.research = undefined; this.cube = undefined;
+    this.optics?.dispose(); this.optics = undefined; this.opticalMask = "";
     this.root.querySelector(".projection-ignition")!.replaceChildren();
     this.root.hidden = true; this.isOpen = false; this.closing = false; this.host.replaceChildren();
     this.siblings.forEach(({ node, inert }) => node.inert = inert); this.siblings = [];
@@ -340,8 +328,8 @@ export class ProjectionViewer {
     }
     if (value && this.closing) this.close(true);
   }
-  refreshTheme() { this.cube?.refreshTheme(); }
+  refreshTheme() { this.cube?.refreshTheme(); if (this.needsCarrierScene) this.paintFlight(); }
   get needsCarrierScene() { return this.isOpen && this.root.dataset.state !== "open"; }
-  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, velocity: this.flight.velocity, presentedMs: this.clock.value, camera: this.frameState?.camera, requestedCamera: this.frameState?.requestedCamera, perspective: this.frameState?.rig.perspective, position: this.frameState?.rig.position, aim: this.frameState?.rig.aim, image: this.frameState?.image, reveal: this.frameState?.reveal, beamReach: this.frameState?.beamReach, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
+  getStats() { return { open: this.isOpen, kind: this.record?.projection?.kind, phase: this.root.dataset.state, beat: this.currentBeat, flight: { progress: this.flight.value, velocity: this.flight.velocity, presentedMs: this.clock.value, camera: this.frameState?.camera, requestedCamera: this.frameState?.requestedCamera, perspective: this.frameState?.rig.perspective, position: this.frameState?.rig.position, aim: this.frameState?.rig.aim, image: this.frameState?.image, clarity: this.opticalClarity, opticalMask: this.opticalMask === "none" ? "none" : "granular", reveal: this.frameState?.reveal, beamReach: this.frameState?.beamReach, environment: this.frameState?.environment, corners: this.frameState?.corners, trace: [...this.beatTrace] }, record: this.record?.id, research: this.research?.getStats(), cube: this.cube?.getStats() }; }
   dispose() { this.close(true); cancelAnimationFrame(this.flightRaf); this.root.remove(); }
 }
