@@ -1,0 +1,33 @@
+Command: npm run build
+Started: 2026-11-20T08:01:52.437199+00:00
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> rhine-lab-analysis-os@1.0.0 prebuild
+> node scripts/patch-rolling-number.mjs && node scripts/export-records.mjs && node scripts/prepare-webfonts.mjs
+
+Prepared 40 downloadable archive records.
+
+> rhine-lab-analysis-os@1.0.0 build
+> tsc && vite build && node scripts/build-pwa.mjs
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 119 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        1.10 kB │ gzip:   0.57 kB
+dist/assets/archive-assembly.d411170676f55a32.glb  3,343.74 kB
+dist/assets/archive-cassette.dda42b9b3b471d11.glb  3,565.12 kB
+dist/assets/index-B9RtjF4z.css                       765.04 kB │ gzip: 222.32 kB
+dist/assets/index-B_WGfk7L.js                      1,110.25 kB │ gzip: 330.90 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 3.20s
+Offline release c0aaf775a99d57fd: 819 files, 34.0 MiB.
+
+Finished: 2026-11-20T08:01:59.421564+00:00
+Exit code: 0

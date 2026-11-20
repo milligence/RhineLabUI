@@ -1,0 +1,67 @@
+Command: npm run check:projection
+Started: 2026-11-20T08:01:49.323262+00:00
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> rhine-lab-analysis-os@1.0.0 check:projection
+> node --experimental-strip-types scripts/check-carrier-flight.mjs && node --experimental-strip-types scripts/check-entry-routing.mjs && node --experimental-strip-types scripts/check-archive-arrival.mjs && node --experimental-strip-types scripts/check-research-schema.mjs
+
+{
+  "checks": "Readable ignition, geometric beam growth, closed-frame-first image reveal and continuous coexistence drift, stall-safe presentation time, real orbit and fixed-lens dolly, exact landing, C2 reversals, bounded braking, Three/CSS alignment, responsive carrier separation, drawn-frame synchronization, finite entry inertia, complete drawn-phase synchronization, scaled-stage production painting and rectangular optical-source alignment, settled mask removal and resource/input cleanup",
+  "reversalCases": 288,
+  "scaledPainterCases": 25,
+  "opticalLifecycleCases": 2,
+  "projectorBackgroundGroups": 4,
+  "maxProjectionErrorPx": 0.0000011216607163078152,
+  "maxExposedOverlap": 0
+}
+{
+  "passed": true,
+  "scope": "Actual main.ts state-transition functions with inert DOM/scene fixtures; no visual rendering claim",
+  "checks": [
+    "Actual moving aperture is sampled continuously in viewport coordinates, camera progress reaches ArchiveScene, and array return cannot flash the reading article",
+    "Esc/back invalidates the pending RAF and hides the never-exposed article synchronously",
+    "A modal interrupts extraction, preserves its opener, and cannot be overtaken by a pending projection",
+    "Reading-origin projection returns to the same reading surface without rerender or scroll reset",
+    "An explicit reading request takes over a pending extraction without a stale projection opening",
+    "Without a 3D carrier the fallback comes from the actual triggering control and keeps the article inert",
+    "A modal during a still-extracting reading-origin request retains the reading route and cancels stale projection work",
+    "Natural first entry remains on the array with the first archive sealed; an explicit read starts unsealing only after physical clearance",
+    "Explicit wallpaper detail playback and frozen reference review retain their opt-in timeline",
+    "Entering a different reading session clears the previous opaque paper before revealing its UI container",
+    "Reduced motion still requires intentional activation and does not wait for suppressed extraction motion",
+    "Ordinary reading arrows retain native scrolling while array and gamepad navigation remain available",
+    "Esc during extraction preserves the originating reading or array route and cancels the queued projection"
+  ]
+}
+{
+  "passed": true,
+  "scope": "Deterministic timing and state only",
+  "checks": [
+    "One monotone web arrival reaches the exact interactive field, lift and camera endpoint without a second wave packet",
+    "Brand timing reaches its final value before the opening layout is released",
+    "Slow first GPU frames advance the existing opening clock by at most 50 ms; earlier artwork and explicit seeks remain exact",
+    "Paper waits for physical clearance, framed camera and current unsealing, reveals over 1.1 s, closes and resets without retaining opaque state",
+    "Text reveal begins on visible paper and uses presented frame increments rather than expiring behind a slow render",
+    "Actual Scene.setMode preserves completed reference/wallpaper reading while keeping fresh and incomplete entries behind the paper gate"
+  ]
+}
+✔ a narrative route can omit a side experiment while preserving the full tree (1.468356ms)
+✔ legacy research catalogs remain valid without authored evolution fields (0.394152ms)
+✔ main routes reject missing, repeated and too few node references (0.686641ms)
+✔ main routes cannot reverse chronology or conceal equal-time steps (0.309485ms)
+✔ evolution layouts require a complete set of finite viewport coordinates (0.892561ms)
+✔ entry references and phase membership cannot silently target absent nodes (0.353702ms)
+✔ unknown visual roles, line semantics and layouts fail explicitly (0.29935ms)
+✔ contemporary records accept complete paragraphs and reject invalid members (1.655827ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12.453259
+
+Finished: 2026-11-20T08:01:51.756655+00:00
+Exit code: 0

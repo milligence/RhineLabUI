@@ -1,0 +1,170 @@
+{
+  "scope": "Frozen camera geometry, actual production render, existing inert Canvas boundary fixture, current-thread CPU timing; real Canvas/PNG encoding, browser/RPC/GPU excluded.",
+  "report": [
+    {
+      "viewport": [
+        1320,
+        726
+      ],
+      "threadCpuMs": {
+        "slow": {
+          "n": 366,
+          "mean": 6.759,
+          "p95": 12.007,
+          "max": 39.588
+        },
+        "fast": {
+          "n": 366,
+          "mean": 2.702,
+          "p95": 5.717,
+          "max": 23.8
+        }
+      },
+      "beamRebuildCpuMs": {
+        "slow": {
+          "n": 248,
+          "mean": 9.84,
+          "p95": 12.856,
+          "max": 39.588
+        },
+        "fast": {
+          "n": 248,
+          "mean": 3.862,
+          "p95": 7.993,
+          "max": 23.8
+        }
+      },
+      "wallMs": {
+        "slow": {
+          "n": 366,
+          "mean": 6.767,
+          "p95": 12.646,
+          "max": 41.474
+        },
+        "fast": {
+          "n": 366,
+          "mean": 2.758,
+          "p95": 4.891,
+          "max": 29.747
+        }
+      },
+      "comparison": {
+        "compared": 336,
+        "differentBytes": 0,
+        "differentVisibleBytes": 0,
+        "maxByteDelta": 0,
+        "slowDigest": "38fa972d6567c179eb347b244d7051e7033beb9d2293e441a9313af5a7d12ae1",
+        "fastDigest": "38fa972d6567c179eb347b244d7051e7033beb9d2293e441a9313af5a7d12ae1"
+      }
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "threadCpuMs": {
+        "slow": {
+          "n": 366,
+          "mean": 8.194,
+          "p95": 16.011,
+          "max": 47.159
+        },
+        "fast": {
+          "n": 366,
+          "mean": 3.038,
+          "p95": 7.998,
+          "max": 12.272
+        }
+      },
+      "beamRebuildCpuMs": {
+        "slow": {
+          "n": 248,
+          "mean": 12.092,
+          "p95": 16.68,
+          "max": 47.159
+        },
+        "fast": {
+          "n": 248,
+          "mean": 4.466,
+          "p95": 8,
+          "max": 12.272
+        }
+      },
+      "wallMs": {
+        "slow": {
+          "n": 366,
+          "mean": 8.24,
+          "p95": 16.538,
+          "max": 47.949
+        },
+        "fast": {
+          "n": 366,
+          "mean": 3.018,
+          "p95": 6.116,
+          "max": 12.702
+        }
+      },
+      "comparison": {
+        "compared": 336,
+        "differentBytes": 0,
+        "differentVisibleBytes": 0,
+        "maxByteDelta": 0,
+        "slowDigest": "ae6ed7ba29ba1d8a56b0ff966e4b0b4fa06736c9dd0019edd825acb2783d1035",
+        "fastDigest": "ae6ed7ba29ba1d8a56b0ff966e4b0b4fa06736c9dd0019edd825acb2783d1035"
+      }
+    }
+  ],
+  "measuredAtUTC": "2026-11-20T07:56:42.744400+00:00",
+  "sourceHashes": {
+    "baselineFrozenModule": {
+      "sha256": "912f59c723ff3c88c8d3bfe2fbb6f379f513b1822f51991bf882122abf7a9b5e",
+      "description": "Frozen module with pre-optimization finiteVolume hot loop; the shared material, mask and geometry definitions match the optimized snapshot."
+    },
+    "optimizedFrozenModule": {
+      "sha256": "a94573b3f89d06c47972f82a867a0ad88ab9b94e0b300c67dcf56268123dc382",
+      "description": "Frozen optimized module before the later identity-exposure and 4px-rim visual calibration."
+    },
+    "cameraGeometrySnapshot": {
+      "sha256": "67423319b96bf0bd97ce2e328f14d5c70f7fd5113a088f072e47489b941f53e3",
+      "description": "Identical carrier-flight geometry used by both implementations, after beamReach completion was moved to 1100ms."
+    },
+    "productionAfterVisualCalibration": {
+      "sha256": "033a4a6d217ca3621c3dfb449b76e544d629ca11d64d5e62e488504c470b94fe",
+      "description": "Same optimized beam loop; subsequently advances identity exposure and extends only the optical rim by four final-DOM pixels."
+    },
+    "benchmarkHarness": {
+      "sha256": "e94fe75bf9001ce2fbc259e8ee4b6e18a1b1b559db69f1b2c48ecc65d52174b1",
+      "description": "Temporary harness reusing scripts/check-carrier-optics.mjs Canvas boundary fixture."
+    }
+  },
+  "method": {
+    "clock": "process.threadCpuUsage for current-thread CPU; performance.now for wall time",
+    "samplesPerViewport": 366,
+    "nominalSamplingHz": 60,
+    "presentationRangeMs": [
+      0,
+      6100
+    ],
+    "warmup": "One full presentation for each implementation before the measured paired comparison.",
+    "sourceGeometry": "Fixed world-space rectangular aperture and carrier outline projected by the production carrierCamera/projectOpticalPoint for every sample.",
+    "comparison": "Both implementations receive the same frozen per-frame inputs. Every available volume buffer is compared byte-for-byte, including transparent pixels.",
+    "included": [
+      "Actual CarrierOptics.render and mask/volume generation",
+      "Existing fixture finite-geometry assertions",
+      "ImageData upload buffer copy",
+      "SHA256 placeholder instead of PNG mask encoding"
+    ],
+    "excluded": [
+      "Real Canvas rasterization and actual putImageData backend",
+      "Real PNG encoding",
+      "DOM layout and browser compositing",
+      "Browser automation/RPC latency",
+      "GPU/WebGL scene rendering"
+    ],
+    "limitations": [
+      "This is a local CPU benchmark, not browser FPS or GPU acceptance.",
+      "The equivalence result covers the beam raster; it does not claim the subsequent intentional mask/rim visual changes are unchanged.",
+      "Single measured warmed traversal per viewport; peaks include allocation/GC and runtime effects."
+    ]
+  }
+}

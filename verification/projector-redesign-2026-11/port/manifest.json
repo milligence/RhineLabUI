@@ -1,0 +1,89 @@
+{
+  "schema": "rhine-offline-projector-reference/v1",
+  "created_utc": "2026-11-20T07:55:42.426253+00:00",
+  "scope": "Offline original GLB plus exact runtime component vertices/material numbers; approximate studio lighting. Not a Three.js capture or acceptance of the projection sequence.",
+  "blender_version": "Blender 4.3.2",
+  "renderer": {
+    "engine": "Cycles",
+    "device": "CPU",
+    "samples": 96,
+    "resolution": [
+      1400,
+      900
+    ],
+    "view_transform": "AgX",
+    "look": "AgX - Medium High Contrast",
+    "denoise": false,
+    "denoise_reason": "This Blender build has no OpenImageDenoise support",
+    "post_processing": false
+  },
+  "inputs": [
+    {
+      "path": "public/assets/archive-cassette.glb",
+      "sha256": "dda42b9b3b471d11c69820a64084d254a64b27761287ab0e35dd8387ec0a0bed",
+      "bytes": 3565116
+    },
+    {
+      "path": "src/projector-aperture.ts",
+      "sha256": "8d27e1f56aec30626d49d1129f69e65ad5e79cff40fd3948ad63607949ad3850",
+      "bytes": 6994
+    },
+    {
+      "path": "src/theme-material.ts",
+      "sha256": "aeb17e47d1c74ce1195f817af946aba45997798e29bb432d25d375fd1c1ab5df",
+      "bytes": 4393
+    },
+    {
+      "path": ".tools/projector-port-reference/geometry.json",
+      "sha256": "1be8b6dd1dfe1453d80b8fb344ea2b176b7e4a38e7d9b6e1a063a1f83d3c4f16",
+      "bytes": 317292
+    }
+  ],
+  "runtime_export_matches_final_source": true,
+  "runtime_geometry_source": "Optical_Diffuser.025 from the unchanged original GLB",
+  "scripts": [
+    {
+      "path": ".tools/projector-port-reference/export_runtime.mjs",
+      "sha256": "ffdf79afcdc60f382d38e3f0a4a947b0b80aab10f9a53e3d9cc1f6befef5879b",
+      "bytes": 2144
+    },
+    {
+      "path": ".tools/projector-port-reference/render_reference.py",
+      "sha256": "7e54bfc4843757c6604177477af8637c70dcf1037f4bb9b7f50401091e0df212",
+      "bytes": 6401
+    }
+  ],
+  "images": [
+    {
+      "path": ".tools/projector-port-reference/port-v2-off-oblique.png",
+      "sha256": "0e69bf5c68e31f6529e4ae8157482f37dffd7bced01720b147f40daeea19715e",
+      "bytes": 2118832,
+      "role": "Unpowered oblique aperture closeup"
+    },
+    {
+      "path": ".tools/projector-port-reference/port-v2-on-oblique.png",
+      "sha256": "4562f58cd0b1c31bed2b30a03e7fb1012bb89a5057edb01f64fdd3d79013f53d",
+      "bytes": 2130839,
+      "role": "Powered oblique aperture closeup",
+      "suggested_for_public_verification": true
+    },
+    {
+      "path": ".tools/projector-port-reference/card-v2-on-proportion.png",
+      "sha256": "6c47cf0e8f311200a040e864115aa5ef74f7dd775d0340871188c91776a2655a",
+      "bytes": 1862224,
+      "role": "Powered full-cassette proportions with uncropped margins",
+      "suggested_for_public_verification": true
+    }
+  ],
+  "notes": {
+    "path": ".tools/projector-port-reference/offline-notes.md",
+    "sha256": "6fa5ffbb56f84cf31751c6e0970f317dd1dc63d21c5ba8f073ed4e69fb5fffde",
+    "bytes": 2691
+  },
+  "limitations": [
+    "Approximate studio lights and static camera, not production ArchiveScene illumination or camera path.",
+    "Cycles refraction/shadows and AgX differ from Three.js screen-space transmission/shadows and ACES.",
+    "CardAppearance decryption shaders, array, DOM, beam and temporal continuity are not rendered.",
+    "Only light-theme high appearance is observed. The theme-material source hash binds code, not dark-theme visual acceptance."
+  ]
+}

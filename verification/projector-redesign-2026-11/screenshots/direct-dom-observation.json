@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-20",
+  "timezone": "Asia/Shanghai",
+  "sourceDigest": "ef49b0aeb81ddd0ef88740c64687a256edb32a9f494442f8fef2f8ad7454555c",
+  "scenario": "Reduced-motion Cube entry, followed by return using the visible control",
+  "method": "Read-only DOM evaluation of .projection-shell in the actual production viewer within the public calibration preview",
+  "result": {
+    "canvasCount": 0,
+    "hidden": true,
+    "mask": "none"
+  },
+  "scope": "Direct observed DOM result, not the residual flight statistics and not Cube WebGL pixel acceptance"
+}

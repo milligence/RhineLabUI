@@ -1,0 +1,82 @@
+{
+  "started": "2026-11-20T08:01:49.322846+00:00",
+  "scope": "Frozen-source functional gates and isolated builds; not a browser or frame-rate acceptance result.",
+  "sourceDigest": "552df8ba06bebbeed73242ea8f5d68e41b5acbdc322e4b9ad70be6401e11458e",
+  "sourceStable": true,
+  "gates": [
+    {
+      "name": "projection",
+      "command": "npm run check:projection",
+      "started": "2026-11-20T08:01:49.323262+00:00",
+      "finished": "2026-11-20T08:01:51.756655+00:00",
+      "exitCode": 0,
+      "passed": true,
+      "log": "projection.log",
+      "logSha256": "8851eea30e4754c65a919194d57bf55287fccbe193ce6c033d78217a784cf298"
+    },
+    {
+      "name": "carrier-optics",
+      "command": "npm run check:carrier-optics",
+      "started": "2026-11-20T08:01:51.763158+00:00",
+      "finished": "2026-11-20T08:01:52.430726+00:00",
+      "exitCode": 0,
+      "passed": true,
+      "log": "carrier-optics.log",
+      "logSha256": "357796d26a8a2e13dac2e95e551beef9ca153b16567b008b8cb1026fd042921c"
+    },
+    {
+      "name": "public-build",
+      "command": "npm run build",
+      "started": "2026-11-20T08:01:52.437199+00:00",
+      "finished": "2026-11-20T08:01:59.421564+00:00",
+      "exitCode": 0,
+      "passed": true,
+      "log": "public-build.log",
+      "logSha256": "7aee29a2cf2368115444c92466f588abdee974b501f758e0bdb8ac511c7a20c7"
+    }
+  ],
+  "previousAttempts": [
+    {
+      "started": "2026-11-20T08:00:09.371837+00:00",
+      "finished": "2026-11-20T08:00:10.256520+00:00",
+      "sourceDigest": "69d50e080429b2427af4146139bffa6fbdded990ae49cbf203c7526bf94277c8",
+      "passed": false,
+      "log": "projection-before-cue-correction.log",
+      "reason": "The beam-arrival design was changed to 1100 ms, while the previous test still expected less than half reach at 900 ms. Root changed the partial-beam sample to 700 ms and added the 1100 ms reach-before-frame/content assertion; production source was unchanged."
+    },
+    {
+      "started": "2026-11-20T08:01:09.174122+00:00",
+      "finished": "2026-11-20T08:01:09.877653+00:00",
+      "sourceDigest": "e7a793936208715dde2ae545054f6cd131d7c826f0f5539375112e6d1cc58307",
+      "passed": false,
+      "log": "projection-before-float-tolerance.log",
+      "reason": "The new arrival assertion compared 0.9999999999999993 to exactly 1. Root changed this numerical check to the existing close helper at 1e-12 tolerance; production source was unchanged."
+    }
+  ],
+  "sourceDigestAfter": "552df8ba06bebbeed73242ea8f5d68e41b5acbdc322e4b9ad70be6401e11458e",
+  "publicBuild": {
+    "release": "c0aaf775a99d57fd",
+    "manifest": "dist/pwa-build.json",
+    "manifestSha256": "913fdb029b133d268e3d3e8a63b2afbf24ca688f2ae0437ef1383b51a65fee08"
+  },
+  "publicGatesFinished": "2026-11-20T08:01:59.429484+00:00",
+  "passed": true,
+  "privateBuild": {
+    "passed": true,
+    "exitCode": 0,
+    "started": "2026-11-20T08:02:29.217610+00:00",
+    "finished": "2026-11-20T08:02:37.547741+00:00",
+    "inputSha256": "72bf1ed12ab6555e63be9523ed1b746e4f42bf24a7ef6bcf899ecd99a434589b",
+    "inputUnchanged": true,
+    "log": "private-build-summary.log",
+    "rawOutput": "An unmodified private build log is retained locally outside the tracked verification directory.",
+    "workspace": ".private-build/archive-XvmeIO",
+    "isolatedContentSha256": "72bf1ed12ab6555e63be9523ed1b746e4f42bf24a7ef6bcf899ecd99a434589b",
+    "productionSourcesMatch": true,
+    "release": "684e9e7b8524ed5e",
+    "manifestSha256": "f7ca030bf7e4e11141b95d174c776bdcf6ab68b574fc10ba0aa4271d5ea69e1e",
+    "publicInputsUnchanged": true,
+    "logSha256": "7e8aa976ce71d90186e5131157ecad022cae84ed3ea216f8abb5ee82026eef91"
+  },
+  "finished": "2026-11-20T08:02:37.547741+00:00"
+}

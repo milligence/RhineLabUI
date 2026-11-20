@@ -1,0 +1,678 @@
+{
+  "schema": "rhine-projector-redesign-review/v1",
+  "date": "2026-11-20",
+  "language": "zh-CN",
+  "scope": "公开合成样本上的生产DOM/Canvas实际审片、功能检查与隔离构建；完整WebGL场景明确未验收。",
+  "implementationCommit": "2816c09aa292069589d09a24de9b487120dfc057",
+  "implementationParentCommit": "2a68fb4137e52b0f836f7e6b726186b647c875bb",
+  "finalPreviewCommit": "f621f5724732f5c33aeaf39a1be37c86dafa0535",
+  "previewBranch": "review/projector-redesign-final-2026-11-20",
+  "finalPublishedUrl": "https://htmlpreview.github.io/?https://github.com/milligence/RhineLabUI/blob/f621f5724732f5c33aeaf39a1be37c86dafa0535/reference/projector-redesign-review.bundle.html",
+  "finalPublishedUrlOpened": true,
+  "finalPublishedSourceDigestMatched": true,
+  "publicationObservation": {
+    "sourceDigest": "ef49b0aeb81ddd0ef88740c64687a256edb32a9f494442f8fef2f8ad7454555c",
+    "timeMs": 3200,
+    "beat": "image-held",
+    "clarity": 1,
+    "mask": "none",
+    "markedDeliverable": true,
+    "evidence": [
+      "screenshots/projector-final-published-held.jpg",
+      "screenshots/projector-final-published-state.json"
+    ]
+  },
+  "previews": {
+    "optical": {
+      "url": "https://htmlpreview.github.io/?https://github.com/milligence/RhineLabUI/blob/f621f5724732f5c33aeaf39a1be37c86dafa0535/reference/projector-redesign-review.bundle.html",
+      "bundlePath": "reference/projector-redesign-review.bundle.html",
+      "sourceDigest": "ef49b0aeb81ddd0ef88740c64687a256edb32a9f494442f8fef2f8ad7454555c",
+      "manifest": "preview/optical-manifest.json",
+      "actualProductionDomAndCanvas": true,
+      "source": "labelled synthetic calibration plane; no archive GLB",
+      "opened": true
+    },
+    "fullScene": {
+      "url": "https://htmlpreview.github.io/?https://github.com/milligence/RhineLabUI/blob/f621f5724732f5c33aeaf39a1be37c86dafa0535/reference/projector-full-scene-review.bundle.html",
+      "bundlePath": "reference/projector-full-scene-review.bundle.html",
+      "sourceDigest": "802f8271ca46fc38d7dd9c684c4860aad4813e4450c3b17f77edbb70708c85f8",
+      "manifest": "preview/full-scene-manifest.json",
+      "containsActualArchiveSceneAndOriginalPublicGLBs": true,
+      "opened": true,
+      "observedResult": "Error creating WebGL context",
+      "visualAcceptance": false,
+      "evidence": [
+        "screenshots/projector-final-webgl-unavailable.jpg"
+      ]
+    }
+  },
+  "environment": {
+    "webglAvailable": false,
+    "observedGLVendor": "Disabled",
+    "observedGLRenderer": "Disabled",
+    "evidenceOrigin": "Root实际读取的CDP GPU信息及最终完整场景页面错误。"
+  },
+  "content": {
+    "publicFixtureOnly": true,
+    "nodes": 36,
+    "edges": 39,
+    "narrativeRouteSteps": 23,
+    "realHistoryNarrativeAcceptance": false,
+    "privateContentInputSha256": "72bf1ed12ab6555e63be9523ed1b746e4f42bf24a7ef6bcf899ecd99a434589b",
+    "privateContentInputUnchanged": true
+  },
+  "timing": {
+    "origin": "档案抽取取得净空后",
+    "entranceMs": 6100,
+    "returnMs": 2400,
+    "beats": [
+      {
+        "name": "source",
+        "rangeMs": [
+          0,
+          400
+        ]
+      },
+      {
+        "name": "beam",
+        "rangeMs": [
+          400,
+          1100
+        ]
+      },
+      {
+        "name": "frame",
+        "rangeMs": [
+          1100,
+          1750
+        ]
+      },
+      {
+        "name": "content",
+        "rangeMs": [
+          1800,
+          3000
+        ]
+      },
+      {
+        "name": "coexist",
+        "rangeMs": [
+          3000,
+          3650
+        ]
+      },
+      {
+        "name": "approach",
+        "rangeMs": [
+          3650,
+          6100
+        ]
+      }
+    ]
+  },
+  "designCauses": [
+    {
+      "problem": "光源朦胧、缺少明确投影框",
+      "implementation": "实体矩形玻璃口、四角光束、近角两路闭合的四边光学框。"
+    },
+    {
+      "problem": "信息突然出现",
+      "implementation": "标题与内容同一真实DOM投影平面；确定性遮罩先显身份再显主体，移除相机文字gate。"
+    },
+    {
+      "problem": "镜头割裂",
+      "implementation": "固定入口空间基准、同一已呈现相机状态与有限惯性接续；一次连续接近已形成画面的路径。"
+    }
+  ],
+  "visualIterations": [
+    {
+      "round": 1,
+      "changes": [
+        "矩形四角源口与四棱体积",
+        "完整框从近角闭合",
+        "标题与主体统一透视/曝光"
+      ],
+      "observedRemaining": [
+        "浅色上侧光束方向弱",
+        "源口整面偏白",
+        "标题悬停尺度小"
+      ]
+    },
+    {
+      "round": 2,
+      "changes": [
+        "两条纵向外侧面的有限反射/吸收层",
+        "减少源口整面填充并缩窄热亮",
+        "放大标题"
+      ],
+      "observedRemaining": [
+        "2150ms旧曝光阈值尚未到达标题，框内仍空白"
+      ]
+    },
+    {
+      "round": 3,
+      "changes": [
+        "提前上方身份带曝光",
+        "保留主体连续前沿",
+        "光束抵达统一为1100ms",
+        "框边最后退场并外扩4个最终DOM像素"
+      ],
+      "materialDensityIncreasedGlobally": false
+    }
+  ],
+  "maskCalibration": {
+    "kind": "actual-production-mask-numeric-sampling",
+    "viewport": [
+      1320,
+      726
+    ],
+    "headerRegionUV": [
+      0.25,
+      0.44,
+      0.035,
+      0.085
+    ],
+    "bodyRegionUV": [
+      0.2,
+      0.85,
+      0.36,
+      0.67
+    ],
+    "samples": [
+      {
+        "ms": 2050,
+        "headerCoverage": 0.0809,
+        "bodyCoverage": 0
+      },
+      {
+        "ms": 2100,
+        "headerCoverage": 0.916,
+        "bodyCoverage": 0
+      },
+      {
+        "ms": 2150,
+        "headerCoverage": 1,
+        "bodyCoverage": 0
+      },
+      {
+        "ms": 2400,
+        "headerCoverage": 1,
+        "bodyCoverage": 0.2598
+      },
+      {
+        "ms": 2500,
+        "headerCoverage": 1,
+        "bodyCoverage": 0.6586
+      },
+      {
+        "ms": 2600,
+        "headerCoverage": 1,
+        "bodyCoverage": 0.9883
+      }
+    ],
+    "scope": "局部遮罩数值，不是完整场景像素或浏览器帧率。"
+  },
+  "observations": [
+    {
+      "id": "light-identity",
+      "theme": "light",
+      "viewport": [
+        1320,
+        726
+      ],
+      "timeMs": 2150,
+      "kind": "actual-production-dom-canvas",
+      "result": "标题已形成，主体尚未完整生成；源、束、框可同时辨认。",
+      "evidence": [
+        "screenshots/projector-final-identity.jpg"
+      ]
+    },
+    {
+      "id": "light-held",
+      "theme": "light",
+      "viewport": [
+        1320,
+        726
+      ],
+      "timeMs": 3200,
+      "kind": "actual-production-dom-canvas",
+      "result": {
+        "beat": "image-held",
+        "contentResolve": 1,
+        "clarity": 1,
+        "mask": "none"
+      },
+      "evidence": [
+        "screenshots/projector-final-held-light.jpg",
+        "screenshots/projector-final-held-light-state.json"
+      ]
+    },
+    {
+      "id": "light-approach",
+      "theme": "light",
+      "viewport": [
+        1320,
+        726
+      ],
+      "timesMs": [
+        4750,
+        5800
+      ],
+      "kind": "actual-production-dom-canvas",
+      "result": "同一标题和主图随接收面扩大，后段光学外沿接近画幅边缘。",
+      "evidence": [
+        "screenshots/projector-final-approach.jpg",
+        "screenshots/projector-final-late-approach.jpg"
+      ]
+    },
+    {
+      "id": "dark-held",
+      "theme": "dark",
+      "viewport": [
+        1320,
+        726
+      ],
+      "timeMs": 3200,
+      "kind": "actual-production-dom-canvas",
+      "result": "观察暗色下的光束侧面、完整框与已生成信息。",
+      "evidence": [
+        "screenshots/projector-final-held-dark.jpg"
+      ]
+    },
+    {
+      "id": "dark-continuous-playback",
+      "theme": "dark",
+      "viewport": [
+        1320,
+        726
+      ],
+      "approximateTimesMs": [
+        1667,
+        2190,
+        3083
+      ],
+      "kind": "actual-continuous-playback",
+      "result": "连续观察写框、身份生成和共同呈现。",
+      "evidence": [
+        "screenshots/projector-final-playback-a.jpg",
+        "screenshots/projector-final-playback-b.jpg",
+        "screenshots/projector-final-playback-c.jpg"
+      ]
+    },
+    {
+      "id": "return-and-reentry",
+      "theme": "dark",
+      "viewport": [
+        1320,
+        726
+      ],
+      "approximateTimesMs": [
+        3806,
+        4112
+      ],
+      "kind": "actual-controls-and-state",
+      "result": "returning后重新接入；两个状态均保留contentResolve=1。",
+      "evidence": [
+        "screenshots/projector-final-return-state.json",
+        "screenshots/projector-final-reentry.jpg",
+        "screenshots/projector-final-reentry-state.json"
+      ]
+    },
+    {
+      "id": "portrait-held-and-reading",
+      "theme": "light",
+      "viewport": [
+        390,
+        780
+      ],
+      "timesMs": [
+        3200,
+        6100
+      ],
+      "kind": "actual-production-dom-canvas",
+      "result": {
+        "finalBeat": "open",
+        "finalClarity": 1,
+        "finalMask": "none"
+      },
+      "evidence": [
+        "screenshots/projector-final-portrait-held.jpg",
+        "screenshots/projector-final-portrait-held-state.json",
+        "screenshots/projector-final-portrait-reading.jpg",
+        "screenshots/projector-final-portrait-reading-state.json"
+      ]
+    },
+    {
+      "id": "reduced-cube",
+      "viewport": [
+        390,
+        780
+      ],
+      "reducedMotion": true,
+      "kind": "dom-and-state-only",
+      "result": {
+        "open": true,
+        "kind": "cube",
+        "clarity": 1,
+        "mask": "none"
+      },
+      "cubeWebGLPixelsAccepted": false,
+      "evidence": [
+        "screenshots/projector-final-reduced-cube-state.json"
+      ]
+    },
+    {
+      "id": "reduced-cube-return",
+      "viewport": [
+        390,
+        780
+      ],
+      "reducedMotion": true,
+      "kind": "direct-dom-observation",
+      "result": {
+        "canvasCount": 0,
+        "hidden": true,
+        "mask": "none"
+      },
+      "residualFlightStatsAreNotLiveDom": true,
+      "unobservedFields": [
+        "inert"
+      ],
+      "evidence": [
+        "screenshots/direct-dom-observation.json",
+        "screenshots/projector-final-reduced-closed-state.json"
+      ]
+    }
+  ],
+  "functionalGates": {
+    "passed": true,
+    "sourceStable": true,
+    "sourceDigest": "552df8ba06bebbeed73242ea8f5d68e41b5acbdc322e4b9ad70be6401e11458e",
+    "summary": "checks/checks-summary.json",
+    "commands": [
+      "npm run check:projection",
+      "npm run check:carrier-optics",
+      "npm run build"
+    ],
+    "priorFailedAttemptsRetained": true,
+    "priorFailures": [
+      "checks/projection-before-cue-correction.log",
+      "checks/projection-before-float-tolerance.log"
+    ]
+  },
+  "builds": {
+    "publicRelease": "c0aaf775a99d57fd",
+    "privateRelease": "684e9e7b8524ed5e",
+    "privatePassed": true,
+    "privateInputsUnchanged": true,
+    "productionSourcesMatch": true,
+    "publicInputsUnchanged": true,
+    "privateRawOutputPublished": false
+  },
+  "performance": {
+    "evidence": "optics-performance.json",
+    "clock": "process.threadCpuUsage",
+    "isBrowserFpsAcceptance": false,
+    "materialParametersAndBeamResolutionUnchanged": true,
+    "byteIdenticalBeamBuffers": true,
+    "perViewport": [
+      {
+        "viewport": [
+          1320,
+          726
+        ],
+        "samples": 366,
+        "rebuildFrames": 248,
+        "beforeMeanRebuildCpuMs": 9.84,
+        "afterMeanRebuildCpuMs": 3.862,
+        "afterP95RebuildCpuMs": 7.993,
+        "afterPeakRebuildCpuMs": 23.8,
+        "afterMeanAllFramesCpuMs": 2.702,
+        "comparedBuffers": 336,
+        "differentBytes": 0
+      },
+      {
+        "viewport": [
+          1440,
+          900
+        ],
+        "samples": 366,
+        "rebuildFrames": 248,
+        "beforeMeanRebuildCpuMs": 12.092,
+        "afterMeanRebuildCpuMs": 4.466,
+        "afterP95RebuildCpuMs": 8,
+        "afterPeakRebuildCpuMs": 12.272,
+        "afterMeanAllFramesCpuMs": 3.038,
+        "comparedBuffers": 336,
+        "differentBytes": 0
+      }
+    ]
+  },
+  "portReference": {
+    "manifest": "port/manifest.json",
+    "notes": "port/offline-notes.md",
+    "renderer": "Blender 4.3.2 / Cycles CPU",
+    "runtimeGeometryMatchesFinalSource": true,
+    "originalGLBUnchanged": true,
+    "threeJsCapture": false,
+    "realTimeMaterialAcceptance": false,
+    "copiedFilesAreByteIdentical": true,
+    "reproduction": "Copy port/export_runtime.mjs, port/render_reference.py and port/geometry.json to .tools/projector-port-reference/; run the exporter with Node and the render script with Blender 4.3.2. Preserve the original manifest paths."
+  },
+  "notAccepted": [
+    "Actual ArchiveScene whole-sequence visual result",
+    "Original GLB and physical aperture real-time Three.js materials and occlusion",
+    "Cube WebGL pixels",
+    "GPU cost and browser frame rate",
+    "Real-history narrative rewrite"
+  ],
+  "historicalEvidenceRetained": [
+    "../projection-cinematic-2026-11/README.md",
+    "../projection-ui-2026-11/README.md",
+    "../strict-flow-2026-11/README.md",
+    "checks/projection-before-cue-correction.log",
+    "checks/projection-before-float-tolerance.log"
+  ],
+  "evidenceFiles": [
+    {
+      "path": "checks/carrier-optics.log",
+      "sha256": "357796d26a8a2e13dac2e95e551beef9ca153b16567b008b8cb1026fd042921c",
+      "bytes": 2002
+    },
+    {
+      "path": "checks/checks-summary.json",
+      "sha256": "202ec2faf5d8dda246ac682c3c49a7009a672679c0eec30254ef61e415ed7d06",
+      "bytes": 3708
+    },
+    {
+      "path": "checks/private-build-summary.log",
+      "sha256": "7e8aa976ce71d90186e5131157ecad022cae84ed3ea216f8abb5ee82026eef91",
+      "bytes": 510
+    },
+    {
+      "path": "checks/projection-before-cue-correction.log",
+      "sha256": "23333858cadfc86e866c4854773f82497dfd589030debdc3b261b195ead3570c",
+      "bytes": 1190
+    },
+    {
+      "path": "checks/projection-before-float-tolerance.log",
+      "sha256": "98e595b398bb48437dd580130b848d2104bc09ea3060e7adf63e9e9c35426bd2",
+      "bytes": 1279
+    },
+    {
+      "path": "checks/projection.log",
+      "sha256": "8851eea30e4754c65a919194d57bf55287fccbe193ce6c033d78217a784cf298",
+      "bytes": 4589
+    },
+    {
+      "path": "checks/public-build.log",
+      "sha256": "7aee29a2cf2368115444c92466f588abdee974b501f758e0bdb8ac511c7a20c7",
+      "bytes": 1483
+    },
+    {
+      "path": "optics-performance.json",
+      "sha256": "f29a2e80dc893ffe7bcf4ad27e1b61b78330173486d3f9b3d05033976d349d0b",
+      "bytes": 5484
+    },
+    {
+      "path": "port/card-v2-on-proportion.png",
+      "sha256": "6c47cf0e8f311200a040e864115aa5ef74f7dd775d0340871188c91776a2655a",
+      "bytes": 1862224
+    },
+    {
+      "path": "port/export_runtime.mjs",
+      "sha256": "ffdf79afcdc60f382d38e3f0a4a947b0b80aab10f9a53e3d9cc1f6befef5879b",
+      "bytes": 2144
+    },
+    {
+      "path": "port/geometry.json",
+      "sha256": "1be8b6dd1dfe1453d80b8fb344ea2b176b7e4a38e7d9b6e1a063a1f83d3c4f16",
+      "bytes": 317292
+    },
+    {
+      "path": "port/manifest.json",
+      "sha256": "bafe8ba88857a472e26a49e52c34262660fd58f0d8ed86830b0aed18410df52d",
+      "bytes": 3396
+    },
+    {
+      "path": "port/offline-notes.md",
+      "sha256": "6fa5ffbb56f84cf31751c6e0970f317dd1dc63d21c5ba8f073ed4e69fb5fffde",
+      "bytes": 2691
+    },
+    {
+      "path": "port/port-v2-off-oblique.png",
+      "sha256": "0e69bf5c68e31f6529e4ae8157482f37dffd7bced01720b147f40daeea19715e",
+      "bytes": 2118832
+    },
+    {
+      "path": "port/port-v2-on-oblique.png",
+      "sha256": "4562f58cd0b1c31bed2b30a03e7fb1012bb89a5057edb01f64fdd3d79013f53d",
+      "bytes": 2130839
+    },
+    {
+      "path": "port/render_reference.py",
+      "sha256": "7e54bfc4843757c6604177477af8637c70dcf1037f4bb9b7f50401091e0df212",
+      "bytes": 6401
+    },
+    {
+      "path": "preview/full-scene-manifest.json",
+      "sha256": "f3ad3a3d2ce88d7ea85993abf81520ab1e88eca3d02fa6ade686ef471bcc9631",
+      "bytes": 6804
+    },
+    {
+      "path": "preview/optical-manifest.json",
+      "sha256": "76f8cd1b43e71987caa9783d3093f2a7a0518568f20ee8a4f8708f03809cc5a7",
+      "bytes": 3804
+    },
+    {
+      "path": "screenshots/direct-dom-observation.json",
+      "sha256": "fc0146c344a8a0902f70874c2161332480214aa6b3afaf8ca56cb52343e0136c",
+      "bytes": 557
+    },
+    {
+      "path": "screenshots/projector-final-approach.jpg",
+      "sha256": "408b3de32eb087ecc9451034d767bdcb3a40f43388f6d4e203d5de7c4e58ccd1",
+      "bytes": 81403
+    },
+    {
+      "path": "screenshots/projector-final-held-dark.jpg",
+      "sha256": "5e4e14697943dae98eba35d2011ce96beb6a420ca4117d78bd60392e10874c91",
+      "bytes": 73125
+    },
+    {
+      "path": "screenshots/projector-final-held-light-state.json",
+      "sha256": "018da3ea119970eb7e174f8d95490cde7f0c752f36f34f5910727bc400267ba9",
+      "bytes": 6624
+    },
+    {
+      "path": "screenshots/projector-final-held-light.jpg",
+      "sha256": "376a0c3890bbee0450b22193ba10506a8b4c1a90bd6c550bab49242462afbcbc",
+      "bytes": 68710
+    },
+    {
+      "path": "screenshots/projector-final-identity.jpg",
+      "sha256": "1160fc5b2391da8684869e1bfa4a6a493817f7f07c3593712643ffc6f460824a",
+      "bytes": 56901
+    },
+    {
+      "path": "screenshots/projector-final-late-approach.jpg",
+      "sha256": "1bd54c2362797248d14cbc9d37a9cd4069a8b4e7d2238bc96464ac0dab2f7b76",
+      "bytes": 92139
+    },
+    {
+      "path": "screenshots/projector-final-playback-a.jpg",
+      "sha256": "20fdb2513125cbbeb6c5c6bebbba00c6bc4a692db598e97f35385e07f9add532",
+      "bytes": 60338
+    },
+    {
+      "path": "screenshots/projector-final-playback-b.jpg",
+      "sha256": "25f290281e843593e8e13babe5334c152c9e4ab8642db001b2eab6e783f4a70d",
+      "bytes": 61291
+    },
+    {
+      "path": "screenshots/projector-final-playback-c.jpg",
+      "sha256": "5fc90e2ec61d881354310c5b3938274665527ca0f27dc70c90c91703089e0d73",
+      "bytes": 73111
+    },
+    {
+      "path": "screenshots/projector-final-portrait-held-state.json",
+      "sha256": "02bbffc5c81f26ab58b86b18356afa8ccbf3b37447158447feeb076af60c629e",
+      "bytes": 6629
+    },
+    {
+      "path": "screenshots/projector-final-portrait-held.jpg",
+      "sha256": "5c147c760ca23b448d9735dafc89672bb5c021dbf2ffedd7722f3253d330d17f",
+      "bytes": 55375
+    },
+    {
+      "path": "screenshots/projector-final-portrait-reading-state.json",
+      "sha256": "c6d1aa4e4d6126b7297092d2412202884ed4bfb9e6e408f9915c9f80cf66128d",
+      "bytes": 6796
+    },
+    {
+      "path": "screenshots/projector-final-portrait-reading.jpg",
+      "sha256": "38412629fa0650e1a70b9d5a42bb60b9460952749abd11878f36e377ee959477",
+      "bytes": 59643
+    },
+    {
+      "path": "screenshots/projector-final-published-held.jpg",
+      "sha256": "12f23195f1acce9142bbf00beb0cf9198b0184a8a691abd6d721f963e2e11aea",
+      "bytes": 68716
+    },
+    {
+      "path": "screenshots/projector-final-published-state.json",
+      "sha256": "018da3ea119970eb7e174f8d95490cde7f0c752f36f34f5910727bc400267ba9",
+      "bytes": 6624
+    },
+    {
+      "path": "screenshots/projector-final-reduced-closed-state.json",
+      "sha256": "5f37ea9b5af4ff86627c93d164c60826f1967adda8af33d1a587942d8cbd547f",
+      "bytes": 5677
+    },
+    {
+      "path": "screenshots/projector-final-reduced-cube-state.json",
+      "sha256": "d877ede75cc01ee20ae1748fcee61af2ff2e20ae4c1f2135165eeed63271f338",
+      "bytes": 7142
+    },
+    {
+      "path": "screenshots/projector-final-reentry-state.json",
+      "sha256": "6b012514e38f02b87440eb2e416b279bd19bd6a2f29dfb9ca0ff16a3b5e225bf",
+      "bytes": 7091
+    },
+    {
+      "path": "screenshots/projector-final-reentry.jpg",
+      "sha256": "2cb62346daad58f5a97fff3ded7693e229048395d10ba9d232d5900390b6e1a1",
+      "bytes": 76069
+    },
+    {
+      "path": "screenshots/projector-final-return-state.json",
+      "sha256": "7ed2dfc6e649a42a60cabc36d4df6f56e4393094cafdff86ee77472d93eb12c6",
+      "bytes": 6950
+    },
+    {
+      "path": "screenshots/projector-final-webgl-unavailable.jpg",
+      "sha256": "8f618e663e879877d127ae3c361b01342d175d09b668e761dae33f7b8a05568d",
+      "bytes": 57888
+    }
+  ]
+}

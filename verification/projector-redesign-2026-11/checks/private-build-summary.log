@@ -1,0 +1,11 @@
+Command: npm run archive:private -- <private-content>
+Started: 2026-11-20T08:02:29.217610+00:00
+Finished: 2026-11-20T08:02:37.547741+00:00
+Exit code: 0
+Isolated build passed: true
+Private content input SHA-256: 72bf1ed12ab6555e63be9523ed1b746e4f42bf24a7ef6bcf899ecd99a434589b
+Private input unchanged: true
+Production sources match public build: true
+Public inputs unchanged: true
+Private release: 684e9e7b8524ed5e
+Only build status and cryptographic identity are published; raw private output is not included.
